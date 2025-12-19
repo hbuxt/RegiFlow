@@ -1,3 +1,4 @@
+using Api.Infrastructure.Cache;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -11,6 +12,9 @@ namespace Api.Infrastructure.Extensions
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
+            
+            services.AddMemoryCache();
+            services.AddScoped<ICacheProvider, CacheProvider>();
             
             return services;
         }
