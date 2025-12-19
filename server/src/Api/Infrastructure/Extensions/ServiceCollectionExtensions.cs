@@ -1,13 +1,16 @@
 using System;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.RateLimiting;
 using Api.Application.Abstractions;
+using Api.Domain.Constants;
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 using Api.Infrastructure.Cache;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -106,6 +109,47 @@ namespace Api.Infrastructure.Extensions
                         }
                     };
                 });
+            
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddPolicy(RateLimitPolicies.UserTokenBucket, context =>
+                {
+                    var userId = context.User.GetUserId();
+
+                    return RateLimitPartition.GetTokenBucketLimiter(
+                        partitionKey: userId,
+                        factory: _ => new TokenBucketRateLimiterOptions()
+                        {
+                            TokenLimit = 20,
+                            TokensPerPeriod = 10,
+                            ReplenishmentPeriod = TimeSpan.FromSeconds(10),
+                            AutoReplenishment = true,
+                            QueueLimit = 0,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                        });
+                });
+                options.AddPolicy(RateLimitPolicies.IpAddressFixedWindow, context =>
+                {
+                    var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: ipAddress,
+                        factory: _ => new FixedWindowRateLimiterOptions()
+                        {
+                            PermitLimit = 20,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                        });
+                });
+                options.OnRejected = async (context, token) =>
+                {
+                    var result = Result.Failure(new Error(ErrorStatus.TooManyRequests));
+
+                    await result.ToProblemDetails().ExecuteAsync(context.HttpContext);
+                };
+            });
             
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
