@@ -1,4 +1,5 @@
 using Api.Domain.Entities;
+using Api.Infrastructure.Persistence.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,6 +32,8 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(UserRoleSeeder.Generate());
         }
     }
 }

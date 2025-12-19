@@ -1,4 +1,5 @@
 using Api.Domain.Entities;
+using Api.Infrastructure.Persistence.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,6 +33,8 @@ namespace Api.Infrastructure.Persistence.Configurations
             builder.Property(p => p.CreatedAt)
                 .HasColumnOrder(3)
                 .IsRequired();
+
+            builder.HasData(PermissionSeeder.Generate());
         }
     }
 }
