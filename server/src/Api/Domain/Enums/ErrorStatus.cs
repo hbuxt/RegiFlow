@@ -1,0 +1,13 @@
+namespace Api.Domain.Enums
+{
+    public enum ErrorStatus
+    {
+        BadRequest = 0,
+        Unauthorized = 1,
+        Forbidden = 2,
+        NotFound = 3,
+        Conflict = 4,
+        TooManyRequests = 5,
+        Failure = 6
+    }
+}

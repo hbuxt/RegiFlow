@@ -1,3 +1,4 @@
+using Api.Application.Extensions;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,7 @@ namespace Api
         
             builder.Host.UseSerilog();
             builder.Services.AddControllers();
+            builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
