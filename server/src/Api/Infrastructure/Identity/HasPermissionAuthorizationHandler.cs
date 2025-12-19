@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Api.Infrastructure.Identity
 {
@@ -40,7 +41,7 @@ namespace Api.Infrastructure.Identity
             {
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
                 var cacheProvider = scope.ServiceProvider.GetRequiredService<ICacheProvider>();
-                var cacheOptions = scope.ServiceProvider.GetRequiredService<PermissionCacheOptions>();
+                var cacheOptions = scope.ServiceProvider.GetRequiredService<IOptions<PermissionCacheOptions>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 var cacheKey = PermissionCacheKeys.GetByNameAndUserId(requirement.Permission, userId.Value);
@@ -48,7 +49,7 @@ namespace Api.Infrastructure.Identity
                 
                 try
                 {
-                    var permission = await cacheProvider.ReadThroughAsync(cacheKey, cacheOptions, async () =>
+                    var permission = await cacheProvider.ReadThroughAsync(cacheKey, cacheOptions.Value, async () =>
                     {
                         return await dbContext.Users
                             .AsNoTracking()

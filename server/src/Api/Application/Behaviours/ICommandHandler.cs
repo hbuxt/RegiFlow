@@ -8,7 +8,7 @@ namespace Api.Application.Behaviours
     {
     }
     
-    public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result>
+    public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>>
         where TCommand : ICommand<TResponse>
     {
     }

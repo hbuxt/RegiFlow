@@ -11,7 +11,7 @@ namespace Api.Application.Behaviours
     {
     }
     
-    public interface ICommand<TResponse> : IRequest<Result>, IBaseCommand
+    public interface ICommand<TResponse> : IRequest<Result<TResponse>>, IBaseCommand
     {
     }
 }

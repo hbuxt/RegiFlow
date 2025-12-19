@@ -9,10 +9,13 @@ using Api.Domain.ValueObjects;
 using Api.Infrastructure.Cache;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Identity;
+using Api.Infrastructure.Localization;
+using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +28,9 @@ namespace Api.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var permissionCacheSection = configuration.GetRequiredSection("CacheOptions:Permissions");
-            
+            var userCacheSection = configuration.GetRequiredSection("CacheOptions:Users");
+            var roleCacheSection = configuration.GetRequiredSection("CacheOptions:Roles");
+
             var jwtBearerSection = configuration.GetRequiredSection("Authentication:Jwt");
             var jwtBearerOptions = jwtBearerSection.Get<JwtBearerOptions>();
             
@@ -51,6 +56,16 @@ namespace Api.Infrastructure.Extensions
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
             
+            services.AddOptions<UserCacheOptions>()
+                .Bind(userCacheSection)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            
+            services.AddOptions<RoleCacheOptions>()
+                .Bind(roleCacheSection)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            
             services.AddOptions<JwtBearerOptions>()
                 .Bind(jwtBearerSection)
                 .ValidateDataAnnotations()
@@ -60,6 +75,13 @@ namespace Api.Infrastructure.Extensions
                 .Bind(corsPolicySection)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+            
+            var connectionString = configuration.GetConnectionString("default");
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlite(connectionString);
+            });
             
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -143,7 +165,7 @@ namespace Api.Infrastructure.Extensions
                             QueueProcessingOrder = QueueProcessingOrder.OldestFirst
                         });
                 });
-                options.OnRejected = async (context, token) =>
+                options.OnRejected = async (context, _) =>
                 {
                     var result = Result.Failure(new Error(ErrorStatus.TooManyRequests));
 
@@ -159,7 +181,10 @@ namespace Api.Infrastructure.Extensions
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthorizationMiddlewareResultHandler>();
             services.AddSingleton<IAuthorizationHandler, HasPermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, HasPermissionAuthorizationPolicyProvider>();
+            services.AddSingleton<IErrorLocalizer, ErrorLocalizer>();
             services.AddScoped<ICacheProvider, CacheProvider>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
             
             return services;
         }
