@@ -23,6 +23,7 @@ namespace Api
             app.UseCors(CorsPolicies.RegiFlowClient);
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
