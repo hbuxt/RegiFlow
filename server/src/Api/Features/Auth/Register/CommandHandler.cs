@@ -11,7 +11,6 @@ using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 using Api.Infrastructure.Cache;
 using Api.Infrastructure.Identity;
-using Api.Infrastructure.Localization;
 using Api.Infrastructure.Persistence.Contexts;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,6 @@ namespace Api.Features.Auth.Register
     {
         private readonly AppDbContext _dbContext;
         private readonly ICacheProvider _cacheProvider;
-        private readonly IErrorLocalizer _localizer;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IOptions<UserCacheOptions> _userCacheOptions;
@@ -35,7 +33,6 @@ namespace Api.Features.Auth.Register
         public CommandHandler(
             AppDbContext dbContext,
             ICacheProvider cacheProvider,
-            IErrorLocalizer localizer,
             IPasswordHasher passwordHasher,
             ITokenGenerator tokenGenerator,
             IOptions<UserCacheOptions> userCacheOptions,
@@ -45,7 +42,6 @@ namespace Api.Features.Auth.Register
         {
             _dbContext = dbContext;
             _cacheProvider = cacheProvider;
-            _localizer = localizer;
             _passwordHasher = passwordHasher;
             _tokenGenerator = tokenGenerator;
             _userCacheOptions = userCacheOptions;
@@ -83,7 +79,10 @@ namespace Api.Features.Auth.Register
             if (existingUser != null)
             {
                 _logger.LogInformation("Registration failed for user: {Email}. User already exists", command.Email);
-                return Result.Failure<Response>(new Error(ErrorStatus.Conflict, ErrorCodes.RegisterEmailAlreadyExists, _localizer.GetMessage(ErrorCodes.RegisterEmailAlreadyExists)));
+                return Result.Failure<Response>(new Error(
+                    ErrorStatus.Conflict, 
+                    "REGISTER_EMAIL_ALREADY_EXISTS", 
+                    "The email is already in use. Please use a different one or try logging in."));
             }
 
             var roleCacheKey = RoleCacheKeys.GetByName(RoleNames.StandardUser);
@@ -106,7 +105,10 @@ namespace Api.Features.Auth.Register
             if (role == null)
             {
                 _logger.LogError("Registration failed for user: {Email}. Role not found", command.Email);
-                return Result.Failure<Response>(new Error(ErrorStatus.NotFound, ErrorCodes.GeneralUnexpectedError, _localizer.GetMessage(ErrorCodes.GeneralUnexpectedError)));
+                return Result.Failure<Response>(new Error(
+                    ErrorStatus.NotFound, 
+                    "GENERAL_UNEXPECTED_ERROR", 
+                    "An unexpected error occurred. Please try again later or contact support if the problem persists."));
             }
 
             await using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
@@ -147,7 +149,10 @@ namespace Api.Features.Auth.Register
                     await transaction.RollbackAsync(cancellationToken);
                     
                     _logger.LogError(ex, "Registration failed for user: {Email}. Unexpected error occurred", command.Email);
-                    return Result.Failure<Response>(new Error(ErrorStatus.Failure, ErrorCodes.GeneralUnexpectedError, _localizer.GetMessage(ErrorCodes.GeneralUnexpectedError)));
+                    return Result.Failure<Response>(new Error(
+                        ErrorStatus.Failure, 
+                        "GENERAL_UNEXPECTED_ERROR", 
+                        "An unexpected error occurred. Please try again later or contact support if the problem persists."));
                 }
             }
         }

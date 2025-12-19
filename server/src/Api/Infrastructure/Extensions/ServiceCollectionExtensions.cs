@@ -9,7 +9,6 @@ using Api.Domain.ValueObjects;
 using Api.Infrastructure.Cache;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Identity;
-using Api.Infrastructure.Localization;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -181,7 +180,6 @@ namespace Api.Infrastructure.Extensions
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthorizationMiddlewareResultHandler>();
             services.AddSingleton<IAuthorizationHandler, HasPermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, HasPermissionAuthorizationPolicyProvider>();
-            services.AddSingleton<IErrorLocalizer, ErrorLocalizer>();
             services.AddScoped<ICacheProvider, CacheProvider>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
