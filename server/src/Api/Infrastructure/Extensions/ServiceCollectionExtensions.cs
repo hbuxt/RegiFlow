@@ -1,4 +1,6 @@
+using System;
 using Api.Infrastructure.Cache;
+using Api.Infrastructure.Cors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -9,6 +11,27 @@ namespace Api.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var corsPolicySection = configuration.GetRequiredSection("Cors:Client");
+            var corsPolicyOptions = corsPolicySection.Get<CorsPolicyOptions>();
+            
+            if (corsPolicyOptions == null)
+            {
+                throw new NullReferenceException("CORS policy options were not provided on startup. " +
+                    "CORS policy options are required in order to successfully setup" +
+                    "CORS policies for client-server communication.");
+            }
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsPolicies.RegiFlowClient, policy =>
+                {
+                    policy.WithOrigins(corsPolicyOptions.Origins);
+                    policy.AllowAnyMethod();
+                    policy.WithHeaders(corsPolicyOptions.Headers);
+                    policy.AllowCredentials();
+                });
+            });
+            
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();

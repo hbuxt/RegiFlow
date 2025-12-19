@@ -1,3 +1,4 @@
+using Api.Infrastructure.Cors;
 using Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Api
 
             var app = builder.Build();
         
+            app.UseCors(CorsPolicies.RegiFlowClient);
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseAuthorization();
