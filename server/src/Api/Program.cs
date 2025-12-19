@@ -1,5 +1,7 @@
+using Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Api
 {
@@ -9,10 +11,13 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
         
+            builder.Host.UseSerilog();
             builder.Services.AddControllers();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
         
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
