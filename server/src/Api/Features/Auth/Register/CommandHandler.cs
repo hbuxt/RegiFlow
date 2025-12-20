@@ -108,7 +108,7 @@ namespace Api.Features.Auth.Register
                 return Result.Failure<Response>(new Error(
                     ErrorStatus.NotFound, 
                     "GENERAL_UNEXPECTED_ERROR", 
-                    "An unexpected error occurred. Please try again later or contact support if the problem persists."));
+                    "An unexpected error occurred when registering your new account. Please try again later or contact support if the problem persists."));
             }
 
             await using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
@@ -152,7 +152,7 @@ namespace Api.Features.Auth.Register
                     return Result.Failure<Response>(new Error(
                         ErrorStatus.Failure, 
                         "GENERAL_UNEXPECTED_ERROR", 
-                        "An unexpected error occurred. Please try again later or contact support if the problem persists."));
+                        "An unexpected error occurred when registering your new account. Please try again later or contact support if the problem persists."));
                 }
             }
         }

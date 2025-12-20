@@ -45,6 +45,27 @@ namespace Api.Features.Users
                 _ => result.ToProblemDetails());
         }
         
+        [HttpDelete]
+        [Route(EndpointRoutes.DeleteMyDetails, Name = EndpointNames.DeleteMyDetails)]
+        [HasPermission(PermissionNames.DeleteMyDetails)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Users)]
+        public async Task<IResult> DeleteMyDetails(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new DeleteMyDetails.Command(HttpContext.User.GetUserId()), cancellationToken);
+
+            return result.Match(
+                Results.NoContent,
+                _ => result.ToProblemDetails());
+        }
+        
         [HttpGet]
         [Route(EndpointRoutes.ListMyRoles, Name = EndpointNames.ListMyRoles)]
         [HasPermission(PermissionNames.ViewMyRoles)]
