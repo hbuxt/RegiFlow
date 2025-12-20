@@ -39,13 +39,22 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
 
+        public static Permission CreateProjects { get; set; } = new Permission()
+        {
+            Id = new Guid("73FBC56A-BE18-45D8-BB78-5FD8B0391B6C"),
+            Name = PermissionNames.CreateProjects,
+            Description = "Allows the user to create projects.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+
         public static List<Permission> Generate()
         {
             return [
                 ViewMyDetails, 
                 UpdateMyDetails, 
-                DeleteMyDetails, 
-                ViewMyRoles
+                DeleteMyDetails,
+                ViewMyRoles,
+                CreateProjects
             ];
         }
     }

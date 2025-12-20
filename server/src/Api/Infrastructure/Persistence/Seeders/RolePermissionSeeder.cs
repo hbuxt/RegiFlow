@@ -7,72 +7,52 @@ namespace Api.Infrastructure.Persistence.Seeders
     {
         public static List<RolePermission> Generate()
         {
-            var applicationAdministratorPermissions = new List<RolePermission>()
+            var generalPermissions = new List<RolePermission>()
             {
                 new RolePermission()
                 {
-                    RoleId = RoleSeeder.ApplicationAdministrator.Id,
                     PermissionId = PermissionSeeder.ViewMyDetails.Id,
+                    RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    RoleId = RoleSeeder.ApplicationAdministrator.Id,
                     PermissionId = PermissionSeeder.UpdateMyDetails.Id,
+                    RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    RoleId = RoleSeeder.ApplicationAdministrator.Id,
-                    PermissionId = PermissionSeeder.DeleteMyDetails.Id
+                    PermissionId = PermissionSeeder.DeleteMyDetails.Id,
+                    RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    RoleId = RoleSeeder.ApplicationAdministrator.Id,
-                    PermissionId = PermissionSeeder.ViewMyRoles.Id
+                    PermissionId = PermissionSeeder.ViewMyRoles.Id,
+                    RoleId = RoleSeeder.General.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.CreateProjects.Id,
+                    RoleId = RoleSeeder.General.Id
+                }
+            };
+
+            var DemoPermissions = new List<RolePermission>()
+            {
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ViewMyDetails.Id,
+                    RoleId = RoleSeeder.Demo.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ViewMyRoles.Id,
+                    RoleId = RoleSeeder.Demo.Id
                 }
             };
             
-            var applicationUserPermissions = new List<RolePermission>()
-            {
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationUser.Id,
-                    PermissionId = PermissionSeeder.ViewMyDetails.Id,
-                },
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationUser.Id,
-                    PermissionId = PermissionSeeder.UpdateMyDetails.Id,
-                },
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationUser.Id,
-                    PermissionId = PermissionSeeder.DeleteMyDetails.Id
-                },
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationUser.Id,
-                    PermissionId = PermissionSeeder.ViewMyRoles.Id
-                }
-            };
-
-            var applicationViewerPermissions = new List<RolePermission>()
-            {
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationViewer.Id,
-                    PermissionId = PermissionSeeder.ViewMyDetails.Id
-                },
-                new RolePermission()
-                {
-                    RoleId = RoleSeeder.ApplicationViewer.Id,
-                    PermissionId = PermissionSeeder.ViewMyRoles.Id
-                }
-            };
-
             return [
-                ..applicationAdministratorPermissions, 
-                ..applicationUserPermissions, 
-                ..applicationViewerPermissions
+                ..generalPermissions,
+                ..DemoPermissions
             ];
         }
     }
