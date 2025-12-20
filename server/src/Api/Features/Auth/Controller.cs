@@ -46,5 +46,29 @@ namespace Api.Features.Auth
                 _ => Results.CreatedAtRoute(EndpointNames.Register, value: result.Value),
                 _ => result.ToProblemDetails());
         }
+        
+        [HttpPost]
+        [Route(EndpointRoutes.Login, Name = EndpointNames.Login)]
+        [EnableRateLimiting(RateLimitPolicies.IpAddressFixedWindow)]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(Login.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Authentication)]
+        public async Task<IResult> Login([FromForm] Login.Request? request)
+        {
+            var result = await _mediator.Send(new Login.Command(
+                request?.Email,
+                request?.Password));
+
+            return result.Match(
+                _ => Results.Ok(result.Value),
+                _ => result.ToProblemDetails());
+        }
     }
 }
