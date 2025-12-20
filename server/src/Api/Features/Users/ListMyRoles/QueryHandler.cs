@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Api.Features.Users.GetMyDetails
+namespace Api.Features.Users.ListMyRoles
 {
     public sealed class QueryHandler : IQueryHandler<Query, Response>
     {
@@ -36,10 +37,10 @@ namespace Api.Features.Users.GetMyDetails
         {
             if (query.UserId == null || query.UserId == Guid.Empty)
             {
-                _logger.LogInformation("Get My Details failed for user: {UserId}. User not found", query.UserId);
+                _logger.LogInformation("List My Roles failed for user: {UserId}. User not found", query.UserId);
                 return Result.Failure<Response>(new Error(
                     ErrorStatus.NotFound,
-                    "GETMYDETAILS_USER_NOT_FOUND",
+                    "LISTMYROLES_USER_NOT_FOUND",
                     "We couldn't locate your account. Please try again later or contact support if the problem persists."));
             }
             
@@ -58,23 +59,45 @@ namespace Api.Features.Users.GetMyDetails
                     return null;
                 }
             });
-
+            
             if (user == null)
             {
-                _logger.LogInformation("Get My Details failed for user: {UserId}. User not found", query.UserId);
+                _logger.LogInformation("List My Roles failed for user: {UserId}. User not found", query.UserId);
                 return Result.Failure<Response>(new Error(
                     ErrorStatus.NotFound,
-                    "GETMYDETAILS_USER_NOT_FOUND",
+                    "LISTMYROLES_USER_NOT_FOUND",
                     "We couldn't locate your account. Please try again later or contact support if the problem persists."));
             }
+
+            var rolesCacheKey = UserCacheKeys.GetRolesById(user.Id);
+            var roles = await _cacheProvider.ReadThroughAsync(rolesCacheKey, _userCacheOptions.Value, async () =>
+            {
+                try
+                {
+                    return await _dbContext.UserRoles
+                        .AsNoTracking()
+                        .Where(ur => ur.UserId == user.Id)
+                        .Include(ur => ur.Role)
+                        .Select(ur => ur.Role!)
+                        .ToListAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "User: {UserId} roles retrieval failed", user.Id);
+                    return null;
+                }
+            }) ?? [];
             
-            _logger.LogInformation("Get My Details succeeded for user: {UserId}", query.UserId);
+            _logger.LogInformation("List My Roles succeeded for user: {UserId}", query.UserId);
             return Result.Success(new Response()
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
+                Roles = roles
+                    .Select(r => new RoleDto()
+                    {
+                        Id = r.Id,
+                        Name = r.Name
+                    })
+                    .ToList()
             });
         }
     }
