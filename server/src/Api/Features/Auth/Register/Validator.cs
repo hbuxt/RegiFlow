@@ -9,10 +9,10 @@ namespace Api.Features.Auth.Register
         {
             var emailRequired = "Email is required";
             var emailInvalid = "Email is not a valid email";
-            var emailTooLong = $"Email is too long, it must not exceed 256 characters";
+            var emailTooLong = "Email is too long, it must not exceed 256 characters";
             var passwordRequired = "Password is required";
-            var passwordTooShort = $"Password is too short, it must be at least 8 characters";
-            var passwordTooLong = $"Password is too long, it must not exceed 64 characters";
+            var passwordTooShort = "Password is too short, it must be at least 8 characters";
+            var passwordTooLong = "Password is too long, it must not exceed 64 characters";
             var passwordMismatch = "Passwords must match";
             var confirmPasswordRequired = "Confirm password is required";
 
