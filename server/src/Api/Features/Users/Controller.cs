@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Extensions;
@@ -35,9 +36,9 @@ namespace Api.Features.Users
         [ProducesDefaultResponseType(typeof(GetMyDetails.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> GetMyDetails()
+        public async Task<IResult> GetMyDetails(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetMyDetails.Query(HttpContext.User.GetUserId()));
+            var result = await _mediator.Send(new GetMyDetails.Query(HttpContext.User.GetUserId()), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -57,13 +58,13 @@ namespace Api.Features.Users
         [ProducesDefaultResponseType(typeof(ListMyRoles.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> ListMyRoles()
+        public async Task<IResult> ListMyRoles(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new ListMyRoles.Query(HttpContext.User.GetUserId()));
+            var result = await _mediator.Send(new ListMyRoles.Query(HttpContext.User.GetUserId()), cancellationToken);
 
             return result.Match(
-                onSuccess => Results.Ok(result.Value),
-                onFailure => result.ToProblemDetails());
+                _ => Results.Ok(result.Value),
+                _ => result.ToProblemDetails());
         }
     }
 }

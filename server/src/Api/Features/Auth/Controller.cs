@@ -35,12 +35,12 @@ namespace Api.Features.Auth
         [ProducesDefaultResponseType(typeof(Register.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Authentication)]
-        public async Task<IResult> Register([FromForm] Register.Request? request, CancellationToken token)
+        public async Task<IResult> Register([FromForm] Register.Request? request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new Register.Command(
                 request?.Email,
                 request?.Password,
-                request?.ConfirmPassword), token);
+                request?.ConfirmPassword), cancellationToken);
 
             return result.Match(
                 _ => Results.CreatedAtRoute(EndpointNames.Register, value: result.Value),
@@ -60,11 +60,11 @@ namespace Api.Features.Auth
         [ProducesDefaultResponseType(typeof(Login.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Authentication)]
-        public async Task<IResult> Login([FromForm] Login.Request? request)
+        public async Task<IResult> Login([FromForm] Login.Request? request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new Login.Command(
                 request?.Email,
-                request?.Password));
+                request?.Password), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
