@@ -8,22 +8,16 @@ namespace Api.Application.Abstractions
     public class Result
     {
         protected readonly bool isSuccess;
-        protected readonly Error? error;
+        private readonly Error? error;
         
-        public Result(bool isSuccess, Error? error)
+        protected Result(bool isSuccess, Error? error)
         {
             this.isSuccess = isSuccess;
             this.error = error;
         }
         
-        public bool IsFailure
-        {
-            get
-            {
-                return !isSuccess;
-            }
-        }
-        
+        public bool IsFailure => !isSuccess;
+
         public Error? Error
         {
             get

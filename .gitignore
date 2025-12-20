@@ -485,3 +485,7 @@ $RECYCLE.BIN/
 
 # Custom
 Logs/*.txt
+
+*.db
+*.db-shm
+*.db-wal

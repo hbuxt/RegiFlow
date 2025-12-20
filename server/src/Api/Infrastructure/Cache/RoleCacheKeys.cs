@@ -1,5 +1,3 @@
-using System;
-
 namespace Api.Infrastructure.Cache
 {
     public static class RoleCacheKeys

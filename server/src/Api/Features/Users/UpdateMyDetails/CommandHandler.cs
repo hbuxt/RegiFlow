@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Behaviours;
+using Api.Application.Extensions;
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 using Api.Infrastructure.Cache;
@@ -38,6 +39,14 @@ namespace Api.Features.Users.UpdateMyDetails
 
         public async Task<Result<Response>> Handle(Command command, CancellationToken cancellationToken)
         {
+            var validationResult = _validator.Validate(command);
+
+            if (!validationResult.IsValid)
+            {
+                _logger.LogInformation("Update My Details failed for user: {UserId}. Validation errors occurred: {@Errors}", command.UserId, validationResult.ToFormattedDictionary());
+                return Result.Failure<Response>(validationResult.ToFormattedDictionary());
+            }
+            
             if (command.UserId == null || command.UserId == Guid.Empty)
             {
                 _logger.LogInformation("Update My Details failed for user: {UserId}. User not found", command.UserId);

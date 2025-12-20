@@ -28,7 +28,7 @@ namespace Api.Domain.ValueObjects
         public ErrorStatus Status { get; private set; }
         public List<ErrorMessage>? Errors { get; private set; }
         
-        private List<ErrorMessage> ToErrorMessages(IDictionary<string, string[]> errors)
+        private static List<ErrorMessage> ToErrorMessages(IDictionary<string, string[]> errors)
         {
             var errorMessages = new List<ErrorMessage>();
 

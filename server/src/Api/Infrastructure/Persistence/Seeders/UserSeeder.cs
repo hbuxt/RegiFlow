@@ -6,7 +6,7 @@ namespace Api.Infrastructure.Persistence.Seeders
 {
     internal static class UserSeeder
     {
-        private const string RawPassword = "P4ssw0rd1!";
+        // The raw password is P4ssw0rd1!
         private const string HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09";
         
         public static User DefaultAdministrator { get; set; } = new User()
