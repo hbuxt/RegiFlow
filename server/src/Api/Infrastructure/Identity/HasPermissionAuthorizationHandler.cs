@@ -39,17 +39,15 @@ namespace Api.Infrastructure.Identity
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<HasPermissionAuthorizationHandler>>();
                 var cacheProvider = scope.ServiceProvider.GetRequiredService<ICacheProvider>();
                 var cacheOptions = scope.ServiceProvider.GetRequiredService<IOptions<PermissionCacheOptions>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                var cacheKey = PermissionCacheKeys.GetByNameAndUserId(requirement.Permission, userId.Value);
-                var hasPermission = false;
-                
-                try
+                var permissionCacheKey = PermissionCacheKeys.GetByNameAndUserId(requirement.Permission, userId.Value);
+                var permission = await cacheProvider.ReadThroughAsync(permissionCacheKey, cacheOptions.Value, async () =>
                 {
-                    var permission = await cacheProvider.ReadThroughAsync(cacheKey, cacheOptions.Value, async () =>
+                    try
                     {
                         return await dbContext.Users
                             .AsNoTracking()
@@ -58,17 +56,15 @@ namespace Api.Infrastructure.Identity
                             .SelectMany(ur => ur.Role!.RolePermissions)
                             .Select(rp => rp.Permission)
                             .FirstOrDefaultAsync(p => p!.Name == requirement.Permission);
-                    });
-
-                    hasPermission = permission != null;
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Failed to check permission: {Permission} for user: {UserId}", requirement.Permission, userId.Value);
-                    hasPermission = false;
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Failed to check permission: {PermissionName} for user: {UserId}", requirement.Permission, userId.Value);
+                        return null;
+                    }
+                });
                 
-                if (!hasPermission)
+                if (permission == null)
                 {
                     context.Fail();
                     return;
