@@ -85,7 +85,7 @@ namespace Api.Features.Auth.Register
                     "The email is already in use. Please use a different one or try logging in."));
             }
 
-            var roleCacheKey = RoleCacheKeys.GetByName(RoleNames.StandardUser);
+            var roleCacheKey = RoleCacheKeys.GetByName(RoleNames.ApplicationUser);
             var role = await _cacheProvider.ReadThroughAsync(roleCacheKey, _roleCacheOptions.Value, async () =>
             {
                 try
@@ -93,11 +93,11 @@ namespace Api.Features.Auth.Register
                     return await _dbContext.Roles
                         .AsNoTracking()
                         .Where(r => r.Scope == RoleScope.Application)
-                        .FirstOrDefaultAsync(r => r.Name == RoleNames.StandardUser, cancellationToken);
+                        .FirstOrDefaultAsync(r => r.Name == RoleNames.ApplicationUser, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Role: {RoleName} retrieval failed", RoleNames.StandardUser);
+                    _logger.LogError(ex, "Role: {RoleName} retrieval failed", RoleNames.ApplicationUser);
                     return null;
                 }
             });

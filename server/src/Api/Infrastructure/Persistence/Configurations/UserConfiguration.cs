@@ -55,7 +55,17 @@ namespace Api.Infrastructure.Persistence.Configurations
             builder.HasMany(u => u.UserRoles)
                 .WithOne(ur => ur.User)
                 .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(u => u.Projects)
+                .WithOne(p => p.CreatedBy)
+                .HasForeignKey(p => p.CreatedById)
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(u => u.ProjectUsers)
+                .WithOne(pu => pu.User)
+                .HasForeignKey(pu => pu.UserId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
             
             builder.HasIndex(u => u.Email)
                 .IsUnique();

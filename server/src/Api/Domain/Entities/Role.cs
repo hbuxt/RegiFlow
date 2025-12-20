@@ -11,6 +11,7 @@ namespace Api.Domain.Entities
             Name = string.Empty;
             UserRoles = new List<UserRole>();
             RolePermissions = new List<RolePermission>();
+            ProjectUserRoles = new List<ProjectUserRole>();
         }
         
         public Guid Id { get; set; }
@@ -21,5 +22,6 @@ namespace Api.Domain.Entities
         
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<RolePermission> RolePermissions { get; set; }
+        public ICollection<ProjectUserRole> ProjectUserRoles { get; set; }
     }
 }

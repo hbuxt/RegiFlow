@@ -10,6 +10,8 @@ namespace Api.Domain.Entities
             Email = string.Empty;
             HashedPassword = string.Empty;
             UserRoles = new List<UserRole>();
+            Projects = new List<Project>();
+            ProjectUsers = new List<ProjectUser>();
         }
         
         public Guid Id { get; set; }
@@ -22,5 +24,7 @@ namespace Api.Domain.Entities
         public DateTime? DeletedAt { get; set; }
         
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Project> Projects { get; set; }
+        public ICollection<ProjectUser> ProjectUsers { get; set; }
     }
 }

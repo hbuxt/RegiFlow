@@ -41,7 +41,12 @@ namespace Api.Infrastructure.Persistence.Seeders
 
         public static List<Permission> Generate()
         {
-            return [ViewMyDetails, UpdateMyDetails, DeleteMyDetails, ViewMyRoles];
+            return [
+                ViewMyDetails, 
+                UpdateMyDetails, 
+                DeleteMyDetails, 
+                ViewMyRoles
+            ];
         }
     }
 }

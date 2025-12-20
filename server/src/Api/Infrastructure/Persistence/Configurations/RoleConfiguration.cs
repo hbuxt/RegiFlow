@@ -41,7 +41,12 @@ namespace Api.Infrastructure.Persistence.Configurations
             builder.HasMany(r => r.UserRoles)
                 .WithOne(ur => ur.Role)
                 .HasForeignKey(ur => ur.RoleId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(r => r.ProjectUserRoles)
+                .WithOne(pur => pur.Role)
+                .HasForeignKey(pur => pur.RoleId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.HasData(RoleSeeder.Generate());
         }

@@ -13,6 +13,9 @@ namespace Api.Infrastructure.Persistence.Contexts
             Permissions = base.Set<Permission>();
             UserRoles = base.Set<UserRole>();
             RolePermissions = base.Set<RolePermission>();
+            Projects = base.Set<Project>();
+            ProjectUsers = base.Set<ProjectUser>();
+            ProjectUserRoles = base.Set<ProjectUserRole>();
         }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -22,6 +25,9 @@ namespace Api.Infrastructure.Persistence.Contexts
             Permissions = base.Set<Permission>();
             UserRoles = base.Set<UserRole>();
             RolePermissions = base.Set<RolePermission>();
+            Projects = base.Set<Project>();
+            ProjectUsers = base.Set<ProjectUser>();
+            ProjectUserRoles = base.Set<ProjectUserRole>();
         }
         
         public DbSet<User> Users { get; set; }
@@ -29,6 +35,9 @@ namespace Api.Infrastructure.Persistence.Contexts
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
+        public DbSet<ProjectUserRole> ProjectUserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +48,9 @@ namespace Api.Infrastructure.Persistence.Contexts
             modelBuilder.ApplyConfiguration(new PermissionConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new RolePermissionConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectUserConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectUserRoleConfiguration());
         }
     }
 }

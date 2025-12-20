@@ -12,37 +12,37 @@ namespace Api.Infrastructure.Persistence.Seeders
                 new UserRole()
                 {
                     UserId = UserSeeder.DefaultAdministrator.Id,
-                    RoleId = RoleSeeder.SuperAdministrator.Id
+                    RoleId = RoleSeeder.ApplicationAdministrator.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DefaultAdministrator.Id,
-                    RoleId = RoleSeeder.StandardUser.Id
+                    RoleId = RoleSeeder.ApplicationUser.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DemoUser1.Id,
-                    RoleId = RoleSeeder.ReadOnlyUser.Id
+                    RoleId = RoleSeeder.ApplicationViewer.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DemoUser2.Id,
-                    RoleId = RoleSeeder.ReadOnlyUser.Id
+                    RoleId = RoleSeeder.ApplicationViewer.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DemoUser3.Id,
-                    RoleId = RoleSeeder.ReadOnlyUser.Id
+                    RoleId = RoleSeeder.ApplicationViewer.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DemoUser4.Id,
-                    RoleId = RoleSeeder.ReadOnlyUser.Id
+                    RoleId = RoleSeeder.ApplicationViewer.Id
                 },
                 new UserRole()
                 {
                     UserId = UserSeeder.DemoUser5.Id,
-                    RoleId = RoleSeeder.ReadOnlyUser.Id
+                    RoleId = RoleSeeder.ApplicationViewer.Id
                 }
             };
         }
