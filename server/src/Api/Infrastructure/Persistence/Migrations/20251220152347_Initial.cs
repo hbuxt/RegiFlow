@@ -132,7 +132,15 @@ namespace Api.Infrastructure.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "DeletedAt", "Email", "FirstName", "HashedPassword", "IsDeleted", "LastName" },
-                values: new object[] { new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "h.buxton@wearewattle.com", "Harry", "C4F4270B5689DA8BE30D0CD9BFD6BB3FF18E9EA08EDAC567CB2FBCCAFB21B0B5-3B1D5C556AF69604D16EB2C3B5821AB8", false, "Buxton" });
+                values: new object[,]
+                {
+                    { new Guid("228d0a28-fe99-4c14-9e4c-d43b5feb02ed"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "alex.morgan@example.com", "Alex", "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09", false, "Morgan" },
+                    { new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "h.buxton@wearewattle.com", "Harry", "C4F4270B5689DA8BE30D0CD9BFD6BB3FF18E9EA08EDAC567CB2FBCCAFB21B0B5-3B1D5C556AF69604D16EB2C3B5821AB8", false, "Buxton" },
+                    { new Guid("929bfd3f-148a-4e2e-85d7-411de090ebfe"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "jordan.alvarez@example.com", "Jordan", "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09", false, "Alvarez" },
+                    { new Guid("9f6bb990-edb9-41fc-8f5e-ec63fa3e4d3f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "jamie.patel@example.com", "Jamie", "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09", false, "Patel" },
+                    { new Guid("aa5bed02-852a-4a88-a107-159fbab169c2"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "taylor.nguyen@example.com", "Taylor", "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09", false, "Nguyen" },
+                    { new Guid("cdd9d41a-161e-4dd5-a9f4-d521233f03b7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "chris.reynolds@example.com", "Chris", "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09", false, "Reynolds" }
+                });
 
             migrationBuilder.InsertData(
                 table: "RolePermissions",
@@ -156,8 +164,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
+                    { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new Guid("228d0a28-fe99-4c14-9e4c-d43b5feb02ed") },
                     { new Guid("76477f30-8761-49eb-94ce-5685af2112d6"), new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105") },
-                    { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105") }
+                    { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105") },
+                    { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new Guid("929bfd3f-148a-4e2e-85d7-411de090ebfe") },
+                    { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new Guid("9f6bb990-edb9-41fc-8f5e-ec63fa3e4d3f") },
+                    { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new Guid("aa5bed02-852a-4a88-a107-159fbab169c2") },
+                    { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new Guid("cdd9d41a-161e-4dd5-a9f4-d521233f03b7") }
                 });
 
             migrationBuilder.CreateIndex(

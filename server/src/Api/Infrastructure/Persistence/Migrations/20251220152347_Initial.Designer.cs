@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251219223001_Initial")]
+    [Migration("20251220152347_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -261,6 +261,56 @@ namespace Api.Infrastructure.Persistence.Migrations
                             HashedPassword = "C4F4270B5689DA8BE30D0CD9BFD6BB3FF18E9EA08EDAC567CB2FBCCAFB21B0B5-3B1D5C556AF69604D16EB2C3B5821AB8",
                             IsDeleted = false,
                             LastName = "Buxton"
+                        },
+                        new
+                        {
+                            Id = new Guid("9f6bb990-edb9-41fc-8f5e-ec63fa3e4d3f"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "jamie.patel@example.com",
+                            FirstName = "Jamie",
+                            HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09",
+                            IsDeleted = false,
+                            LastName = "Patel"
+                        },
+                        new
+                        {
+                            Id = new Guid("aa5bed02-852a-4a88-a107-159fbab169c2"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "taylor.nguyen@example.com",
+                            FirstName = "Taylor",
+                            HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09",
+                            IsDeleted = false,
+                            LastName = "Nguyen"
+                        },
+                        new
+                        {
+                            Id = new Guid("cdd9d41a-161e-4dd5-a9f4-d521233f03b7"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "chris.reynolds@example.com",
+                            FirstName = "Chris",
+                            HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09",
+                            IsDeleted = false,
+                            LastName = "Reynolds"
+                        },
+                        new
+                        {
+                            Id = new Guid("929bfd3f-148a-4e2e-85d7-411de090ebfe"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "jordan.alvarez@example.com",
+                            FirstName = "Jordan",
+                            HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09",
+                            IsDeleted = false,
+                            LastName = "Alvarez"
+                        },
+                        new
+                        {
+                            Id = new Guid("228d0a28-fe99-4c14-9e4c-d43b5feb02ed"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "alex.morgan@example.com",
+                            FirstName = "Alex",
+                            HashedPassword = "211D96B96501A67DF5A3133554554F8BA526F66DD2185CE9E3EDA6C6D51A4DC5-49845E168BF607D5952C745D18899D09",
+                            IsDeleted = false,
+                            LastName = "Morgan"
                         });
                 });
 
@@ -290,6 +340,31 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             UserId = new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105"),
                             RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1")
+                        },
+                        new
+                        {
+                            UserId = new Guid("9f6bb990-edb9-41fc-8f5e-ec63fa3e4d3f"),
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759")
+                        },
+                        new
+                        {
+                            UserId = new Guid("aa5bed02-852a-4a88-a107-159fbab169c2"),
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759")
+                        },
+                        new
+                        {
+                            UserId = new Guid("cdd9d41a-161e-4dd5-a9f4-d521233f03b7"),
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759")
+                        },
+                        new
+                        {
+                            UserId = new Guid("929bfd3f-148a-4e2e-85d7-411de090ebfe"),
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759")
+                        },
+                        new
+                        {
+                            UserId = new Guid("228d0a28-fe99-4c14-9e4c-d43b5feb02ed"),
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759")
                         });
                 });
 

@@ -23,7 +23,7 @@ namespace Api.Infrastructure.Identity
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 context.Response.ContentType = MediaTypeNames.Application.ProblemJson;
 
-                var result = Result.Failure(new Error(ErrorStatus.TooManyRequests));
+                var result = Result.Failure(new Error(ErrorStatus.Forbidden));
 
                 await result.ToProblemDetails().ExecuteAsync(context);
                 return;
