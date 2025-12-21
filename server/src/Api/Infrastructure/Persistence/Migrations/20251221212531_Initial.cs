@@ -177,12 +177,16 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "Name" },
                 values: new object[,]
                 {
+                    { new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to rename a project.", "Rename project" },
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their roles.", "View my roles" },
+                    { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete a project.", "Delete project" },
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "Update my details" },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete their details.", "Delete my details" },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their details.", "View my details" },
                     { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "Create projects" },
-                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "View my projects" }
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "View my projects" },
+                    { new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view a project.", "View project" },
+                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project.", "Update project" }
                 });
 
             migrationBuilder.InsertData(
@@ -205,6 +209,10 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
+                    { new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },

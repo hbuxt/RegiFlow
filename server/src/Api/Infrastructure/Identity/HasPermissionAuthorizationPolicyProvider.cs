@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Api.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -14,14 +16,24 @@ namespace Api.Infrastructure.Identity
         {
             var policy = await base.GetPolicyAsync(policyName);
 
-            if (policy == null)
+            if (policy != null)
             {
-                return new AuthorizationPolicyBuilder()
-                    .AddRequirements(new HasPermissionRequirement(policyName))
-                    .Build();
+                return policy;
             }
 
-            return policy;
+            var parts = policyName.Split(':', count: 2);
+                
+            if (parts.Length != 2)
+            {
+                return null;
+            }
+            
+            var permission = parts[0];
+            _ = Enum.TryParse<PermissionScope>(parts[1], out var scope);
+                
+            return new AuthorizationPolicyBuilder()
+                .AddRequirements(new HasPermissionRequirement(permission, scope))
+                .Build();
         }
     }
 }

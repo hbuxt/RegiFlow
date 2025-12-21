@@ -59,10 +59,35 @@ namespace Api.Infrastructure.Persistence.Seeders
                     RoleId = RoleSeeder.Demo.Id
                 }
             };
+
+            var ownerPermissions = new List<RolePermission>()
+            {
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ViewProject.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.RenameProject.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.UpdateProject.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.DeleteProject.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                }
+            };
             
             return [
                 ..generalPermissions,
-                ..DemoPermissions
+                ..DemoPermissions,
+                ..ownerPermissions
             ];
         }
     }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251221131603_Initial")]
+    [Migration("20251221212531_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -77,6 +77,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to view project they're involved with.",
+                            Name = "View my projects"
+                        },
+                        new
+                        {
                             Id = new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to create projects.",
@@ -84,10 +91,31 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"),
+                            Id = new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to view project they're involved with.",
-                            Name = "View my projects"
+                            Description = "Allows the user to view a project.",
+                            Name = "View project"
+                        },
+                        new
+                        {
+                            Id = new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to rename a project.",
+                            Name = "Rename project"
+                        },
+                        new
+                        {
+                            Id = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to update a project.",
+                            Name = "Update project"
+                        },
+                        new
+                        {
+                            Id = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to delete a project.",
+                            Name = "Delete project"
                         });
                 });
 
@@ -298,6 +326,26 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
                             PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de")
                         });
                 });
 

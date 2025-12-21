@@ -1,9 +1,11 @@
+using System;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
+using Api.Domain.Enums;
 using Api.Infrastructure.Extensions;
 using Api.Infrastructure.Identity;
 using MediatR;
@@ -49,6 +51,29 @@ namespace Api.Features.Projects
             
             return result.Match(
                 _ => Results.CreatedAtRoute(EndpointNames.CreateProject, value: result.Value),
+                _ => result.ToProblemDetails());
+        }
+
+        [HttpGet]
+        [Route(EndpointRoutes.GetProjectById, Name = EndpointNames.GetProjectById)]
+        [HasPermission(PermissionNames.ViewProject, PermissionScope.Project)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(GetById.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Projects)]
+        public async Task<IResult> GetById([FromRoute] Guid? id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetById.Query(User.GetUserId(), id), cancellationToken);
+
+            return result.Match(
+                _ => Results.Ok(result.Value),
                 _ => result.ToProblemDetails());
         }
     }
