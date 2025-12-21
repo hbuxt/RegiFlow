@@ -181,7 +181,8 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "Update my details" },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete their details.", "Delete my details" },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their details.", "View my details" },
-                    { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "Create projects" }
+                    { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "Create projects" },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "View my projects" }
                 });
 
             migrationBuilder.InsertData(
@@ -206,11 +207,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                 {
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
-                    { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") }
+                    { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") }
                 });
 
             migrationBuilder.InsertData(

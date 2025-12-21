@@ -7,5 +7,6 @@ namespace Api.Domain.Constants
         public const string DeleteMyDetails = "Delete my details";
         public const string ViewMyRoles = "View my roles";
         public const string CreateProjects = "Create projects";
+        public const string ViewMyProjects = "View my projects";
     }
 }

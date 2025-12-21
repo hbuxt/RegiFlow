@@ -9,6 +9,7 @@ namespace Api.Domain.Constants
         public const string UpdateMyDetails = "UpdateMyDetails";
         public const string DeleteMyDetails = "DeleteMyDetails";
         public const string ListMyRoles = "ListMyRoles";
+        public const string ListMyProjects = "ListMyProjects";
 
         public const string CreateProject = "CreateProject";
     }

@@ -62,12 +62,12 @@ namespace Api.Features.Users
         [ProducesDefaultResponseType(typeof(UpdateMyDetails.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> UpdateMyDetails([FromBody] UpdateMyDetails.Request? request)
+        public async Task<IResult> UpdateMyDetails([FromBody] UpdateMyDetails.Request? request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new UpdateMyDetails.Command(
                 User.GetUserId(),
                 request?.FirstName,
-                request?.LastName));
+                request?.LastName), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -114,6 +114,29 @@ namespace Api.Features.Users
         {
             var result = await _mediator.Send(new ListMyRoles.Query(User.GetUserId()), cancellationToken);
 
+            return result.Match(
+                _ => Results.Ok(result.Value),
+                _ => result.ToProblemDetails());
+        }
+
+        [HttpGet]
+        [Route(EndpointRoutes.ListMyProjects, Name = EndpointNames.ListMyProjects)]
+        [HasPermission(PermissionNames.ViewMyProjects)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(ListMyProjects.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Users)]
+        public async Task<IResult> ListMyProjects(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new ListMyProjects.Query(User.GetUserId()), cancellationToken);
+            
             return result.Match(
                 _ => Results.Ok(result.Value),
                 _ => result.ToProblemDetails());

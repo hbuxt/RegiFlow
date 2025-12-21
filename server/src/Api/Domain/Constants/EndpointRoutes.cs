@@ -11,6 +11,7 @@ namespace Api.Domain.Constants
         public const string UpdateMyDetails = "me";
         public const string DeleteMyDetails = "me";
         public const string ListMyRoles = "me/roles";
+        public const string ListMyProjects = "me/projects";
 
         public const string ProjectsController = "api/projects";
         public const string CreateProject = "";

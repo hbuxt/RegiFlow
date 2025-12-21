@@ -33,6 +33,11 @@ namespace Api.Infrastructure.Persistence.Seeders
                 {
                     PermissionId = PermissionSeeder.CreateProjects.Id,
                     RoleId = RoleSeeder.General.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ViewMyProjects.Id,
+                    RoleId = RoleSeeder.General.Id
                 }
             };
 
@@ -46,6 +51,11 @@ namespace Api.Infrastructure.Persistence.Seeders
                 new RolePermission()
                 {
                     PermissionId = PermissionSeeder.ViewMyRoles.Id,
+                    RoleId = RoleSeeder.Demo.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ViewMyProjects.Id,
                     RoleId = RoleSeeder.Demo.Id
                 }
             };

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251221110415_Initial")]
+    [Migration("20251221131603_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -81,6 +81,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to create projects.",
                             Name = "Create projects"
+                        },
+                        new
+                        {
+                            Id = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to view project they're involved with.",
+                            Name = "View my projects"
                         });
                 });
 
@@ -274,6 +281,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
+                        },
+                        new
+                        {
                             RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
                             PermissionId = new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23")
                         },
@@ -281,6 +293,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
                             PermissionId = new Guid("0e9b858f-164d-4c75-a559-9c13d3794547")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
                         });
                 });
 

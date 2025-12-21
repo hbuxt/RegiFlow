@@ -176,6 +176,11 @@ namespace Api.Features.Projects.Create
                 _ = _dbContext.ProjectUserRoles.Add(projectOwner);
                 _ = await _dbContext.SaveChangesAsync(cancellationToken);
                 
+                _cacheProvider.Remove([
+                    ProjectCacheKeys.GetMyProjects(user.Id),
+                    ProjectCacheKeys.GetProjectsImInvolvedWith(user.Id)
+                ]);
+                
                 _logger.LogInformation("Create Project succeeded for user: {UserId} with project: {ProjectId}", user.Id, project.Id);
                 return Result.Success(new Response()
                 {
