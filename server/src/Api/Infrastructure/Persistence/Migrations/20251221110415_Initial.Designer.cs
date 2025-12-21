@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251220223806_Initial")]
+    [Migration("20251221110415_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -219,6 +219,14 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Description = "A role assigned for demo accounts.",
                             Name = "Demo",
                             Scope = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to perform all project operations, including project deletion.",
+                            Name = "Owner",
+                            Scope = 1
                         });
                 });
 

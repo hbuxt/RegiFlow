@@ -30,6 +30,7 @@ namespace Api.Features.Users
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -38,7 +39,7 @@ namespace Api.Features.Users
         [Tags(EndpointTags.Users)]
         public async Task<IResult> GetMyDetails(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetMyDetails.Query(HttpContext.User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new GetMyDetails.Query(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -54,6 +55,7 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -63,7 +65,7 @@ namespace Api.Features.Users
         public async Task<IResult> UpdateMyDetails([FromBody] UpdateMyDetails.Request? request)
         {
             var result = await _mediator.Send(new UpdateMyDetails.Command(
-                HttpContext.User.GetUserId(),
+                User.GetUserId(),
                 request?.FirstName,
                 request?.LastName));
 
@@ -79,6 +81,7 @@ namespace Api.Features.Users
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -86,7 +89,7 @@ namespace Api.Features.Users
         [Tags(EndpointTags.Users)]
         public async Task<IResult> DeleteMyDetails(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new DeleteMyDetails.Command(HttpContext.User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new DeleteMyDetails.Command(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 Results.NoContent,
@@ -100,6 +103,7 @@ namespace Api.Features.Users
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -108,7 +112,7 @@ namespace Api.Features.Users
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyRoles(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new ListMyRoles.Query(HttpContext.User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new ListMyRoles.Query(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),

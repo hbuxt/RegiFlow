@@ -29,6 +29,7 @@ namespace Api.Infrastructure.Extensions
             var permissionCacheSection = configuration.GetRequiredSection("CacheOptions:Permissions");
             var userCacheSection = configuration.GetRequiredSection("CacheOptions:Users");
             var roleCacheSection = configuration.GetRequiredSection("CacheOptions:Roles");
+            var projectCacheSection = configuration.GetRequiredSection("CacheOptions:Projects");
 
             var jwtBearerSection = configuration.GetRequiredSection("Authentication:Jwt");
             var jwtBearerOptions = jwtBearerSection.Get<JwtBearerOptions>();
@@ -62,6 +63,11 @@ namespace Api.Infrastructure.Extensions
             
             services.AddOptions<RoleCacheOptions>()
                 .Bind(roleCacheSection)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            
+            services.AddOptions<ProjectCacheOptions>()
+                .Bind(projectCacheSection)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
             

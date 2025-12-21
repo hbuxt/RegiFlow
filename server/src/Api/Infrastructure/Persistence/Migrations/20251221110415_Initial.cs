@@ -189,6 +189,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "Name", "Scope" },
                 values: new object[,]
                 {
+                    { new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to perform all project operations, including project deletion.", "Owner", 1 },
                     { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "A role assigned for demo accounts.", "Demo", 0 },
                     { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "The role assigned when registering for an account.", "General", 0 }
                 });

@@ -25,12 +25,22 @@ namespace Api.Infrastructure.Persistence.Seeders
             Scope = RoleScope.Application,
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
+
+        public static Role Owner { get; set; } = new Role()
+        {
+            Id = new Guid("B4D50721-7C41-491B-92D7-A8213599CC2B"),
+            Name = RoleNames.Owner,
+            Description = "Allows the user to perform all project operations, including project deletion.",
+            Scope = RoleScope.Project,
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
         
         public static List<Role> Generate()
         {
             return [
                 General, 
-                Demo
+                Demo,
+                Owner
             ];
         }
     }

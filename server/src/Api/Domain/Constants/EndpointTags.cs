@@ -4,5 +4,6 @@ namespace Api.Domain.Constants
     {
         public const string Authentication = "Authentication";
         public const string Users = "Users";
+        public const string Projects = "Projects";
     }
 }
