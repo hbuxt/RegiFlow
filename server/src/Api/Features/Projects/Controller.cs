@@ -76,5 +76,32 @@ namespace Api.Features.Projects
                 _ => Results.Ok(result.Value),
                 _ => result.ToProblemDetails());
         }
+
+        [HttpPut]
+        [Route(EndpointRoutes.RenameProject, Name = EndpointNames.RenameProject)]
+        [HasPermission(PermissionNames.RenameProject, PermissionScope.Project)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(Rename.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Projects)]
+        public async Task<IResult> Rename([FromRoute] Guid? id, [FromBody] Rename.Request? request, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new Rename.Command(
+                User.GetUserId(), 
+                id,
+                request?.Name), cancellationToken);
+            
+            return result.Match(
+                _ => Results.Ok(result.Value),
+                _ => result.ToProblemDetails());
+        }
     }
 }
