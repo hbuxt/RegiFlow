@@ -1,3 +1,5 @@
+using Api.Application.Abstractions;
+using Api.Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,11 @@ namespace Api.Application.Extensions
             {
                 configuration.RegisterServicesFromAssemblyContaining<Program>();
             });
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IPermissionService, PermissionService>();
             
             return services;
         }

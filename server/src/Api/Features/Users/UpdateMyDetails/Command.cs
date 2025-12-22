@@ -10,12 +10,12 @@ namespace Api.Features.Users.UpdateMyDetails
             string? firstName,
             string? lastName)
         {
-            UserId = userId;
+            UserId = userId ?? Guid.Empty;
             FirstName = firstName?.Trim();
             LastName = lastName?.Trim();
         }
 
-        public Guid? UserId { get; init; }
+        public Guid UserId { get; init; }
         public string? FirstName { get; init; }
         public string? LastName { get; init; }
     }

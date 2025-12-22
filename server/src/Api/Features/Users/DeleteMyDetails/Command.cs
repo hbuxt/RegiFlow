@@ -7,9 +7,9 @@ namespace Api.Features.Users.DeleteMyDetails
     {
         public Command(Guid? userId)
         {
-            UserId = userId;
+            UserId = userId ?? Guid.Empty;
         }
 
-        public Guid? UserId { get; init; }
+        public Guid UserId { get; init; }
     }
 }

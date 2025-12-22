@@ -5,7 +5,6 @@ using Api.Application.Abstractions;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
 using Api.Infrastructure.Extensions;
-using Api.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +24,6 @@ namespace Api.Features.Users
         
         [HttpGet]
         [Route(EndpointRoutes.GetMyDetails, Name = EndpointNames.GetMyDetails)]
-        [HasPermission(PermissionNames.ViewMyDetails)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,7 +46,6 @@ namespace Api.Features.Users
         
         [HttpPut]
         [Route(EndpointRoutes.UpdateMyDetails, Name = EndpointNames.UpdateMyDetails)]
-        [HasPermission(PermissionNames.UpdateMyDetails)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -76,7 +73,6 @@ namespace Api.Features.Users
         
         [HttpDelete]
         [Route(EndpointRoutes.DeleteMyDetails, Name = EndpointNames.DeleteMyDetails)]
-        [HasPermission(PermissionNames.DeleteMyDetails)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -98,7 +94,6 @@ namespace Api.Features.Users
         
         [HttpGet]
         [Route(EndpointRoutes.ListMyRoles, Name = EndpointNames.ListMyRoles)]
-        [HasPermission(PermissionNames.ViewMyRoles)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -121,7 +116,6 @@ namespace Api.Features.Users
 
         [HttpGet]
         [Route(EndpointRoutes.ListMyProjects, Name = EndpointNames.ListMyProjects)]
-        [HasPermission(PermissionNames.ViewMyProjects)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -7,9 +7,9 @@ namespace Api.Features.Users.ListMyRoles
     {
         public Query(Guid? userId)
         {
-            UserId = userId;
+            UserId = userId ?? Guid.Empty;
         }
 
-        public Guid? UserId { get; init; }
+        public Guid UserId { get; init; }
     }
 }

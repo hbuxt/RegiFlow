@@ -10,7 +10,6 @@ using Api.Infrastructure.Cache;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Identity;
 using Api.Infrastructure.Persistence.Contexts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -183,10 +182,7 @@ namespace Api.Infrastructure.Extensions
                 .CreateLogger();
             
             services.AddMemoryCache();
-            services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthorizationMiddlewareResultHandler>();
-            services.AddSingleton<IAuthorizationHandler, HasPermissionAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationPolicyProvider, HasPermissionAuthorizationPolicyProvider>();
-            services.AddScoped<ICacheProvider, CacheProvider>();
+            services.AddSingleton<ICacheProvider, CacheProvider>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             

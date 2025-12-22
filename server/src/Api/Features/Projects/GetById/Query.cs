@@ -7,11 +7,11 @@ namespace Api.Features.Projects.GetById
     {
         public Query(Guid? userId, Guid? projectId)
         {
-            UserId = userId;
+            UserId = userId ?? Guid.Empty;
             ProjectId = projectId;
         }
         
-        public Guid? UserId { get; init; }
+        public Guid UserId { get; init; }
         public Guid? ProjectId { get; init; }
     }
 }

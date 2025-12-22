@@ -1,71 +1,42 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Behaviours;
-using Api.Domain.Enums;
-using Api.Domain.ValueObjects;
-using Api.Infrastructure.Cache;
-using Api.Infrastructure.Persistence.Contexts;
-using Microsoft.EntityFrameworkCore;
+using Api.Domain.Constants;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Api.Features.Projects.GetById
 {
     public sealed class QueryHandler : IQueryHandler<Query, Response>
     {
-        private readonly AppDbContext _dbContext;
-        private readonly ICacheProvider _cacheProvider;
-        private readonly IOptions<ProjectCacheOptions> _projectCacheOptions;
+        private readonly IProjectService _projectService;
+        private readonly IPermissionService _permissionService;
         private readonly ILogger<QueryHandler> _logger;
         
         public QueryHandler(
-            AppDbContext dbContext,
-            ICacheProvider cacheProvider,
-            IOptions<ProjectCacheOptions> projectCacheOptions,
+            IProjectService projectService,
+            IPermissionService permissionService,
             ILogger<QueryHandler> logger)
         {
-            _dbContext = dbContext;
-            _cacheProvider = cacheProvider;
-            _projectCacheOptions = projectCacheOptions;
+            _projectService = projectService;
+            _permissionService = permissionService;
             _logger = logger;
         }
 
         public async Task<Result<Response>> Handle(Query query, CancellationToken cancellationToken)
         {
-            if (query.ProjectId == null || query.ProjectId == Guid.Empty)
-            {
-                _logger.LogInformation("Get Project By ID failed for user: {UserId} in project: {ProjectId}. Project not found", query.UserId, query.ProjectId);
-                return Result.Failure<Response>(new Error(
-                    ErrorStatus.NotFound,
-                    "GETPROJECTBYID_PROJECT_NOT_FOUND",
-                    "We couldn't locate this project. Please try again later or contact support if the problem persists."));
-            }
-
-            var projectCacheKey = ProjectCacheKeys.GetById(query.ProjectId.Value);
-            var project = await _cacheProvider.ReadThroughAsync(projectCacheKey, _projectCacheOptions.Value, async () =>
-            {
-                try
-                {
-                    return await _dbContext.Projects
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(p => p.Id == query.ProjectId.Value, cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Project: {ProjectId} retrieval failed", query.ProjectId);
-                    return null;
-                }
-            });
+            var project = await _projectService.GetAsync(query.ProjectId);
 
             if (project == null)
             {
                 _logger.LogInformation("Get Project By ID failed for user: {UserId} in project: {ProjectId}. Project not found", query.UserId, query.ProjectId);
-                return Result.Failure<Response>(new Error(
-                    ErrorStatus.NotFound,
-                    "GETPROJECTBYID_PROJECT_NOT_FOUND",
-                    "We couldn't locate this project. Please try again later or contact support if the problem persists."));
+                return Result.Failure<Response>(Errors.ProjectNotFound());
+            }
+
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ViewProject, query.UserId, project.Id))
+            {
+                _logger.LogInformation("Get Project By ID failed for user: {UserId} in project: {ProjectId}. User does not have permission", query.UserId, project.Id);
+                return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
             _logger.LogInformation("Get Project By ID succeeded for user: {UserId} in project: {ProjectId}", query.UserId, query.ProjectId);

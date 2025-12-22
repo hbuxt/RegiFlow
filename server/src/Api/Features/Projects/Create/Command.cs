@@ -10,12 +10,12 @@ namespace Api.Features.Projects.Create
             string? name,
             string? description)
         {
-            UserId = userId;
+            UserId = userId ?? Guid.Empty;
             Name = name?.Trim() ?? string.Empty;
             Description = description?.Trim();
         }
         
-        public Guid? UserId { get; init; }
+        public Guid UserId { get; init; }
         public string Name { get; init; }
         public string? Description { get; init; }
     }

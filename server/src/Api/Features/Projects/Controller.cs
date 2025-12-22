@@ -27,7 +27,6 @@ namespace Api.Features.Projects
 
         [HttpPost]
         [Route(EndpointRoutes.CreateProject, Name = EndpointNames.CreateProject)]
-        [HasPermission(PermissionNames.CreateProjects)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -56,7 +55,6 @@ namespace Api.Features.Projects
 
         [HttpGet]
         [Route(EndpointRoutes.GetProjectById, Name = EndpointNames.GetProjectById)]
-        [HasPermission(PermissionNames.ViewProject, PermissionScope.Project)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -79,7 +77,6 @@ namespace Api.Features.Projects
 
         [HttpPut]
         [Route(EndpointRoutes.RenameProject, Name = EndpointNames.RenameProject)]
-        [HasPermission(PermissionNames.RenameProject, PermissionScope.Project)]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
