@@ -7,15 +7,15 @@ namespace Api.Features.Users.ListMyProjects
     {
         public static Error UserNotFound()
         {
-            var code = "LISTMYPROJECTS_USERNOTFOUND";
-            var message = "We couldn't locate your account.";
+            var code = "user_not_found";
+            var message = "We couldn't locate your account when retrieving your projects.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
         
         public static Error UserNotAuthorized()
         {
-            var code = "LISTMYPROJECTS_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to view your projects.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
@@ -23,10 +23,10 @@ namespace Api.Features.Users.ListMyProjects
         
         public static Error SomethingWentWrong()
         {
-            var code = "LISTMYPROJECTS_UNEXPECTEDERROROCCURRED";
+            var code = "unexpected_error";
             var message = "An unexpected error occurred when retrieving your projects. Please try again.";
 
-            return new Error(ErrorStatus.NotFound, code, message);
+            return new Error(ErrorStatus.Failure, code, message);
         }
     }
 }

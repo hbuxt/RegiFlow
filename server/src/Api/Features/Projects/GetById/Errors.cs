@@ -7,7 +7,7 @@ namespace Api.Features.Projects.GetById
     {
         public static Error ProjectNotFound()
         {
-            var code = "GETPROJECTBYID_PROJECTNOTFOUND";
+            var code = "project_not_found";
             var message = "We couldn't locate your project.";
 
             return new Error(ErrorStatus.NotFound, code, message);
@@ -15,7 +15,7 @@ namespace Api.Features.Projects.GetById
 
         public static Error UserNotAuthorized()
         {
-            var code = "GETPROJECTBYID_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to view this project.";
 
             return new Error(ErrorStatus.Forbidden, code, message);

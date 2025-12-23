@@ -7,15 +7,15 @@ namespace Api.Features.Users.UpdateMyDetails
     {
         public static Error UserNotFound()
         {
-            var code = "UPDATEMYDETAILS_USERNOTFOUND";
-            var message = "We couldn't locate your account.";
+            var code = "user_not_found";
+            var message = "We couldn't locate your account when updating your details.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
         
         public static Error UserNotAuthorized()
         {
-            var code = "UPDATEMYDETAILS_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to update your details.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
@@ -23,7 +23,7 @@ namespace Api.Features.Users.UpdateMyDetails
         
         public static Error SomethingWentWrong()
         {
-            var code = "UPDATEMYDETAILS_UNEXPECTEDERROR";
+            var code = "unexpected_error";
             var message = "An unexpected error occurred when updating your details. Please try again later.";
 
             return new Error(ErrorStatus.Failure, code, message);

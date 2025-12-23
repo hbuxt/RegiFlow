@@ -7,15 +7,15 @@ namespace Api.Features.Projects.Rename
     {
         public static Error ProjectNotFound()
         {
-            var code = "RENAMEPROJECT_PROJECTNOTFOUND";
-            var message = "We couldn't locate your project.";
+            var code = "project_not_found";
+            var message = "We couldn't locate your project when renaming it.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
         
         public static Error UserNotAuthorized()
         {
-            var code = "RENAMEPROJECT_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to rename a project.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
@@ -23,16 +23,16 @@ namespace Api.Features.Projects.Rename
 
         public static Error DuplicateProjectName()
         {
-            var code = "RENAMEPROJECT_DUPLICATENAME";
-            var message = "Unable to rename project, a project with the same name already exists.";
+            var code = "project_duplicate_name";
+            var message = "Unable to create project, one of your other projects has the same name.";
 
             return new Error(ErrorStatus.Conflict, code, message);
         }
         
         public static Error SomethingWentWrong()
         {
-            var code = "RENAMEPROJECT_UNEXPECTEDERROR";
-            var message = "An unexpected error occurred when renaming your project. Please try again later.";
+            var code = "unexpected_error";
+            var message = "An unexpected error occurred when renaming your project. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }

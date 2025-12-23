@@ -7,15 +7,15 @@ namespace Api.Features.Users.DeleteMyDetails
     {
         public static Error UserNotFound()
         {
-            var code = "DELETEMYDETAILS_USERNOTFOUND";
-            var message = "We couldn't locate your account.";
+            var code = "user_not_found";
+            var message = "We couldn't locate your account when deleting your details.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
         
         public static Error UserNotAuthorized()
         {
-            var code = "DELETEMYDETAILS_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to delete your details.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
@@ -23,8 +23,8 @@ namespace Api.Features.Users.DeleteMyDetails
         
         public static Error SomethingWentWrong()
         {
-            var code = "DELETEMYDETAILS_UNEXPECTEDERROR";
-            var message = "An unexpected error occurred when deleting your account. Please try again later.";
+            var code = "unexpected_error";
+            var message = "An unexpected error occurred when deleting your account. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }

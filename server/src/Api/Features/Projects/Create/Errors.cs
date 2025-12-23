@@ -7,15 +7,15 @@ namespace Api.Features.Projects.Create
     {
         public static Error UserNotFound()
         {
-            var code = "CREATEPROJECT_USERNOTFOUND";
-            var message = "We couldn't locate your account.";
+            var code = "user_not_found";
+            var message = "We couldn't locate your account when creating your project.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
         
         public static Error UserNotAuthorized()
         {
-            var code = "CREATEPROJECT_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to create a project.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
@@ -23,24 +23,24 @@ namespace Api.Features.Projects.Create
 
         public static Error DuplicateProjectName()
         {
-            var code = "CREATEPROJECT_DUPLICATENAME";
-            var message = "Unable to create project, an existing project with the same name already exists.";
+            var code = "project_duplicate_name";
+            var message = "Unable to create project, one of your other projects has the same name.";
 
             return new Error(ErrorStatus.Conflict, code, message);
         }
         
         public static Error RoleNotFound()
         {
-            var code = "CREATEPROJECT_ROLENOTFOUND";
-            var message = "An unexpected error occurred when creating your project. Please try again later.";
+            var code = "role_not_found";
+            var message = "An unexpected error occurred when creating your project. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }
         
         public static Error SomethingWentWrong()
         {
-            var code = "CREATEPROJECT_UNEXPECTEDERROR";
-            var message = "An unexpected error occurred when creating your project. Please try again later.";
+            var code = "unexpected_error";
+            var message = "An unexpected error occurred when creating your project. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }

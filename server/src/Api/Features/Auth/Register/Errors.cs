@@ -7,7 +7,7 @@ namespace Api.Features.Auth.Register
     {
         public static Error AccountAlreadyExists()
         {
-            var code = "REGISTER_EMAIL_ALREADY_EXISTS";
+            var code = "existing_email";
             var message = "The email you provided is already in use. Please use a different email or try logging in.";
 
             return new Error(ErrorStatus.Conflict, code, message);
@@ -15,16 +15,16 @@ namespace Api.Features.Auth.Register
 
         public static Error RoleNotFound()
         {
-            var code = "REGISTER_UNEXPECTED_ERROR";
-            var message = "An unexpected error occurred while registering your account. Please try again later.";
+            var code = "role_not_found";
+            var message = "An unexpected error occurred while registering your account. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }
 
         public static Error SomethingWentWrong()
         {
-            var code = "REGISTER_UNEXPECTED_ERROR";
-            var message = "An unexpected error occurred while registering your account. Please try again later.";
+            var code = "unexpected_error";
+            var message = "An unexpected error occurred while registering your account. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);
         }

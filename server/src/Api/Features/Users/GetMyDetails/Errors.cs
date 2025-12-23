@@ -7,15 +7,15 @@ namespace Api.Features.Users.GetMyDetails
     {
         public static Error UserNotFound()
         {
-            var code = "GETMYDETAILS_USERNOTFOUND";
-            var message = "We couldn't locate your account.";
+            var code = "user_not_found";
+            var message = "We couldn't locate your account when retrieving your details.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
 
         public static Error UserNotAuthorized()
         {
-            var code = "GETMYDETAILS_USERNOTAUTHORIZED";
+            var code = "user_not_authorized";
             var message = "You don't have permission to view your details.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
