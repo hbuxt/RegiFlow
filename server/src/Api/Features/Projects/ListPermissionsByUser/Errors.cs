@@ -1,7 +1,7 @@
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 
-namespace Api.Features.Projects.ListPermissions
+namespace Api.Features.Projects.ListPermissionsByUser
 {
     public static class Errors
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Api.Domain.Constants;
 
-namespace Api.Features.Projects.ListPermissions
+namespace Api.Features.Projects.ListPermissionsByUser
 {
     public sealed record Response
     {

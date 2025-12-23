@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
-using Api.Domain.Enums;
 using Api.Infrastructure.Extensions;
-using Api.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -111,12 +109,12 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListPermissions.Response))]
+        [ProducesDefaultResponseType(typeof(ListPermissionsByUser.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyPermissions([FromRoute] Guid? id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new ListPermissions.Query(User.GetUserId(), id), cancellationToken);
+            var result = await _mediator.Send(new ListPermissionsByUser.Query(User.GetUserId(), id), cancellationToken);
             
             return result.Match(
                 _ => Results.Ok(result.Value),

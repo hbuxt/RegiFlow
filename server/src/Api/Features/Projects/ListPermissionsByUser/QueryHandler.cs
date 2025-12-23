@@ -6,7 +6,7 @@ using Api.Application.Behaviours;
 using Api.Domain.Constants;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Features.Projects.ListPermissions
+namespace Api.Features.Projects.ListPermissionsByUser
 {
     public sealed class QueryHandler : IQueryHandler<Query, Response>
     {

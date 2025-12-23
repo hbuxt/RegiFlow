@@ -1,7 +1,7 @@
 using System;
 using Api.Application.Behaviours;
 
-namespace Api.Features.Projects.ListPermissions
+namespace Api.Features.Projects.ListPermissionsByUser
 {
     public sealed record Query : IQuery<Response>
     {
