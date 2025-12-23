@@ -5,32 +5,24 @@ using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Domain.Constants;
 using Api.Domain.Entities;
-using Api.Infrastructure.Cache;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Api.Application.Services
 {
     internal sealed class PermissionService : IPermissionService
     {
         private readonly AppDbContext _dbContext;
-        private readonly ICacheProvider _cacheProvider;
-        private readonly IOptions<PermissionCacheOptions> _cacheOptions;
         private readonly ILogger<PermissionService> _logger;
 
         private readonly Dictionary<string, Func<Guid, Guid, Task<bool>>> _policies;
 
         public PermissionService(
             AppDbContext dbContext, 
-            ICacheProvider cacheProvider, 
-            IOptions<PermissionCacheOptions> cacheOptions, 
             ILogger<PermissionService> logger)
         {
             _dbContext = dbContext;
-            _cacheProvider = cacheProvider;
-            _cacheOptions = cacheOptions;
             _logger = logger;
 
             _policies = new Dictionary<string, Func<Guid, Guid, Task<bool>>>()
@@ -48,16 +40,12 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = PermissionCacheKeys.ForUser(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.UserRoles
-                        .AsNoTracking()
-                        .Where(ur => ur.UserId == id.Value)
-                        .SelectMany(ur => ur.Role!.RolePermissions)
-                        .Select(rp => rp.Permission!)
-                        .ToListAsync();
-                }) ?? [];
+                return await _dbContext.UserRoles
+                    .AsNoTracking()
+                    .Where(ur => ur.UserId == id.Value)
+                    .SelectMany(ur => ur.Role!.RolePermissions)
+                    .Select(rp => rp.Permission!)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -75,17 +63,13 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = PermissionCacheKeys.ForUserInProject(userId.Value, projectId.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.ProjectUsers
-                        .AsNoTracking()
-                        .Where(pu => pu.ProjectId == projectId && pu.UserId == userId)
-                        .SelectMany(pu => pu.ProjectUserRoles)
-                        .SelectMany(pur => pur.Role!.RolePermissions)
-                        .Select(rp => rp.Permission!)
-                        .ToListAsync();
-                }) ?? [];
+                return await _dbContext.ProjectUsers
+                    .AsNoTracking()
+                    .Where(pu => pu.ProjectId == projectId && pu.UserId == userId)
+                    .SelectMany(pu => pu.ProjectUserRoles)
+                    .SelectMany(pur => pur.Role!.RolePermissions)
+                    .Select(rp => rp.Permission!)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -129,33 +113,25 @@ namespace Api.Application.Services
 
         private async Task<bool> HasPermissionAsync(string permissionName, Guid userId)
         {
-            var cacheKey = PermissionCacheKeys.PermissionForUser(userId, permissionName);
-            var permission = await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-            {
-                return await _dbContext.UserRoles
-                    .AsNoTracking()
-                    .Where(ur => ur.UserId == userId)
-                    .SelectMany(ur => ur.Role!.RolePermissions)
-                    .Select(rp => rp.Permission)
-                    .FirstOrDefaultAsync(p => p!.Name == permissionName);
-            });
+            var permission = await _dbContext.UserRoles
+                .AsNoTracking()
+                .Where(ur => ur.UserId == userId)
+                .SelectMany(ur => ur.Role!.RolePermissions)
+                .Select(rp => rp.Permission)
+                .FirstOrDefaultAsync(p => p!.Name == permissionName);
 
             return permission != null;
         }
 
         private async Task<bool> HasPermissionAsync(string permissionName, Guid userId, Guid projectId)
         {
-            var cacheKey = PermissionCacheKeys.PermissionForUserInProject(userId, projectId, permissionName);
-            var permission = await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-            {
-                return await _dbContext.ProjectUsers
-                    .AsNoTracking()
-                    .Where(pu => pu.UserId == userId && pu.ProjectId == projectId)
-                    .SelectMany(pu => pu.ProjectUserRoles)
-                    .SelectMany(pur => pur.Role!.RolePermissions)
-                    .Select(rp => rp.Permission)
-                    .FirstOrDefaultAsync(p => p!.Name == permissionName);
-            });
+            var permission = await _dbContext.ProjectUsers
+                .AsNoTracking()
+                .Where(pu => pu.UserId == userId && pu.ProjectId == projectId)
+                .SelectMany(pu => pu.ProjectUserRoles)
+                .SelectMany(pur => pur.Role!.RolePermissions)
+                .Select(rp => rp.Permission)
+                .FirstOrDefaultAsync(p => p!.Name == permissionName);
 
             return permission != null;
         }
@@ -172,15 +148,11 @@ namespace Api.Application.Services
 
         private async Task<bool> CanDeleteProjectAsync(Guid userId, Guid projectId)
         {
-            var cacheKey = PermissionCacheKeys.PolicyForUserInProject(userId, projectId, Permissions.ProjectDelete);
-            var role = await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-            {
-                return await _dbContext.ProjectUsers
-                    .AsNoTracking()
-                    .Where(pu => pu.UserId == userId && pu.ProjectId == projectId)
-                    .SelectMany(pu => pu.ProjectUserRoles)
-                    .FirstOrDefaultAsync(pur => pur.Role!.Name == Roles.Owner);
-            });
+            var role = await _dbContext.ProjectUsers
+                .AsNoTracking()
+                .Where(pu => pu.UserId == userId && pu.ProjectId == projectId)
+                .SelectMany(pu => pu.ProjectUserRoles)
+                .FirstOrDefaultAsync(pur => pur.Role!.Name == Roles.Owner);
 
             return role != null;
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Domain.Entities;
-using Api.Infrastructure.Cache;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,19 +14,13 @@ namespace Api.Application.Services
     internal sealed class ProjectService : IProjectService
     {
         private readonly AppDbContext _dbContext;
-        private readonly ICacheProvider _cacheProvider;
-        private readonly IOptions<ProjectCacheOptions> _cacheOptions;
         private readonly ILogger<ProjectService> _logger;
 
         public ProjectService(
             AppDbContext dbContext, 
-            ICacheProvider cacheProvider, 
-            IOptions<ProjectCacheOptions> cacheOptions, 
             ILogger<ProjectService> logger)
         {
             _dbContext = dbContext;
-            _cacheProvider = cacheProvider;
-            _cacheOptions = cacheOptions;
             _logger = logger;
         }
 
@@ -70,12 +63,6 @@ namespace Api.Application.Services
             }
 
             _ = await _dbContext.SaveChangesAsync();
-            
-            _cacheProvider.Remove([
-                ProjectCacheKeys.ForId(project.Id),
-                ProjectCacheKeys.ForCreator(user.Id),
-                ProjectCacheKeys.ForUser(user.Id)
-            ]);
 
             return project;
         }
@@ -93,12 +80,6 @@ namespace Api.Application.Services
             _ = _dbContext.Projects.Update(project);
             _ = await _dbContext.SaveChangesAsync();
             
-            _cacheProvider.Remove([
-                ProjectCacheKeys.ForId(project.Id),
-                ProjectCacheKeys.ForCreator(userId),
-                ProjectCacheKeys.ForUser(userId)
-            ]);
-
             return project;
         }
 
@@ -115,12 +96,6 @@ namespace Api.Application.Services
             _ = _dbContext.Projects.Update(project);
             _ = await _dbContext.SaveChangesAsync();
             
-            _cacheProvider.Remove([
-                ProjectCacheKeys.ForId(project.Id),
-                ProjectCacheKeys.ForCreator(userId),
-                ProjectCacheKeys.ForUser(userId)
-            ]);
-
             return project;
         }
 
@@ -133,13 +108,9 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.ForId(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.Projects
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(p => p.Id == id.Value);
-                });
+                return await _dbContext.Projects
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.Id == id.Value);
             }
             catch (Exception ex)
             {
@@ -157,14 +128,10 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.ForCreator(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.Projects
-                        .AsNoTracking()
-                        .Where(p => p.CreatedById == id.Value)
-                        .ToListAsync();
-                }) ?? [];
+                return await _dbContext.Projects
+                    .AsNoTracking()
+                    .Where(p => p.CreatedById == id.Value)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -182,17 +149,13 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.ForUser(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.Projects
-                        .AsNoTracking()
-                        .Include(p => p.CreatedBy)
-                        .Include(p => p.ProjectUsers)
-                        .ThenInclude(pu => pu.User)
-                        .Where(p => p.ProjectUsers.Any(pu => pu.UserId == id.Value))
-                        .ToListAsync();
-                }) ?? [];
+                return await _dbContext.Projects
+                    .AsNoTracking()
+                    .Include(p => p.CreatedBy)
+                    .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                    .Where(p => p.ProjectUsers.Any(pu => pu.UserId == id.Value))
+                    .ToListAsync();
             }
             catch (Exception ex)
             {

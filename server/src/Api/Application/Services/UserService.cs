@@ -4,30 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Domain.Entities;
-using Api.Infrastructure.Cache;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Api.Application.Services
 {
     internal sealed class UserService : IUserService
     {
         private readonly AppDbContext _dbContext;
-        private readonly ICacheProvider _cacheProvider;
-        private readonly IOptions<UserCacheOptions> _cacheOptions;
         private readonly ILogger<UserService> _logger;
 
         public UserService(
             AppDbContext dbContext,
-            ICacheProvider cacheProvider, 
-            IOptions<UserCacheOptions> cacheOptions, 
             ILogger<UserService> logger)
         {
             _dbContext = dbContext;
-            _cacheProvider = cacheProvider;
-            _cacheOptions = cacheOptions;
             _logger = logger;
         }
 
@@ -59,7 +51,6 @@ namespace Api.Application.Services
 
             _ = await _dbContext.SaveChangesAsync();
             
-            _cacheProvider.Remove(UserCacheKeys.ForEmail(email));
             return user;
         }
 
@@ -75,11 +66,6 @@ namespace Api.Application.Services
             _ = _dbContext.Users.Update(user);
             _ = await _dbContext.SaveChangesAsync();
             
-            _cacheProvider.Remove([
-                UserCacheKeys.ForId(user.Id),
-                UserCacheKeys.ForEmail(user.Email)
-            ]);
-
             return user;
         }
 
@@ -92,13 +78,9 @@ namespace Api.Application.Services
             
             try
             {
-                var cacheKey = UserCacheKeys.ForId(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.Users
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(u => !u.IsDeleted && u.Id == id.Value);
-                });
+                return await _dbContext.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => !u.IsDeleted && u.Id == id.Value);
             }
             catch (Exception ex)
             {
@@ -116,13 +98,9 @@ namespace Api.Application.Services
             
             try
             {
-                var cacheKey = UserCacheKeys.ForEmail(email);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.Users
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(u => !u.IsDeleted && u.Email == email);
-                });
+                return await _dbContext.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => !u.IsDeleted && u.Email == email);
             }
             catch (Exception ex)
             {
@@ -136,7 +114,6 @@ namespace Api.Application.Services
             ArgumentNullException.ThrowIfNull(user);
 
             var id = user.Id;
-            var email = user.Email;
             
             _ = _dbContext.Users.Attach(user);
             
@@ -149,12 +126,6 @@ namespace Api.Application.Services
             
             _ = _dbContext.Users.Update(user);
             _ = await _dbContext.SaveChangesAsync();
-            
-            _cacheProvider.Remove([
-                UserCacheKeys.ForId(id),
-                UserCacheKeys.RolesForId(id),
-                UserCacheKeys.ForEmail(email)
-            ]);
 
             return id;
         }
@@ -168,15 +139,11 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = UserCacheKeys.RolesForId(id.Value);
-                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
-                {
-                    return await _dbContext.UserRoles
-                        .AsNoTracking()
-                        .Include(ur => ur.Role)
-                        .Where(ur => ur.UserId == id.Value)
-                        .ToListAsync();
-                }) ?? [];
+                return await _dbContext.UserRoles
+                    .AsNoTracking()
+                    .Include(ur => ur.Role)
+                    .Where(ur => ur.UserId == id.Value)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {

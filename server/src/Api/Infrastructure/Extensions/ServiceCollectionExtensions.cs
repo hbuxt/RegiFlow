@@ -6,7 +6,6 @@ using Api.Application.Abstractions;
 using Api.Domain.Constants;
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
-using Api.Infrastructure.Cache;
 using Api.Infrastructure.Cors;
 using Api.Infrastructure.Identity;
 using Api.Infrastructure.Persistence.Contexts;
@@ -25,11 +24,6 @@ namespace Api.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var permissionCacheSection = configuration.GetRequiredSection("CacheOptions:Permissions");
-            var userCacheSection = configuration.GetRequiredSection("CacheOptions:Users");
-            var roleCacheSection = configuration.GetRequiredSection("CacheOptions:Roles");
-            var projectCacheSection = configuration.GetRequiredSection("CacheOptions:Projects");
-
             var jwtBearerSection = configuration.GetRequiredSection("Authentication:Jwt");
             var jwtBearerOptions = jwtBearerSection.Get<JwtBearerOptions>();
             
@@ -49,26 +43,6 @@ namespace Api.Infrastructure.Extensions
                     "CORS policy options are required in order to successfully setup" +
                     "CORS policies for client-server communication.");
             }
-            
-            services.AddOptions<PermissionCacheOptions>()
-                .Bind(permissionCacheSection)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-            
-            services.AddOptions<UserCacheOptions>()
-                .Bind(userCacheSection)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-            
-            services.AddOptions<RoleCacheOptions>()
-                .Bind(roleCacheSection)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-            
-            services.AddOptions<ProjectCacheOptions>()
-                .Bind(projectCacheSection)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
             
             services.AddOptions<JwtBearerOptions>()
                 .Bind(jwtBearerSection)
@@ -181,8 +155,6 @@ namespace Api.Infrastructure.Extensions
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
             
-            services.AddMemoryCache();
-            services.AddSingleton<ICacheProvider, CacheProvider>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             
