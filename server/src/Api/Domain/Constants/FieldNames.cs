@@ -17,6 +17,8 @@ namespace Api.Domain.Constants
         public const string RoleId = "id";
         public const string RoleName = "name";
 
+        public const string Permissions = "permissions";
+
         public const string Projects = "projects";
         public const string ProjectId = "id";
         public const string ProjectName = "name";

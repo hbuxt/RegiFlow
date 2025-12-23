@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Domain.Constants;
+using Api.Domain.Entities;
 using Api.Infrastructure.Cache;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,61 @@ namespace Api.Application.Services
             {
                 [Permissions.ProjectDelete] = CanDeleteProjectAsync
             };
+        }
+
+        public async Task<List<Permission>> ListForUserAsync(Guid? id)
+        {
+            if (id == null || id == Guid.Empty)
+            {
+                return [];
+            }
+
+            try
+            {
+                var cacheKey = PermissionCacheKeys.ForUser(id.Value);
+                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
+                {
+                    return await _dbContext.UserRoles
+                        .AsNoTracking()
+                        .Where(ur => ur.UserId == id.Value)
+                        .SelectMany(ur => ur.Role!.RolePermissions)
+                        .Select(rp => rp.Permission!)
+                        .ToListAsync();
+                }) ?? [];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "User: {UserId} permissions retrieval failed", id);
+                return [];
+            }
+        }
+
+        public async Task<List<Permission>> ListForUserAsync(Guid? userId, Guid? projectId)
+        {
+            if (userId == null || userId == Guid.Empty || projectId == null || projectId == Guid.Empty)
+            {
+                return [];
+            }
+
+            try
+            {
+                var cacheKey = PermissionCacheKeys.ForUserInProject(userId.Value, projectId.Value);
+                return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
+                {
+                    return await _dbContext.ProjectUsers
+                        .AsNoTracking()
+                        .Where(pu => pu.ProjectId == projectId && pu.UserId == userId)
+                        .SelectMany(pu => pu.ProjectUserRoles)
+                        .SelectMany(pur => pur.Role!.RolePermissions)
+                        .Select(rp => rp.Permission!)
+                        .ToListAsync();
+                }) ?? [];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "User: {UserId} permissions in project: {ProjectId} retrieval failed", userId, projectId);
+                return [];
+            }
         }
 
         public async Task<bool> IsAuthorizedAsync(string permissionName, Guid userId)
@@ -76,10 +132,9 @@ namespace Api.Application.Services
             var cacheKey = PermissionCacheKeys.PermissionForUser(userId, permissionName);
             var permission = await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
             {
-                return await _dbContext.Users
+                return await _dbContext.UserRoles
                     .AsNoTracking()
-                    .Where(u => u.Id == userId)
-                    .SelectMany(u => u.UserRoles)
+                    .Where(ur => ur.UserId == userId)
                     .SelectMany(ur => ur.Role!.RolePermissions)
                     .Select(rp => rp.Permission)
                     .FirstOrDefaultAsync(p => p!.Name == permissionName);

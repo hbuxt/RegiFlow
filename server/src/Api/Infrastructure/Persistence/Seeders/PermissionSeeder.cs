@@ -38,6 +38,14 @@ namespace Api.Infrastructure.Persistence.Seeders
             Description = "Allows the user to view their roles.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
+
+        public static Permission UserPermissionsRead { get; set; } = new Permission()
+        {
+            Id = new Guid("3F396475-3E5A-4C44-93C0-77ACC30E494F"),
+            Name = Permissions.UserPermissionsRead,
+            Description = "Allows the user to view their permissions.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
         
         public static Permission ProjectRead { get; set; } = new Permission()
         {
@@ -78,6 +86,7 @@ namespace Api.Infrastructure.Persistence.Seeders
                 UserUpdate,
                 UserDelete,
                 UserRolesRead,
+                UserPermissionsRead,
                 ProjectCreate,
                 ProjectRead,
                 ProjectUpdate,
