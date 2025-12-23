@@ -5,6 +5,7 @@ using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
+using Api.Domain.Entities;
 using Api.Domain.Enums;
 using Api.Infrastructure.Identity;
 using Api.Infrastructure.Persistence.Contexts;
@@ -71,10 +72,25 @@ namespace Api.Features.Auth.Register
             {
                 try
                 {
-                    var user = await _userService.CreateAsync(
-                        email: command.Email,
-                        hashedPassword: _passwordHasher.HashPassword(command.Password),
-                        role: role);
+                    var user = new User()
+                    {
+                        Id = Guid.NewGuid(),
+                        Email = command.Email,
+                        HashedPassword = _passwordHasher.HashPassword(command.Password),
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    
+                    _ = _dbContext.Users.Add(user);
+
+                    var userRole = new UserRole()
+                    {
+                        UserId = user.Id,
+                        RoleId = role.Id
+                    };
+
+                    _ = _dbContext.UserRoles.Add(userRole);
+                    _ = await _dbContext.SaveChangesAsync(cancellationToken);
+                    
                     var accessToken = _tokenGenerator.GenerateAccessToken(user);
 
                     await transaction.CommitAsync(cancellationToken);

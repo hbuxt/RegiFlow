@@ -20,5 +20,13 @@ namespace Api.Features.Users.ListMyProjects
 
             return new Error(ErrorStatus.Forbidden, code, message);
         }
+        
+        public static Error SomethingWentWrong()
+        {
+            var code = "LISTMYPROJECTS_UNEXPECTEDERROROCCURRED";
+            var message = "An unexpected error occurred when retrieving your projects. Please try again.";
+
+            return new Error(ErrorStatus.NotFound, code, message);
+        }
     }
 }

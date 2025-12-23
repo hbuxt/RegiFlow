@@ -4,21 +4,26 @@ using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Domain.Constants;
+using Api.Infrastructure.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Users.DeleteMyDetails
 {
     public sealed class CommandHandler : ICommandHandler<Command>
     {
+        private readonly AppDbContext _dbContext;
         private readonly IUserService _userService;
         private readonly IPermissionService _permissionService;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
+            AppDbContext dbContext,
             IUserService userService,
             IPermissionService permissionService,
             ILogger<CommandHandler> logger)
         {
+            _dbContext = dbContext;
             _userService = userService;
             _permissionService = permissionService;
             _logger = logger;
@@ -26,9 +31,7 @@ namespace Api.Features.Users.DeleteMyDetails
 
         public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var user = await _userService.GetAsync(command.UserId);
-            
-            if (user == null)
+            if (!await _userService.ExistsAsync(command.UserId))
             {
                 _logger.LogInformation("Delete My Details failed for user: {UserId}. User not found", command.UserId);
                 return Result.Failure(Errors.UserNotFound());
@@ -36,15 +39,24 @@ namespace Api.Features.Users.DeleteMyDetails
 
             if (!await _permissionService.IsAuthorizedAsync(Permissions.UserDelete, command.UserId))
             {
-                _logger.LogInformation("Delete My Details failed for user: {UserId}. User does not have permission", user.Id);
+                _logger.LogInformation("Delete My Details failed for user: {UserId}. User does not have permission", command.UserId);
                 return Result.Failure(Errors.UserNotAuthorized());
             }
 
             try
             {
-                _ = await _userService.SoftDeleteAsync(user);
+                var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
                 
-                _logger.LogInformation("Delete My Details succeeded for user: {UserId}", user.Id);
+                user.FirstName = null;
+                user.LastName = null;
+                user.Email = Guid.NewGuid().ToString();
+                user.HashedPassword = Guid.NewGuid().ToString();
+                user.IsDeleted = true;
+                user.DeletedAt = DateTime.UtcNow;
+
+                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+                
+                _logger.LogInformation("Delete My Details succeeded for user: {UserId}", command.UserId);
                 return Result.Success();
             }
             catch (Exception ex)

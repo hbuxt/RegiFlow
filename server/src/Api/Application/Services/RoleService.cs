@@ -39,7 +39,7 @@ namespace Api.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Role: {RoleName} retrieval failed", role);
+                _logger.LogError(ex, "Role: {RoleName} in scope: {RoleScope} retrieval failed", role, scope);
                 return null;
             }
         }

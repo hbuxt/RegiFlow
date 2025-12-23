@@ -8,10 +8,10 @@ namespace Api.Features.Projects.ListPermissionsByUser
         public Query(Guid? userId, Guid? projectId)
         {
             UserId = userId ?? Guid.Empty;
-            ProjectId = projectId;
+            ProjectId = projectId ?? Guid.Empty;
         }
         
         public Guid UserId { get; init; }
-        public Guid? ProjectId { get; init; }
+        public Guid ProjectId { get; init; }
     }
 }

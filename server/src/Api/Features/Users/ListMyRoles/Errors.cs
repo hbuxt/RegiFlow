@@ -20,5 +20,13 @@ namespace Api.Features.Users.ListMyRoles
 
             return new Error(ErrorStatus.Forbidden, code, message);
         }
+
+        public static Error SomethingWentWrong()
+        {
+            var code = "LISTMYROLES_UNEXPECTEDERROROCCURRED";
+            var message = "An unexpected error occurred when retrieving your roles. Please try again.";
+
+            return new Error(ErrorStatus.NotFound, code, message);
+        }
     }
 }

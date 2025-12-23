@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Domain.Constants;
-using Api.Domain.Entities;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,54 +29,7 @@ namespace Api.Application.Services
                 [Permissions.ProjectDelete] = CanDeleteProjectAsync
             };
         }
-
-        public async Task<List<Permission>> ListForUserAsync(Guid? id)
-        {
-            if (id == null || id == Guid.Empty)
-            {
-                return [];
-            }
-
-            try
-            {
-                return await _dbContext.UserRoles
-                    .AsNoTracking()
-                    .Where(ur => ur.UserId == id.Value)
-                    .SelectMany(ur => ur.Role!.RolePermissions)
-                    .Select(rp => rp.Permission!)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User: {UserId} permissions retrieval failed", id);
-                return [];
-            }
-        }
-
-        public async Task<List<Permission>> ListForUserAsync(Guid? userId, Guid? projectId)
-        {
-            if (userId == null || userId == Guid.Empty || projectId == null || projectId == Guid.Empty)
-            {
-                return [];
-            }
-
-            try
-            {
-                return await _dbContext.ProjectUsers
-                    .AsNoTracking()
-                    .Where(pu => pu.ProjectId == projectId && pu.UserId == userId)
-                    .SelectMany(pu => pu.ProjectUserRoles)
-                    .SelectMany(pur => pur.Role!.RolePermissions)
-                    .Select(rp => rp.Permission!)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User: {UserId} permissions in project: {ProjectId} retrieval failed", userId, projectId);
-                return [];
-            }
-        }
-
+        
         public async Task<bool> IsAuthorizedAsync(string permissionName, Guid userId)
         {
             try

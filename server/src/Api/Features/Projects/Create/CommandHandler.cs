@@ -6,32 +6,35 @@ using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
+using Api.Domain.Entities;
 using Api.Domain.Enums;
+using Api.Infrastructure.Persistence.Contexts;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Projects.Create
 {
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
+        private readonly AppDbContext _dbContext;
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
-        private readonly IProjectService _projectService;
         private readonly IPermissionService _permissionService;
         private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
         
         public CommandHandler(
+            AppDbContext dbContext,
             IUserService userService,
             IRoleService roleService,
-            IProjectService projectService,
             IPermissionService permissionService,
             IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
+            _dbContext = dbContext;
             _userService = userService;
             _roleService = roleService;
-            _projectService = projectService;
             _permissionService = permissionService;
             _validator = validator;
             _logger = logger;
@@ -47,9 +50,7 @@ namespace Api.Features.Projects.Create
                 return Result.Failure<Response>(validationResult.ToFormattedDictionary());
             }
 
-            var user = await _userService.GetAsync(command.UserId);
-            
-            if (user == null)
+            if (!await _userService.ExistsAsync(command.UserId))
             {
                 _logger.LogInformation("Create Project failed for user: {UserId}. User not found", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
@@ -57,35 +58,70 @@ namespace Api.Features.Projects.Create
 
             if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectCreate, command.UserId))
             {
-                _logger.LogInformation("Create Project failed for user: {UserId}. User does not have permission", user.Id);
+                _logger.LogInformation("Create Project failed for user: {UserId}. User does not have permission", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
-            }
-
-            var projects = await _projectService.ListByCreatorAsync(user.Id);
-
-            if (projects.Any(p => string.Equals(p.Name, command.Name)))
-            {
-                _logger.LogInformation("Create Project failed for user: {UserId}. Duplicate project: {ProjectName} found", user.Id, command.Name);
-                return Result.Failure<Response>(Errors.DuplicateProjectName());
-            }
-
-            var role = await _roleService.GetAsync(Roles.Owner, RoleScope.Project);
-
-            if (role == null)
-            {
-                _logger.LogError("Create Project failed for user: {UserId}. Role not found", user.Id);
-                return Result.Failure<Response>(Errors.RoleNotFound());
             }
 
             try
             {
-                var project = await _projectService.CreateAsync(
-                    user, 
-                    command.Name, 
-                    command.Description, 
-                    role);
+                var isDuplicate = await _dbContext.Projects
+                    .AsNoTracking()
+                    .Where(p => p.CreatedById == command.UserId)
+                    .AnyAsync(p => string.Equals(p.Name, command.Name), cancellationToken);
                 
-                _logger.LogInformation("Create Project succeeded for user: {UserId} with project: {ProjectId}", user.Id, project.Id);
+                if (isDuplicate)
+                {
+                    _logger.LogInformation("Create Project failed for user: {UserId}. Duplicate project: {ProjectName} found", command.UserId, command.Name);
+                    return Result.Failure<Response>(Errors.DuplicateProjectName());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Create Project failed for user: {UserId}. An unexpected error occurred", command.UserId);
+                return Result.Failure<Response>(Errors.SomethingWentWrong());
+            }
+            
+            var role = await _roleService.GetAsync(Roles.Owner, RoleScope.Project);
+
+            if (role == null)
+            {
+                _logger.LogError("Create Project failed for user: {UserId}. Role not found", command.UserId);
+                return Result.Failure<Response>(Errors.RoleNotFound());
+            }
+            
+            var project = new Project()
+            {
+                Id = Guid.NewGuid(),
+                CreatedById = command.UserId,
+                Name = command.Name,
+                Description = command.Description,
+                CreatedAt = DateTime.UtcNow
+            };
+            
+            var projectUser = new ProjectUser()
+            {
+                ProjectId = project.Id,
+                UserId = command.UserId,
+                JoinedAt = DateTime.UtcNow
+            };
+            
+            var projectOwner = new ProjectUserRole()
+            {
+                Id = Guid.NewGuid(),
+                ProjectUserId = projectUser.Id,
+                RoleId = role.Id,
+                AssignedAt = DateTime.UtcNow
+            };
+
+            try
+            {
+                _ = _dbContext.Projects.Add(project);
+                _ = _dbContext.ProjectUsers.Add(projectUser);
+                _ = _dbContext.ProjectUserRoles.Add(projectOwner);
+                
+                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+                
+                _logger.LogInformation("Create Project succeeded for user: {UserId} with project: {ProjectId}", command.UserId, project.Id);
                 return Result.Success(new Response()
                 {
                     Name = project.Name
@@ -93,7 +129,7 @@ namespace Api.Features.Projects.Create
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Create Project failed for user: {UserId}. Unexpected error occurred", user.Id);
+                _logger.LogError(ex, "Create Project failed for user: {UserId}. Unexpected error occurred", command.UserId);
                 return Result.Failure<Response>(Errors.SomethingWentWrong());
             }
         }

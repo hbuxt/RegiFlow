@@ -5,24 +5,29 @@ using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Application.Extensions;
 using Api.Domain.Constants;
+using Api.Infrastructure.Persistence.Contexts;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Users.UpdateMyDetails
 {
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
+        private readonly AppDbContext _dbContext;
         private readonly IUserService _userService;
         private readonly IPermissionService _permissionService;
         private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
+            AppDbContext dbContext,
             IUserService userService,
             IPermissionService permissionService,
             IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
+            _dbContext = dbContext;
             _userService = userService;
             _permissionService = permissionService;
             _validator = validator;
@@ -39,9 +44,7 @@ namespace Api.Features.Users.UpdateMyDetails
                 return Result.Failure<Response>(validationResult.ToFormattedDictionary());
             }
 
-            var user = await _userService.GetAsync(command.UserId);
-
-            if (user == null)
+            if (!await _userService.ExistsAsync(command.UserId))
             {
                 _logger.LogInformation("Update My Details failed for user: {UserId}. User not found", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
@@ -49,32 +52,23 @@ namespace Api.Features.Users.UpdateMyDetails
 
             if (!await _permissionService.IsAuthorizedAsync(Permissions.UserUpdate, command.UserId))
             {
-                _logger.LogInformation("Update My Details failed for user: {UserId}. User does not have permission", user.Id);
+                _logger.LogInformation("Update My Details failed for user: {UserId}. User does not have permission", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
-            }
-            
-            var normalizedNewFirstName = string.IsNullOrWhiteSpace(command.FirstName) ? null : command.FirstName;
-            var normalizedExistingFirstName = string.IsNullOrWhiteSpace(user.FirstName) ? null : user.FirstName;
-            var hasFirstNameChanged = !string.Equals(normalizedNewFirstName, normalizedExistingFirstName);
-                
-            var normalizedNewLastName = string.IsNullOrWhiteSpace(command.LastName) ? null : command.LastName;
-            var normalizedExistingLastName = string.IsNullOrWhiteSpace(user.LastName) ? null : user.LastName;
-            var hasLastNameChanged = !string.Equals(normalizedNewLastName, normalizedExistingLastName);
-
-            if (!hasFirstNameChanged && !hasLastNameChanged)
-            {
-                _logger.LogInformation("Update My Details succeeded with no action taken for user: {UserId}", user.Id);
-                return Result.Success(new Response()
-                {
-                    Id = user.Id
-                });
             }
             
             try
             {
-                _ = await _userService.UpdateAsync(user, normalizedNewFirstName, normalizedNewLastName);
+                var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
+
+                var normalizedNewFirstName = string.IsNullOrWhiteSpace(command.FirstName) ? null : command.FirstName;
+                var normalizedNewLastName = string.IsNullOrWhiteSpace(command.LastName) ? null : command.LastName;
                 
-                _logger.LogInformation("Update My Details succeeded for user: {UserId}", user.Id);
+                user.FirstName = normalizedNewFirstName;
+                user.LastName = normalizedNewLastName;
+
+                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+                
+                _logger.LogInformation("Update My Details succeeded for user: {UserId}", command.UserId);
                 return Result.Success(new Response()
                 {
                     Id = user.Id
@@ -82,7 +76,7 @@ namespace Api.Features.Users.UpdateMyDetails
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Update My Details failed for user: {UserId}. Unexpected error occurred", user.Id);
+                _logger.LogError(ex, "Update My Details failed for user: {UserId}. Unexpected error occurred", command.UserId);
                 return Result.Failure<Response>(Errors.SomethingWentWrong());
             }
         }
