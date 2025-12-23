@@ -100,5 +100,27 @@ namespace Api.Features.Projects
                 _ => Results.Ok(result.Value),
                 _ => result.ToProblemDetails());
         }
+        
+        [HttpGet]
+        [Route(EndpointRoutes.ListProjectPermissions, Name = EndpointNames.ListProjectPermissions)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(ListPermissions.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Users)]
+        public async Task<IResult> ListMyPermissions([FromRoute] Guid? id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new ListPermissions.Query(User.GetUserId(), id), cancellationToken);
+            
+            return result.Match(
+                _ => Results.Ok(result.Value),
+                _ => result.ToProblemDetails());
+        }
     }
 }

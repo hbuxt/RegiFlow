@@ -18,5 +18,6 @@ namespace Api.Domain.Constants
         public const string CreateProject = "";
         public const string GetProjectById = "{id}";
         public const string RenameProject = "{id}";
+        public const string ListProjectPermissions = "{id}/permissions";
     }
 }

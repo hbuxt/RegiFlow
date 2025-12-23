@@ -79,6 +79,14 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
 
+        public static Permission ProjectPermissionsRead { get; set; } = new Permission()
+        {
+            Id = new Guid("5967EAC1-DABF-4C13-880A-3B25C4078A4F"),
+            Name = Permissions.ProjectPermissionsRead,
+            Description = "Allows the user to view their permissions in a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+
         public static List<Permission> Generate()
         {
             return [
@@ -90,7 +98,8 @@ namespace Api.Infrastructure.Persistence.Seeders
                 ProjectCreate,
                 ProjectRead,
                 ProjectUpdate,
-                ProjectDelete
+                ProjectDelete,
+                ProjectPermissionsRead
             ];
         }
     }
