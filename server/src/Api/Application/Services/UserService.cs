@@ -59,7 +59,7 @@ namespace Api.Application.Services
 
             _ = await _dbContext.SaveChangesAsync();
             
-            _cacheProvider.Remove(UserCacheKeys.GetByEmail(email));
+            _cacheProvider.Remove(UserCacheKeys.ForEmail(email));
             return user;
         }
 
@@ -76,8 +76,8 @@ namespace Api.Application.Services
             _ = await _dbContext.SaveChangesAsync();
             
             _cacheProvider.Remove([
-                UserCacheKeys.GetById(user.Id),
-                UserCacheKeys.GetByEmail(user.Email)
+                UserCacheKeys.ForId(user.Id),
+                UserCacheKeys.ForEmail(user.Email)
             ]);
 
             return user;
@@ -92,7 +92,7 @@ namespace Api.Application.Services
             
             try
             {
-                var cacheKey = UserCacheKeys.GetById(id.Value);
+                var cacheKey = UserCacheKeys.ForId(id.Value);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Users
@@ -116,7 +116,7 @@ namespace Api.Application.Services
             
             try
             {
-                var cacheKey = UserCacheKeys.GetByEmail(email);
+                var cacheKey = UserCacheKeys.ForEmail(email);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Users
@@ -151,9 +151,9 @@ namespace Api.Application.Services
             _ = await _dbContext.SaveChangesAsync();
             
             _cacheProvider.Remove([
-                UserCacheKeys.GetById(id),
-                UserCacheKeys.GetRolesById(id),
-                UserCacheKeys.GetByEmail(email)
+                UserCacheKeys.ForId(id),
+                UserCacheKeys.RolesForId(id),
+                UserCacheKeys.ForEmail(email)
             ]);
 
             return id;
@@ -168,7 +168,7 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = UserCacheKeys.GetRolesById(id.Value);
+                var cacheKey = UserCacheKeys.RolesForId(id.Value);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.UserRoles

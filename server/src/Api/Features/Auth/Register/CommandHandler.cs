@@ -59,7 +59,7 @@ namespace Api.Features.Auth.Register
                 return Result.Failure<Response>(Errors.AccountAlreadyExists());
             }
 
-            var role = await _roleService.GetAsync(RoleNames.General, RoleScope.Application);
+            var role = await _roleService.GetAsync(Roles.General, RoleScope.Application);
 
             if (role == null)
             {

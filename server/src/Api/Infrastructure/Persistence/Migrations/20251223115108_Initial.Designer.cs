@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251221212531_Initial")]
+    [Migration("20251223115108_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -52,70 +52,56 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their details.",
-                            Name = "View my details"
+                            Name = "user.read"
                         },
                         new
                         {
                             Id = new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to update their details.",
-                            Name = "Update my details"
+                            Name = "user.update"
                         },
                         new
                         {
                             Id = new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to delete their details.",
-                            Name = "Delete my details"
+                            Name = "user.delete"
                         },
                         new
                         {
                             Id = new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their roles.",
-                            Name = "View my roles"
-                        },
-                        new
-                        {
-                            Id = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to view project they're involved with.",
-                            Name = "View my projects"
+                            Name = "user.roles.read"
                         },
                         new
                         {
                             Id = new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to create projects.",
-                            Name = "Create projects"
+                            Name = "project.create"
                         },
                         new
                         {
-                            Id = new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e"),
+                            Id = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to view a project.",
-                            Name = "View project"
-                        },
-                        new
-                        {
-                            Id = new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to rename a project.",
-                            Name = "Rename project"
+                            Description = "Allows the user to view project they're involved with.",
+                            Name = "project.read"
                         },
                         new
                         {
                             Id = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to update a project.",
-                            Name = "Update project"
+                            Name = "project.update"
                         },
                         new
                         {
                             Id = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to delete a project.",
-                            Name = "Delete project"
+                            Name = "project.delete"
                         });
                 });
 
@@ -330,12 +316,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
-                            PermissionId = new Guid("ab80f393-242f-4021-9ccc-f93c5d11427e")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
-                            PermissionId = new Guid("008824e5-561a-4c51-b9cb-3d75782f1b84")
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
                         },
                         new
                         {

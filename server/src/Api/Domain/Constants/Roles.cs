@@ -1,6 +1,6 @@
 namespace Api.Domain.Constants
 {
-    public static class RoleNames
+    public static class Roles
     {
         public const string General = "General";
         public const string Demo = "Demo";

@@ -4,17 +4,23 @@ namespace Api.Infrastructure.Cache
 {
     public static class PermissionCacheKeys
     {
-        private const string NameAndUserIdPrefix = "permission:name:{0}:AND:user:id:{1}";
-        private const string NameAndUserIdInProjectPrefix = "permission:name:{0}:AND:user:id:{1}:AND:project:id:{2}";
+        private const string PermissionUser = "auth:permission:user:{0}:perm:{1}";
+        private const string PermissionUserProject = "auth:permission:user:{0}:project:{1}:perm:{2}";
+        private const string PolicyUserProject = "auth:policy:user:{0}:project:{1}:perm:{2}";
 
-        public static string GetByNameAndUserId(string name, Guid id)
+        public static string PermissionForUser(Guid userId, string permission)
         {
-            return string.Format(NameAndUserIdPrefix, name, id);
+            return string.Format(PermissionUser, userId, permission);
         }
 
-        public static string GetByNameAndUserIdInProject(string name, Guid userId, Guid projectId)
+        public static string PermissionForUserInProject(Guid userId, Guid projectId, string permission)
         {
-            return string.Format(NameAndUserIdInProjectPrefix, name, userId, projectId);
+            return string.Format(PermissionUserProject, userId, projectId, permission);
+        }
+
+        public static string PolicyForUserInProject(Guid userId, Guid projectId, string permission)
+        {
+            return string.Format(PolicyUserProject, userId, projectId, permission);
         }
     }
 }

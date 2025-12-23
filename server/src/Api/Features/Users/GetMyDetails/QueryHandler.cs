@@ -33,7 +33,7 @@ namespace Api.Features.Users.GetMyDetails
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ViewMyDetails, query.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.UserRead, query.UserId))
             {
                 _logger.LogInformation("Get My Details failed for user: {UserId}. User does not have permission", query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());

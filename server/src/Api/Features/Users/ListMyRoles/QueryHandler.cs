@@ -34,7 +34,7 @@ namespace Api.Features.Users.ListMyRoles
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ViewMyRoles, query.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.UserRolesRead, query.UserId))
             {
                 _logger.LogInformation("List My Roles failed for user: {UserId}. User does not have permission", user.Id);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());

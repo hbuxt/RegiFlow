@@ -72,9 +72,9 @@ namespace Api.Application.Services
             _ = await _dbContext.SaveChangesAsync();
             
             _cacheProvider.Remove([
-                ProjectCacheKeys.GetById(project.Id),
-                ProjectCacheKeys.GetByCreator(user.Id),
-                ProjectCacheKeys.GetByUser(user.Id)
+                ProjectCacheKeys.ForId(project.Id),
+                ProjectCacheKeys.ForCreator(user.Id),
+                ProjectCacheKeys.ForUser(user.Id)
             ]);
 
             return project;
@@ -94,9 +94,9 @@ namespace Api.Application.Services
             _ = await _dbContext.SaveChangesAsync();
             
             _cacheProvider.Remove([
-                ProjectCacheKeys.GetById(project.Id),
-                ProjectCacheKeys.GetByCreator(userId),
-                ProjectCacheKeys.GetByUser(userId)
+                ProjectCacheKeys.ForId(project.Id),
+                ProjectCacheKeys.ForCreator(userId),
+                ProjectCacheKeys.ForUser(userId)
             ]);
 
             return project;
@@ -116,9 +116,9 @@ namespace Api.Application.Services
             _ = await _dbContext.SaveChangesAsync();
             
             _cacheProvider.Remove([
-                ProjectCacheKeys.GetById(project.Id),
-                ProjectCacheKeys.GetByCreator(userId),
-                ProjectCacheKeys.GetByUser(userId)
+                ProjectCacheKeys.ForId(project.Id),
+                ProjectCacheKeys.ForCreator(userId),
+                ProjectCacheKeys.ForUser(userId)
             ]);
 
             return project;
@@ -133,7 +133,7 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.GetById(id.Value);
+                var cacheKey = ProjectCacheKeys.ForId(id.Value);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Projects
@@ -157,7 +157,7 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.GetByCreator(id.Value);
+                var cacheKey = ProjectCacheKeys.ForCreator(id.Value);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Projects
@@ -182,7 +182,7 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = ProjectCacheKeys.GetByUser(id.Value);
+                var cacheKey = ProjectCacheKeys.ForUser(id.Value);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Projects

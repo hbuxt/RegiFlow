@@ -40,7 +40,7 @@ namespace Api.Application.Services
 
             try
             {
-                var cacheKey = RoleCacheKeys.GetByNameAndScope(role, scope);
+                var cacheKey = RoleCacheKeys.ForNameAndScope(role, scope);
                 return await _cacheProvider.ReadThroughAsync(cacheKey, _cacheOptions.Value, async () =>
                 {
                     return await _dbContext.Roles

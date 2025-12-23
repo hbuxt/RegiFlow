@@ -47,7 +47,7 @@ namespace Api.Features.Users.UpdateMyDetails
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UpdateMyDetails, command.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.UserUpdate, command.UserId))
             {
                 _logger.LogInformation("Update My Details failed for user: {UserId}. User does not have permission", user.Id);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());

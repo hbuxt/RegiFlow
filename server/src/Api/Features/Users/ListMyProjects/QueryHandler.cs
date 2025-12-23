@@ -37,7 +37,7 @@ namespace Api.Features.Users.ListMyProjects
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ViewMyProjects, query.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectRead, query.UserId))
             {
                 _logger.LogInformation("List My Projects failed for user: {UserId}. User does not have permission", query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());

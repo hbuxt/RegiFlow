@@ -4,11 +4,11 @@ namespace Api.Infrastructure.Cache
 {
     public static class RoleCacheKeys
     {
-        private const string NameAndScopePrefix = "role:name:{0}:AND:scope:{1}";
+        private const string ByNameAndScope = "roles:name:{0}:scope:{1}";
 
-        public static string GetByNameAndScope(string name, RoleScope scope)
+        public static string ForNameAndScope(string roleName, RoleScope scope)
         {
-            return string.Format(NameAndScopePrefix, name, scope);
+            return string.Format(ByNameAndScope, roleName, scope);
         }
     }
 }

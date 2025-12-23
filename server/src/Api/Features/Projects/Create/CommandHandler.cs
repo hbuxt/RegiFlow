@@ -55,7 +55,7 @@ namespace Api.Features.Projects.Create
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.CreateProjects, command.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectCreate, command.UserId))
             {
                 _logger.LogInformation("Create Project failed for user: {UserId}. User does not have permission", user.Id);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
@@ -69,7 +69,7 @@ namespace Api.Features.Projects.Create
                 return Result.Failure<Response>(Errors.DuplicateProjectName());
             }
 
-            var role = await _roleService.GetAsync(RoleNames.Owner, RoleScope.Project);
+            var role = await _roleService.GetAsync(Roles.Owner, RoleScope.Project);
 
             if (role == null)
             {

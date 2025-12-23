@@ -34,7 +34,7 @@ namespace Api.Features.Users.DeleteMyDetails
                 return Result.Failure(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.DeleteMyDetails, command.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.UserDelete, command.UserId))
             {
                 _logger.LogInformation("Delete My Details failed for user: {UserId}. User does not have permission", user.Id);
                 return Result.Failure(Errors.UserNotAuthorized());

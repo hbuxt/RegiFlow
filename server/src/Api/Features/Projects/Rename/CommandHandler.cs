@@ -48,12 +48,12 @@ namespace Api.Features.Projects.Rename
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.RenameProject, command.UserId, project.Id))
+            if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectUpdate, command.UserId, project.Id))
             {
                 _logger.LogInformation("Rename Project failed for user: {UserId} in project: {ProjectId}. User does not have permission", command.UserId, project.Id);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
-
+            
             var projects = await _projectService.ListByCreatorAsync(command.UserId);
             var hasSameProjectName = projects
                 .Where(p => p.Id != project.Id)

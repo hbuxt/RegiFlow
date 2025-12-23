@@ -11,32 +11,32 @@ namespace Api.Infrastructure.Persistence.Seeders
             {
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyDetails.Id,
+                    PermissionId = PermissionSeeder.UserRead.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.UpdateMyDetails.Id,
+                    PermissionId = PermissionSeeder.UserUpdate.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.DeleteMyDetails.Id,
+                    PermissionId = PermissionSeeder.UserDelete.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyRoles.Id,
+                    PermissionId = PermissionSeeder.UserRolesRead.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.CreateProjects.Id,
+                    PermissionId = PermissionSeeder.ProjectCreate.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyProjects.Id,
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
                     RoleId = RoleSeeder.General.Id
                 }
             };
@@ -45,17 +45,17 @@ namespace Api.Infrastructure.Persistence.Seeders
             {
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyDetails.Id,
+                    PermissionId = PermissionSeeder.UserRead.Id,
                     RoleId = RoleSeeder.Demo.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyRoles.Id,
+                    PermissionId = PermissionSeeder.UserRolesRead.Id,
                     RoleId = RoleSeeder.Demo.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewMyProjects.Id,
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
                     RoleId = RoleSeeder.Demo.Id
                 }
             };
@@ -64,22 +64,17 @@ namespace Api.Infrastructure.Persistence.Seeders
             {
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ViewProject.Id,
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
                     RoleId = RoleSeeder.Owner.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.RenameProject.Id,
+                    PermissionId = PermissionSeeder.ProjectUpdate.Id,
                     RoleId = RoleSeeder.Owner.Id
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.UpdateProject.Id,
-                    RoleId = RoleSeeder.Owner.Id
-                },
-                new RolePermission()
-                {
-                    PermissionId = PermissionSeeder.DeleteProject.Id,
+                    PermissionId = PermissionSeeder.ProjectDelete.Id,
                     RoleId = RoleSeeder.Owner.Id
                 }
             };
