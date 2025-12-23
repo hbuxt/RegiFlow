@@ -32,7 +32,7 @@ namespace Api.Application.Services
             {
                 return await _dbContext.Users
                     .AsNoTracking()
-                    .AnyAsync(u => u.Id == id.Value);
+                    .AnyAsync(u => !u.IsDeleted && u.Id == id.Value);
             }
             catch (Exception ex)
             {

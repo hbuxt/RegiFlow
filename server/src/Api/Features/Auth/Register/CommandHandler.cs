@@ -67,47 +67,51 @@ namespace Api.Features.Auth.Register
                 _logger.LogError("Registration failed for user: {Email}. Role not found", command.Email);
                 return Result.Failure<Response>(Errors.RoleNotFound());
             }
-
-            await using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
+            
+            var user = new User()
             {
-                try
-                {
-                    var user = new User()
-                    {
-                        Id = Guid.NewGuid(),
-                        Email = command.Email,
-                        HashedPassword = _passwordHasher.HashPassword(command.Password),
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    
-                    _ = _dbContext.Users.Add(user);
+                Id = Guid.NewGuid(),
+                Email = command.Email,
+                CreatedAt = DateTime.UtcNow
+            };
+            
+            var userRole = new UserRole()
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            };
 
-                    var userRole = new UserRole()
-                    {
-                        UserId = user.Id,
-                        RoleId = role.Id
-                    };
-
-                    _ = _dbContext.UserRoles.Add(userRole);
-                    _ = await _dbContext.SaveChangesAsync(cancellationToken);
-                    
-                    var accessToken = _tokenGenerator.GenerateAccessToken(user);
-
-                    await transaction.CommitAsync(cancellationToken);
+            try
+            {
+                user.HashedPassword = _passwordHasher.HashPassword(command.Password);
                 
-                    _logger.LogInformation("Registration succeeded for user: {UserId}", user.Id);
-                    return Result.Success(new Response()
-                    {
-                        AccessToken = accessToken
-                    });
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync(cancellationToken);
+                _ = _dbContext.Users.Add(user);
+                _ = _dbContext.UserRoles.Add(userRole);
+                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Registration failed for user: {UserEmail}. Unexpected error occurred", command.Email);
+                return Result.Failure<Response>(Errors.SomethingWentWrong());
+            }
+            
+            try
+            {
+                var accessToken = _tokenGenerator.GenerateAccessToken(user);
                     
-                    _logger.LogError(ex, "Registration failed for user: {UserEmail}. Unexpected error occurred", command.Email);
-                    return Result.Failure<Response>(Errors.SomethingWentWrong());
-                }
+                _logger.LogInformation("Registration succeeded for user: {UserId}", user.Id);
+                return Result.Success(new Response()
+                {
+                    AccessToken = accessToken
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Registration succeeded for user: {UserId}. Access token failed to generate", user.Id);
+                return Result.Success(new Response()
+                {
+                    AccessToken = null
+                });
             }
         }
     }
