@@ -8,6 +8,8 @@ namespace Api.Domain.Constants
         public const string UserRolesRead = "user.roles.read";
         public const string UserPermissionsRead = "user.permissions.read";
 
+        public const string RolesRead = "roles.read";
+
         public const string ProjectCreate = "project.create";
         public const string ProjectRead = "project.read";
         public const string ProjectUpdate = "project.update";

@@ -17,6 +17,7 @@ namespace Api.Domain.Constants
         public const string Roles = "roles";
         public const string RoleId = "id";
         public const string RoleName = "name";
+        public const string RoleScope = "scope";
 
         public const string Permissions = "permissions";
 
