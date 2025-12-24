@@ -9,7 +9,7 @@ namespace Api.Domain.Constants
         public const string UsersController = "api/users";
         public const string GetMyDetails = "me";
         public const string UpdateMyDetails = "me";
-        public const string DeleteMyDetails = "me";
+        public const string DeleteMyAccount = "me";
         public const string ListMyRoles = "me/roles";
         public const string ListMyProjects = "me/projects";
         public const string ListMyPermissions = "me/permissions";
@@ -20,6 +20,6 @@ namespace Api.Domain.Constants
         public const string UpdateProject = "{id}";
         public const string RenameProject = "{id}/rename";
         public const string DeleteProject = "{id}";
-        public const string ListProjectPermissions = "{id}/permissions";
+        public const string ListMyPermissionsInProject = "{id}/me/permissions";
     }
 }

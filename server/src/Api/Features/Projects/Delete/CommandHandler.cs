@@ -38,7 +38,7 @@ namespace Api.Features.Projects.Delete
                 return Result.Failure(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectDelete, command.UserId, command.ProjectId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectDelete, command.UserId, command.ProjectId))
             {
                 _logger.LogInformation("Delete Project failed for user: {UserId} in project: {ProjectId}. User does not have permission", command.UserId, command.ProjectId);
                 return Result.Failure(Errors.UserNotAuthorized());

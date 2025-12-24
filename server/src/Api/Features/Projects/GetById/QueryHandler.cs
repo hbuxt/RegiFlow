@@ -33,7 +33,7 @@ namespace Api.Features.Projects.GetById
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(Permissions.ProjectRead, query.UserId, project.Id))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectRead, query.UserId, project.Id))
             {
                 _logger.LogInformation("Get Project By ID failed for user: {UserId} in project: {ProjectId}. User does not have permission", query.UserId, project.Id);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());

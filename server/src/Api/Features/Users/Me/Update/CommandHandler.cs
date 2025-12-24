@@ -10,25 +10,25 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Features.Projects.Update
+namespace Api.Features.Users.Me.Update
 {
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
         private readonly AppDbContext _dbContext;
-        private readonly IProjectService _projectService;
+        private readonly IUserService _userService;
         private readonly IPermissionService _permissionService;
         private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
-            AppDbContext dbContext, 
-            IProjectService projectService, 
+            AppDbContext dbContext,
+            IUserService userService,
             IPermissionService permissionService,
             IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
             _dbContext = dbContext;
-            _projectService = projectService;
+            _userService = userService;
             _permissionService = permissionService;
             _validator = validator;
             _logger = logger;
@@ -40,40 +40,43 @@ namespace Api.Features.Projects.Update
 
             if (!validationResult.IsValid)
             {
-                _logger.LogInformation("Update Project failed for user: {UserId} in project: {ProjectId}. Validation errors occurred: {@Errors}", command.UserId, command.ProjectId, validationResult.ToFormattedDictionary());
+                _logger.LogInformation("Update My Details failed for user: {UserId}. Validation errors occurred: {@Errors}", command.UserId, validationResult.ToFormattedDictionary());
                 return Result.Failure<Response>(validationResult.ToFormattedDictionary());
             }
 
-            if (!await _projectService.ExistsAsync(command.ProjectId))
+            if (!await _userService.ExistsAsync(command.UserId))
             {
-                _logger.LogInformation("Update Project failed for user: {UserId} in project: {ProjectId}. Project not found", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.ProjectNotFound());
+                _logger.LogInformation("Update My Details failed for user: {UserId}. User not found", command.UserId);
+                return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUpdate, command.UserId, command.ProjectId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserUpdate, command.UserId))
             {
-                _logger.LogInformation("Update Project failed for user: {UserId} in project: {ProjectId}. User does not have permission", command.UserId, command.ProjectId);
+                _logger.LogInformation("Update My Details failed for user: {UserId}. User does not have permission", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
-
+            
             try
             {
-                var project = await _dbContext.Projects.FirstAsync(p => p.Id == command.ProjectId, cancellationToken);
-                var normalizedDescription = string.IsNullOrWhiteSpace(command.Description) ? null : command.Description;
+                var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
+
+                var normalizedNewFirstName = string.IsNullOrWhiteSpace(command.FirstName) ? null : command.FirstName;
+                var normalizedNewLastName = string.IsNullOrWhiteSpace(command.LastName) ? null : command.LastName;
                 
-                project.Description = normalizedDescription;
+                user.FirstName = normalizedNewFirstName;
+                user.LastName = normalizedNewLastName;
 
                 _ = await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                _logger.LogInformation("Update Project succeeded for user: {UserId} in project: {ProjectId}", command.UserId, command.ProjectId);
+                _logger.LogInformation("Update My Details succeeded for user: {UserId}", command.UserId);
                 return Result.Success(new Response()
                 {
-                    ProjectId = command.ProjectId
+                    Id = user.Id
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Update Project failed for user: {UserId} in project: {ProjectId}. Unexpected error occurred", command.UserId, command.ProjectId);
+                _logger.LogError(ex, "Update My Details failed for user: {UserId}. Unexpected error occurred", command.UserId);
                 return Result.Failure<Response>(Errors.SomethingWentWrong());
             }
         }
