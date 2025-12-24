@@ -45,6 +45,10 @@ namespace Api.Features.Users.DeleteMyDetails
 
             try
             {
+                // TODO:
+                // Think about what projects should be deleted.
+                // Delete all projects where I am only project user?
+                // Delete all projetcs where I am the owner?
                 var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
                 
                 user.FirstName = null;

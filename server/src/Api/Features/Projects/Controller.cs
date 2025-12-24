@@ -125,6 +125,27 @@ namespace Api.Features.Projects
                 _ => result.ToProblemDetails());
         }
         
+        [HttpDelete]
+        [Route(EndpointRoutes.DeleteProject, Name = EndpointNames.DeleteProject)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Projects)]
+        public async Task<IResult> DeleteMyDetails([FromRoute] Guid? id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new Delete.Command(User.GetUserId(), id), cancellationToken);
+
+            return result.Match(
+                Results.NoContent,
+                _ => result.ToProblemDetails());
+        }
+        
         [HttpGet]
         [Route(EndpointRoutes.ListProjectPermissions, Name = EndpointNames.ListProjectPermissions)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
@@ -137,7 +158,7 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType(typeof(ListPermissionsByUser.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        [Tags(EndpointTags.Users)]
+        [Tags(EndpointTags.Projects)]
         public async Task<IResult> ListMyPermissions([FromRoute] Guid? id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new ListPermissionsByUser.Query(User.GetUserId(), id), cancellationToken);

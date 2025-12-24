@@ -89,34 +89,36 @@ namespace Api.Features.Projects.Create
                 return Result.Failure<Response>(Errors.RoleNotFound());
             }
             
-            var project = new Project()
-            {
-                Id = Guid.NewGuid(),
-                CreatedById = command.UserId,
-                Name = command.Name,
-                Description = command.Description,
-                CreatedAt = DateTime.UtcNow
-            };
-            
-            var projectUser = new ProjectUser()
-            {
-                ProjectId = project.Id,
-                UserId = command.UserId,
-                JoinedAt = DateTime.UtcNow
-            };
-            
-            var projectOwner = new ProjectUserRole()
-            {
-                Id = Guid.NewGuid(),
-                ProjectUserId = projectUser.Id,
-                RoleId = role.Id,
-                AssignedAt = DateTime.UtcNow
-            };
-
             try
             {
+                var project = new Project()
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedById = command.UserId,
+                    Name = command.Name,
+                    Description = command.Description,
+                    CreatedAt = DateTime.UtcNow
+                };
+                
                 _ = _dbContext.Projects.Add(project);
+                
+                var projectUser = new ProjectUser()
+                {
+                    ProjectId = project.Id,
+                    UserId = command.UserId,
+                    JoinedAt = DateTime.UtcNow
+                };
+                
                 _ = _dbContext.ProjectUsers.Add(projectUser);
+                
+                var projectOwner = new ProjectUserRole()
+                {
+                    Id = Guid.NewGuid(),
+                    ProjectUserId = projectUser.Id,
+                    RoleId = role.Id,
+                    AssignedAt = DateTime.UtcNow
+                };
+                
                 _ = _dbContext.ProjectUserRoles.Add(projectOwner);
                 
                 _ = await _dbContext.SaveChangesAsync(cancellationToken);
