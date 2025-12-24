@@ -89,6 +89,11 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
+                    PermissionId = PermissionSeeder.ProjectUsersRead.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
                     PermissionId = PermissionSeeder.ProjectPermissionsRead.Id,
                     RoleId = RoleSeeder.Owner.Id
                 }

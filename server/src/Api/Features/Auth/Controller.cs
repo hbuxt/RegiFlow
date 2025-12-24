@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.RateLimiting;
 namespace Api.Features.Auth
 {
     [ApiController]
-    [Route(EndpointRoutes.AuthController)]
+    [Route(EndpointRoutes.Auth)]
     [AllowAnonymous]
     public sealed class Controller : BaseController
     {

@@ -109,6 +109,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to view the users in a project.",
+                            Name = "project.users.read"
+                        },
+                        new
+                        {
                             Id = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their permissions in a project.",
@@ -348,6 +355,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
                             PermissionId = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8")
                         },
                         new
                         {

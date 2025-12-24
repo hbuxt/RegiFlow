@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace Api.Features.Users.Me
+namespace Api.Features.Users
 {
     [ApiController]
-    [Route(EndpointRoutes.UsersController)]
+    [Route(EndpointRoutes.Users)]
     [Authorize]
     public sealed class Controller : BaseController
     {
@@ -32,12 +32,12 @@ namespace Api.Features.Users.Me
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Details.Response))]
+        [ProducesDefaultResponseType(typeof(Me.Details.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> GetMyDetails(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Details.Query(User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new Me.Details.Query(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -56,12 +56,12 @@ namespace Api.Features.Users.Me
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Update.Response))]
+        [ProducesDefaultResponseType(typeof(Me.Update.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> UpdateMyDetails([FromBody] Update.Request? request, CancellationToken cancellationToken)
+        public async Task<IResult> UpdateMyDetails([FromBody] Me.Update.Request? request, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Update.Command(
+            var result = await _mediator.Send(new Me.Update.Command(
                 User.GetUserId(),
                 request?.FirstName,
                 request?.LastName), cancellationToken);
@@ -85,7 +85,7 @@ namespace Api.Features.Users.Me
         [Tags(EndpointTags.Users)]
         public async Task<IResult> DeleteMyAccount(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Delete.Command(User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new Me.Delete.Command(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 Results.NoContent,
@@ -102,12 +102,12 @@ namespace Api.Features.Users.Me
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Roles.Response))]
+        [ProducesDefaultResponseType(typeof(Me.Roles.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyRoles(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Roles.Query(User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new Me.Roles.Query(User.GetUserId()), cancellationToken);
 
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -124,12 +124,12 @@ namespace Api.Features.Users.Me
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Projects.Response))]
+        [ProducesDefaultResponseType(typeof(Me.Projects.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyProjects(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Projects.Query(User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new Me.Projects.Query(User.GetUserId()), cancellationToken);
             
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -146,12 +146,12 @@ namespace Api.Features.Users.Me
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Permissions.Response))]
+        [ProducesDefaultResponseType(typeof(Me.Permissions.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyPermissions(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Permissions.Query(User.GetUserId()), cancellationToken);
+            var result = await _mediator.Send(new Me.Permissions.Query(User.GetUserId()), cancellationToken);
             
             return result.Match(
                 _ => Results.Ok(result.Value),

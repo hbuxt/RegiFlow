@@ -78,6 +78,14 @@ namespace Api.Infrastructure.Persistence.Seeders
             Description = "Allows the user to delete a project.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
+        
+        public static Permission ProjectUsersRead { get; set; } = new Permission()
+        {
+            Id = new Guid("9385F62B-2867-42C6-9DC0-3598D19DA8F8"),
+            Name = PermissionNames.ProjectUsersRead,
+            Description = "Allows the user to view the users in a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
 
         public static Permission ProjectPermissionsRead { get; set; } = new Permission()
         {
@@ -99,6 +107,7 @@ namespace Api.Infrastructure.Persistence.Seeders
                 ProjectRead,
                 ProjectUpdate,
                 ProjectDelete,
+                ProjectUsersRead,
                 ProjectPermissionsRead
             ];
         }

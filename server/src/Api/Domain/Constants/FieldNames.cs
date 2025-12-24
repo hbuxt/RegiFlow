@@ -5,6 +5,7 @@ namespace Api.Domain.Constants
         public const string ErrorCode = "error_code";
         public const string ErrorMessage = "error_message";
 
+        public const string Users = "users";
         public const string UserId = "id";
         public const string FirstName = "first_name";
         public const string LastName = "last_name";

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251223144331_Initial")]
+    [Migration("20251224150119_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -109,6 +109,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to delete a project.",
                             Name = "project.delete"
+                        },
+                        new
+                        {
+                            Id = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to view the users in a project.",
+                            Name = "project.users.read"
                         },
                         new
                         {
@@ -351,6 +358,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
                             PermissionId = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8")
                         },
                         new
                         {

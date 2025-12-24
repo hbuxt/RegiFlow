@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Api.Domain.Constants;
 
-namespace Api.Features.Projects.Me.Permissions
+namespace Api.Features.Projects.Users.Members
 {
     public sealed record Response
     {
@@ -10,8 +10,8 @@ namespace Api.Features.Projects.Me.Permissions
         {
         }
         
-        [JsonPropertyName(FieldNames.Permissions)]
+        [JsonPropertyName(FieldNames.Users)]
         [JsonPropertyOrder(0)]
-        public List<string>? Permissions { get; init; }
+        public List<UserDto>? Users { get; init; }
     }
 }

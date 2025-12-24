@@ -186,6 +186,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their details.", "user.read" },
                     { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "project.create" },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "project.read" },
+                    { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view the users in a project.", "project.users.read" },
                     { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project.", "project.update" }
                 });
 
@@ -212,6 +213,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
