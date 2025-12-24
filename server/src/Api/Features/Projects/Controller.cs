@@ -87,7 +87,7 @@ namespace Api.Features.Projects
         [ProducesDefaultResponseType(typeof(Update.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Projects)]
-        public async Task<IResult> Rename([FromRoute] Guid? id, [FromBody] Update.Request? request, CancellationToken cancellationToken)
+        public async Task<IResult> Update([FromRoute] Guid? id, [FromBody] Update.Request? request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new Update.Command(
                 User.GetUserId(), 
@@ -137,7 +137,7 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Projects)]
-        public async Task<IResult> DeleteMyDetails([FromRoute] Guid? id, CancellationToken cancellationToken)
+        public async Task<IResult> DeleteProject([FromRoute] Guid? id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new Delete.Command(User.GetUserId(), id), cancellationToken);
 
