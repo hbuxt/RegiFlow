@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251226104516_Initial")]
+    [Migration("20251226143641_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace Api.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<Guid>("RecipientId")
                         .HasColumnType("TEXT")
@@ -365,7 +365,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to read and update tickets",
-                            Name = "Admin",
+                            Name = "Developer",
                             Scope = 1
                         },
                         new
@@ -373,7 +373,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Restricts the user to reading data.",
-                            Name = "Admin",
+                            Name = "Viewer",
                             Scope = 1
                         });
                 });
@@ -671,9 +671,14 @@ namespace Api.Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("Api.Domain.Entities.Notification");
 
+                    b.Property<string>("DataJson")
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(8);
+
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<Guid>("RegardingId")
                         .HasColumnType("TEXT")

@@ -41,7 +41,7 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .HasMaxLength(450);
 
             builder.Property(n => n.CreatedAt)
-                .HasColumnOrder(8)
+                .HasColumnOrder(9)
                 .IsRequired();
 
             builder.HasOne(n => n.Recipient)

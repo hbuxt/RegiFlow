@@ -24,6 +24,7 @@ namespace Api.Domain.Constants
         public const string UpdateProject = "{id}";
         public const string RenameProject = "{id}/rename";
         public const string DeleteProject = "{id}";
+        public const string InviteUserToProject = "{id}/invitations";
         public const string ListUsersInProject = "{id}/users";
         public const string ListMyPermissionsInProject = "{id}/users/me/permissions";
     }

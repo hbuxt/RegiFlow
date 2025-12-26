@@ -47,7 +47,7 @@ namespace Api.Infrastructure.Persistence.Seeders
         public static Role Developer { get; set; } = new Role()
         {
             Id = new Guid("625484D1-E87E-4DF0-9997-B53BBD150DF0"),
-            Name = RoleNames.Admin,
+            Name = RoleNames.Developer,
             Description = "Allows the user to read and update tickets",
             Scope = RoleScope.Project,
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
@@ -56,7 +56,7 @@ namespace Api.Infrastructure.Persistence.Seeders
         public static Role Viewer { get; set; } = new Role()
         {
             Id = new Guid("FE40C9DD-0205-4231-A9E7-DA887545636A"),
-            Name = RoleNames.Admin,
+            Name = RoleNames.Viewer,
             Description = "Restricts the user to reading data.",
             Scope = RoleScope.Project,
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)

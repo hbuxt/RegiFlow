@@ -146,6 +146,34 @@ namespace Api.Features.Projects
                 _ => result.ToProblemDetails());
         }
         
+        [HttpPost]
+        [Route(EndpointRoutes.InviteUserToProject, Name = EndpointNames.InviteUserToProject)]
+        [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType(typeof(InviteUser.Response))]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [Tags(EndpointTags.Projects)]
+        public async Task<IResult> InviteUser([FromRoute] Guid? id, [FromBody] InviteUser.Request? request, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new InviteUser.Command(
+                User.GetUserId(), 
+                id,
+                request?.Email,
+                request?.Roles), cancellationToken);
+            
+            return result.Match(
+                _ => Results.CreatedAtRoute(EndpointNames.InviteUserToProject, value: result.Value),
+                _ => result.ToProblemDetails());
+        }
+        
         [HttpGet]
         [Route(EndpointRoutes.ListUsersInProject, Name = EndpointNames.ListUsersInProject)]
         [EnableRateLimiting(RateLimitPolicies.UserTokenBucket)]

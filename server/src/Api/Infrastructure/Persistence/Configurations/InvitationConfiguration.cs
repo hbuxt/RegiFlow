@@ -23,8 +23,13 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(450);
 
+            builder.Property(i => i.DataJson)
+                .HasColumnOrder(8)
+                .IsRequired(false)
+                .HasMaxLength(450);
+
             builder.Property(i => i.ExpiresAt)
-                .HasColumnOrder(9)
+                .HasColumnOrder(10)
                 .IsRequired();
 
             builder.HasOne(i => i.Regarding)
@@ -33,6 +38,7 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.HasIndex(i => i.Token);
+            builder.Ignore(i => i.Data);
         }
     }
 }

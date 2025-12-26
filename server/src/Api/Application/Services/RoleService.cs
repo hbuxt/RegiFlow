@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
@@ -21,6 +22,27 @@ namespace Api.Application.Services
         {
             _dbContext = dbContext;
             _logger = logger;
+        }
+
+        public async Task<List<Role>> GetAsync(List<Guid>? ids, RoleScope scope)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                return [];
+            }
+
+            try
+            {
+                return await _dbContext.Roles
+                    .AsNoTracking()
+                    .Where(r => r.Scope == scope && ids.Contains(r.Id))
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Role: {@RoleIds} in scope: {RoleScope} retrieval failed", ids, scope);
+                return [];
+            }
         }
 
         public async Task<Role?> GetAsync(string? role, RoleScope scope)

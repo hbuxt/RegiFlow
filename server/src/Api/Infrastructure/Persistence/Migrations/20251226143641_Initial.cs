@@ -136,6 +136,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Content = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
                     Token = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
+                    DataJson = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
@@ -237,11 +238,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                 values: new object[,]
                 {
                     { new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to read and update tickets, invite and kick users, and update user roles", "Admin", 1 },
-                    { new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to read and update tickets", "Admin", 1 },
+                    { new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to read and update tickets", "Developer", 1 },
                     { new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to perform all project operations, including project deletion.", "Owner", 1 },
                     { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "A role assigned for demo accounts.", "Demo", 0 },
                     { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "The role assigned when registering for an account.", "General", 0 },
-                    { new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Restricts the user to reading data.", "Admin", 1 }
+                    { new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Restricts the user to reading data.", "Viewer", 1 }
                 });
 
             migrationBuilder.InsertData(
