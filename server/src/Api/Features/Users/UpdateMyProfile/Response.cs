@@ -11,6 +11,6 @@ namespace Api.Features.Users.UpdateMyProfile
         }
 
         [JsonPropertyName(FieldNames.UserId)]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
     }
 }

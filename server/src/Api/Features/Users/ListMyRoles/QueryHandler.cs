@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,42 +33,35 @@ namespace Api.Features.Users.ListMyRoles
         {
             if (!await _userService.ExistsAsync(query.UserId))
             {
-                _logger.LogInformation("List My Roles failed for user: {UserId}. User not found", query.UserId);
+                _logger.LogInformation("List my roles failed for user: {UserId}. User not found", query.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserRolesRead, query.UserId))
             {
-                _logger.LogInformation("List My Roles failed for user: {UserId}. User does not have permission", query.UserId);
+                _logger.LogInformation("List my roles failed for user: {UserId}. User does not have permission", 
+                    query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var roles = await _dbContext.UserRoles
-                    .AsNoTracking()
-                    .Include(ur => ur.Role)
-                    .Where(ur => ur.UserId == query.UserId)
-                    .ToListAsync(cancellationToken);
+            var roles = await _dbContext.UserRoles
+                .AsNoTracking()
+                .Include(ur => ur.Role)
+                .Where(ur => ur.UserId == query.UserId)
+                .ToListAsync();
                 
-                _logger.LogInformation("List My Roles succeeded for user: {UserId}", query.UserId);
-                return Result.Success(new Response()
-                {
-                    Roles = roles
-                        .Where(ur => ur.Role != null)
-                        .Select(ur => new RoleDto()
-                        {
-                            Id = ur.Role!.Id,
-                            Name = ur.Role.Name
-                        })
-                        .ToList()
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("List my roles succeeded for user: {UserId}", query.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "List My Roles failed for user: {UserId}. An unexpected error occurred.", query.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Roles = roles
+                    .Where(ur => ur.Role != null)
+                    .Select(ur => new RoleDto()
+                    {
+                        Id = ur.Role!.Id,
+                        Name = ur.Role.Name
+                    })
+                    .ToList()
+            });
         }
     }
 }

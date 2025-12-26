@@ -44,26 +44,6 @@ namespace Api.Application.Services
                 .AsNoTracking()
                 .AnyAsync(u => !u.IsDeleted && u.Email == email);
         }
-
-        public async Task<User?> GetAsync(Guid? id)
-        {
-            if (id == null || id == Guid.Empty)
-            {
-                return null;
-            }
-            
-            try
-            {
-                return await _dbContext.Users
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(u => !u.IsDeleted && u.Id == id.Value);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User: {UserId} retrieval failed", id);
-                return null;
-            }
-        }
         
         public async Task<User?> GetAsync(string? email)
         {

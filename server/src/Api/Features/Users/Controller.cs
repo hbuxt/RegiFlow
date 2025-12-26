@@ -32,7 +32,6 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(GetMyDetails.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> GetMyDetails(CancellationToken cancellationToken)
@@ -56,10 +55,10 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(UpdateMyProfile.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> UpdateMyProfile([FromBody] UpdateMyProfile.Request? request, CancellationToken cancellationToken)
+        public async Task<IResult> UpdateMyProfile([FromBody] UpdateMyProfile.Request? request, 
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new UpdateMyProfile.Command(
                 User.GetUserId(),
@@ -102,7 +101,6 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListMyRoles.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyRoles(CancellationToken cancellationToken)
@@ -124,7 +122,6 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListMyProjects.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyProjects(CancellationToken cancellationToken)
@@ -146,7 +143,6 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListMyPermissions.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyPermissions(CancellationToken cancellationToken)
@@ -168,7 +164,6 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListMyNotifications.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
         public async Task<IResult> ListMyNotifications(CancellationToken cancellationToken)

@@ -8,7 +8,7 @@ namespace Api.Features.Users.UpdateMyProfile
         public static Error UserNotFound()
         {
             var code = "user_not_found";
-            var message = "We couldn't locate your account when updating your details.";
+            var message = "We couldn't locate your account.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
@@ -19,14 +19,6 @@ namespace Api.Features.Users.UpdateMyProfile
             var message = "You don't have permission to update your details.";
 
             return new Error(ErrorStatus.Forbidden, code, message);
-        }
-        
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when updating your details. Please try again later.";
-
-            return new Error(ErrorStatus.Failure, code, message);
         }
     }
 }

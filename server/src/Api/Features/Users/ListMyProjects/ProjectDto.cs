@@ -16,7 +16,7 @@ namespace Api.Features.Users.ListMyProjects
         
         [JsonPropertyName(FieldNames.ProjectName)]
         [JsonPropertyOrder(0)]
-        public string? Name { get; set; }
+        public string? Name { get; init; }
         
         [JsonPropertyName(FieldNames.ProjectCreatedAt)]
         [JsonPropertyOrder(0)]

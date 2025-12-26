@@ -12,6 +12,6 @@ namespace Api.Features.Users.ListMyRoles
 
         [JsonPropertyName(FieldNames.Roles)]
         [JsonPropertyOrder(0)]
-        public List<RoleDto>? Roles { get; set; }
+        public List<RoleDto>? Roles { get; init; }
     }
 }

@@ -10,9 +10,9 @@ namespace Api.Features.Users.UpdateMyProfile
         }
 
         [JsonPropertyName(FieldNames.FirstName)]
-        public string? FirstName { get; set; }
+        public string? FirstName { get; init; }
 
         [JsonPropertyName(FieldNames.LastName)]
-        public string? LastName { get; set; }
+        public string? LastName { get; init; }
     }
 }

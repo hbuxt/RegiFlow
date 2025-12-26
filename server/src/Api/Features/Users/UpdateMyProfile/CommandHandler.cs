@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
@@ -40,45 +39,41 @@ namespace Api.Features.Users.UpdateMyProfile
 
             if (!validationResult.IsValid)
             {
-                _logger.LogInformation("Update My Details failed for user: {UserId}. Validation errors occurred: {@Errors}", command.UserId, validationResult.ToFormattedDictionary());
-                return Result.Failure<Response>(validationResult.ToFormattedDictionary());
+                var validationErrors = validationResult.ToFormattedDictionary();
+                
+                _logger.LogInformation("Update my details failed for user: {UserId}. Validation errors occurred: " +
+                    "{@Errors}", command.UserId, validationErrors);
+                return Result.Failure<Response>(validationErrors);
             }
 
             if (!await _userService.ExistsAsync(command.UserId))
             {
-                _logger.LogInformation("Update My Details failed for user: {UserId}. User not found", command.UserId);
+                _logger.LogInformation("Update my details failed for user: {UserId}. User not found", command.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserUpdate, command.UserId))
             {
-                _logger.LogInformation("Update My Details failed for user: {UserId}. User does not have permission", command.UserId);
+                _logger.LogInformation("Update my details failed for user: {UserId}. User does not have permission", 
+                    command.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
             
-            try
-            {
-                var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
+            var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId);
 
-                var normalizedNewFirstName = string.IsNullOrWhiteSpace(command.FirstName) ? null : command.FirstName;
-                var normalizedNewLastName = string.IsNullOrWhiteSpace(command.LastName) ? null : command.LastName;
+            var normalizedNewFirstName = string.IsNullOrWhiteSpace(command.FirstName) ? null : command.FirstName;
+            var normalizedNewLastName = string.IsNullOrWhiteSpace(command.LastName) ? null : command.LastName;
                 
-                user.FirstName = normalizedNewFirstName;
-                user.LastName = normalizedNewLastName;
+            user.FirstName = normalizedNewFirstName;
+            user.LastName = normalizedNewLastName;
 
-                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            _ = await _dbContext.SaveChangesAsync();
                 
-                _logger.LogInformation("Update My Details succeeded for user: {UserId}", command.UserId);
-                return Result.Success(new Response()
-                {
-                    Id = user.Id
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("Update my details succeeded for user: {UserId}", command.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "Update My Details failed for user: {UserId}. Unexpected error occurred", command.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Id = user.Id
+            });
         }
     }
 }

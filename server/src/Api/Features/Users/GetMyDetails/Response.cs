@@ -12,18 +12,18 @@ namespace Api.Features.Users.GetMyDetails
 
         [JsonPropertyName(FieldNames.UserId)]
         [JsonPropertyOrder(0)]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
 
         [JsonPropertyName(FieldNames.FirstName)]
         [JsonPropertyOrder(1)]
-        public string? FirstName { get; set; }
+        public string? FirstName { get; init; }
 
         [JsonPropertyName(FieldNames.LastName)]
         [JsonPropertyOrder(2)]
-        public string? LastName { get; set; }
+        public string? LastName { get; init; }
 
         [JsonPropertyName(FieldNames.Email)]
         [JsonPropertyOrder(3)]
-        public string? Email { get; set; }
+        public string? Email { get; init; }
     }
 }

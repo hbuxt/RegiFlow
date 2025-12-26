@@ -33,41 +33,35 @@ namespace Api.Features.Users.DeleteMyAccount
         {
             if (!await _userService.ExistsAsync(command.UserId))
             {
-                _logger.LogInformation("Delete My Details failed for user: {UserId}. User not found", command.UserId);
+                _logger.LogInformation("Delete my account failed for user: {UserId}. User not found", command.UserId);
                 return Result.Failure(Errors.UserNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserDelete, command.UserId))
             {
-                _logger.LogInformation("Delete My Details failed for user: {UserId}. User does not have permission", command.UserId);
+                _logger.LogInformation("Delete my account failed for user: {UserId}. User does not have permission", 
+                    command.UserId);
                 return Result.Failure(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                // TODO:
-                // Think about what projects should be deleted.
-                // Delete all projects where I am only project user?
-                // Delete all projetcs where I am the owner?
-                var user = await _dbContext.Users.FirstAsync(u => u.Id == command.UserId, cancellationToken);
+            // TODO:
+            // Think about what projects should be deleted.
+            // Delete all projects where I am only project user?
+            // Delete all projetcs where I am the owner?
+            // Notifications?
+            var user = await _dbContext.Users.FirstAsync(u => !u.IsDeleted && u.Id == command.UserId);
                 
-                user.FirstName = null;
-                user.LastName = null;
-                user.Email = Guid.NewGuid().ToString();
-                user.HashedPassword = Guid.NewGuid().ToString();
-                user.IsDeleted = true;
-                user.DeletedAt = DateTime.UtcNow;
+            user.FirstName = null;
+            user.LastName = null;
+            user.Email = Guid.NewGuid().ToString();
+            user.HashedPassword = Guid.NewGuid().ToString();
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
 
-                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            _ = await _dbContext.SaveChangesAsync();
                 
-                _logger.LogInformation("Delete My Details succeeded for user: {UserId}", command.UserId);
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Delete My Details failed for user: {UserId}. Unexpected error occurred", command.UserId);
-                return Result.Failure(Errors.SomethingWentWrong());
-            }
+            _logger.LogInformation("Delete my account succeeded for user: {UserId}", command.UserId);
+            return Result.Success();
         }
     }
 }

@@ -12,10 +12,10 @@ namespace Api.Features.Users.ListMyRoles
 
         [JsonPropertyName(FieldNames.RoleId)]
         [JsonPropertyOrder(0)]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
 
         [JsonPropertyName(FieldNames.RoleName)]
         [JsonPropertyOrder(1)]
-        public string? Name { get; set; }
+        public string? Name { get; init; }
     }
 }

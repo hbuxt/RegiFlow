@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,49 +33,40 @@ namespace Api.Features.Users.ListMyProjects
         {
             if (!await _userService.ExistsAsync(query.UserId))
             {
-                _logger.LogInformation("List My Projects failed for user: {UserId}. User not found", query.UserId);
+                _logger.LogInformation("List my projects failed for user: {UserId}. User not found", query.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectRead, query.UserId))
             {
-                _logger.LogInformation("List My Projects failed for user: {UserId}. User does not have permission", query.UserId);
+                _logger.LogInformation("List my projects failed for user: {UserId}. User does not have permission", 
+                    query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var projects = await _dbContext.Projects
-                    .AsNoTracking()
-                    .Include(p => p.CreatedBy)
-                    .Include(p => p.ProjectUsers)
-                    .ThenInclude(pu => pu.User)
-                    .Where(p => p.ProjectUsers.Any(pu => pu.UserId == query.UserId))
-                    .ToListAsync(cancellationToken);
+            var projects = await _dbContext.Projects
+                .AsNoTracking()
+                .Include(p => p.CreatedBy)
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == query.UserId))
+                .ToListAsync();
                 
-                _logger.LogInformation("List My Projects succeeded for user: {UserId}", query.UserId);
-                return Result.Success(new Response()
-                {
-                    Projects = projects
-                        .Select(p => new ProjectDto()
-                        {
-                            Id = p.Id,
-                            Name = p.Name,
-                            CreatedAt = p.CreatedAt,
-                            CreatedBy = p.CreatedBy == null ? null : new UserDto()
-                            {
-                                Id = p.CreatedBy.Id,
-                                Email = p.CreatedBy.Email
-                            }
-                        })
-                        .ToList()
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("List my projects succeeded for user: {UserId}", query.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "List My Projects failed for user: {UserId}. An unexpected error occurred", query.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Projects = projects
+                    .Select(p => new ProjectDto()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        CreatedAt = p.CreatedAt,
+                        CreatedBy = p.CreatedBy == null ? null : new UserDto()
+                        {
+                            Id = p.CreatedBy.Id,
+                            Email = p.CreatedBy.Email
+                        }
+                    })
+                    .ToList()
+            });
         }
     }
 }

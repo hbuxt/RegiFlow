@@ -8,7 +8,7 @@ namespace Api.Features.Users.GetMyDetails
         public static Error UserNotFound()
         {
             var code = "user_not_found";
-            var message = "We couldn't locate your account when retrieving your details.";
+            var message = "We couldn't locate your account.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }

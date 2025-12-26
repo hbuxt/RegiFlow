@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,53 +35,46 @@ namespace Api.Features.Users.ListMyNotifications
         {
             if (!await _userService.ExistsAsync(query.UserId))
             {
-                _logger.LogInformation("Notifications for user: {UserId} failed. User not found", query.UserId);
+                _logger.LogInformation("List my notifications for user: {UserId} failed. User not found", query.UserId);
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.NotificationsRead, query.UserId))
             {
-                _logger.LogInformation("Notifications for user: {UserId} failed. User does not have permission", query.UserId);
+                _logger.LogInformation("List my notifications for user: {UserId} failed. User does not have permission", 
+                    query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var notifications = await _dbContext.Notifications
-                    .AsNoTracking()
-                    .Where(n => n.RecipientId == query.UserId)
-                    .Select(n => new NotificationDto()
-                    {
-                        Id = n.Id,
-                        Type = n.Type.ToString(),
-                        Status = n.Status.ToString(),
-                        Content = n.Content,
-                        CreatedAt = n.CreatedAt,
-                        InvitationDetails = n.Type == NotificationType.Invitation
-                            ? new InvitationDetailsDto
-                            {
-                                Token = ((Invitation)n).Token,
-                                ExpiresAt = ((Invitation)n).ExpiresAt,
-                                Regarding = new ProjectDto
-                                {
-                                    Name = ((Invitation)n).Regarding!.Name
-                                }
-                            }
-                            : null
-                    })
-                    .ToListAsync(cancellationToken);
-                
-                _logger.LogInformation("Notifications for user: {UserId} succeeded", query.UserId);
-                return Result.Success(new Response()
+            var notifications = await _dbContext.Notifications
+                .AsNoTracking()
+                .Where(n => n.RecipientId == query.UserId)
+                .Select(n => new NotificationDto()
                 {
-                    Notifications = notifications
-                });
-            }
-            catch (Exception ex)
+                    Id = n.Id,
+                    Type = n.Type.ToString(),
+                    Status = n.Status.ToString(),
+                    Content = n.Content,
+                    CreatedAt = n.CreatedAt,
+                    InvitationDetails = n.Type == NotificationType.Invitation
+                        ? new InvitationDetailsDto
+                        {
+                            Token = ((Invitation)n).Token,
+                            ExpiresAt = ((Invitation)n).ExpiresAt,
+                            Regarding = new ProjectDto
+                            {
+                                Name = ((Invitation)n).Regarding!.Name
+                            }
+                        }
+                        : null
+                })
+                .ToListAsync();
+                
+            _logger.LogInformation("List my notifications for user: {UserId} succeeded", query.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "Notifications for user: {UserId} failed. Something went wrong", query.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Notifications = notifications
+            });
         }
     }
 }
