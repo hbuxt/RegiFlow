@@ -125,6 +125,41 @@ namespace Api.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    RecipientId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SentById = table.Column<Guid>(type: "TEXT", nullable: true),
+                    RelatesToId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    Content = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
+                    Token = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Projects_RelatesToId",
+                        column: x => x.RelatesToId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_SentById",
+                        column: x => x.SentById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectUsers",
                 columns: table => new
                 {
@@ -180,15 +215,20 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their roles.", "user.roles.read" },
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete a project.", "project.delete" },
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "user.update" },
+                    { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to revoke invitations in a project.", "project.invitations.revoke" },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their permissions.", "user.permissions.read" },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete their details.", "user.delete" },
+                    { new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to respond to notifications.", "notifications.update" },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their permissions in a project.", "project.permissions.read" },
+                    { new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their notifications.", "notifications.read" },
                     { new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view system roles.", "roles.read" },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their details.", "user.read" },
                     { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "project.create" },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "project.read" },
+                    { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to invite users into a project.", "project.invitations.invite" },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view the users in a project.", "project.users.read" },
-                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project.", "project.update" }
+                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project.", "project.update" },
+                    { new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to change the user's roles in a project.", "project.users.update" }
                 });
 
             migrationBuilder.InsertData(
@@ -196,9 +236,12 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "Name", "Scope" },
                 values: new object[,]
                 {
+                    { new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to read and update tickets, invite and kick users, and update user roles", "Admin", 1 },
+                    { new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to read and update tickets", "Admin", 1 },
                     { new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to perform all project operations, including project deletion.", "Owner", 1 },
                     { new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "A role assigned for demo accounts.", "Demo", 0 },
-                    { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "The role assigned when registering for an account.", "General", 0 }
+                    { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "The role assigned when registering for an account.", "General", 0 },
+                    { new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Restricts the user to reading data.", "Admin", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -211,13 +254,27 @@ namespace Api.Infrastructure.Persistence.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
+                    { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("625484d1-e87e-4df0-9997-b53bbd150df0") },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("625484d1-e87e-4df0-9997-b53bbd150df0") },
+                    { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("625484d1-e87e-4df0-9997-b53bbd150df0") },
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
+                    { new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759") },
@@ -225,16 +282,41 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
+                    { new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
+                    { new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
                     { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
-                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") }
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1") },
+                    { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("fe40c9dd-0205-4231-a9e7-da887545636a") },
+                    { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("fe40c9dd-0205-4231-a9e7-da887545636a") },
+                    { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("fe40c9dd-0205-4231-a9e7-da887545636a") }
                 });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[] { new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"), new Guid("60345af2-506f-45d9-bc6d-1e5d16a0e105") });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_RecipientId",
+                table: "Notifications",
+                column: "RecipientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_RelatesToId",
+                table: "Notifications",
+                column: "RelatesToId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_SentById",
+                table: "Notifications",
+                column: "SentById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_Token",
+                table: "Notifications",
+                column: "Token");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_CreatedById",
@@ -281,6 +363,9 @@ namespace Api.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Notifications");
+
             migrationBuilder.DropTable(
                 name: "ProjectUserRoles");
 

@@ -36,6 +36,16 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
+                    PermissionId = PermissionSeeder.NotificationsRead.Id,
+                    RoleId = RoleSeeder.General.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.NotificationsUpdate.Id,
+                    RoleId = RoleSeeder.General.Id
+                },
+                new RolePermission()
+                {
                     PermissionId = PermissionSeeder.RolesRead.Id,
                     RoleId = RoleSeeder.General.Id
                 },
@@ -66,6 +76,11 @@ namespace Api.Infrastructure.Persistence.Seeders
                 new RolePermission()
                 {
                     PermissionId = PermissionSeeder.UserPermissionsRead.Id,
+                    RoleId = RoleSeeder.Demo.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.NotificationsRead.Id,
                     RoleId = RoleSeeder.Demo.Id
                 },
                 new RolePermission()
@@ -104,15 +119,110 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
+                    PermissionId = PermissionSeeder.ProjectUsersUpdate.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
                     PermissionId = PermissionSeeder.ProjectPermissionsRead.Id,
                     RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectInvitationInvite.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectInvitationRevoke.Id,
+                    RoleId = RoleSeeder.Owner.Id
                 }
+            };
+
+            var adminPermissions = new List<RolePermission>()
+            {
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectUpdate.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectUsersRead.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectUsersUpdate.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectPermissionsRead.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectInvitationInvite.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectInvitationRevoke.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                }
+            };
+
+            var developerPermissions = new List<RolePermission>()
+            {
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
+                    RoleId = RoleSeeder.Developer.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectUsersRead.Id,
+                    RoleId = RoleSeeder.Developer.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectPermissionsRead.Id,
+                    RoleId = RoleSeeder.Developer.Id
+                },
+            };
+
+            var viewerPermissions = new List<RolePermission>()
+            {
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectRead.Id,
+                    RoleId = RoleSeeder.Viewer.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectUsersRead.Id,
+                    RoleId = RoleSeeder.Viewer.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectPermissionsRead.Id,
+                    RoleId = RoleSeeder.Viewer.Id
+                },
             };
             
             return [
                 ..generalPermissions,
                 ..DemoPermissions,
-                ..ownerPermissions
+                ..ownerPermissions,
+                ..adminPermissions,
+                ..developerPermissions,
+                ..viewerPermissions
             ];
         }
     }

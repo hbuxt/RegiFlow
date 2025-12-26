@@ -12,6 +12,8 @@ namespace Api.Domain.Entities
             UserRoles = new List<UserRole>();
             Projects = new List<Project>();
             ProjectUsers = new List<ProjectUser>();
+            Notifications = new List<Notification>();
+            Invitations = new List<Invitation>();
         }
         
         public Guid Id { get; set; }
@@ -26,5 +28,7 @@ namespace Api.Domain.Entities
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<Project> Projects { get; set; }
         public ICollection<ProjectUser> ProjectUsers { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
+        public ICollection<Invitation> Invitations { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace Api.Infrastructure.Persistence.Contexts
             Projects = base.Set<Project>();
             ProjectUsers = base.Set<ProjectUser>();
             ProjectUserRoles = base.Set<ProjectUserRole>();
+            Notifications = base.Set<Notification>();
         }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -28,6 +29,7 @@ namespace Api.Infrastructure.Persistence.Contexts
             Projects = base.Set<Project>();
             ProjectUsers = base.Set<ProjectUser>();
             ProjectUserRoles = base.Set<ProjectUserRole>();
+            Notifications = base.Set<Notification>();
         }
         
         public DbSet<User> Users { get; set; }
@@ -38,6 +40,7 @@ namespace Api.Infrastructure.Persistence.Contexts
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<ProjectUserRole> ProjectUserRoles { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +54,8 @@ namespace Api.Infrastructure.Persistence.Contexts
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectUserConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectUserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new NotificationConfiguration());
+            modelBuilder.ApplyConfiguration(new InvitationConfiguration());
         }
     }
 }

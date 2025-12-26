@@ -66,6 +66,16 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .WithOne(pu => pu.User)
                 .HasForeignKey(pu => pu.UserId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(u => u.Notifications)
+                .WithOne(n => n.Recipient)
+                .HasForeignKey(n => n.RecipientId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(u => u.Invitations)
+                .WithOne(i => i.SentBy)
+                .HasForeignKey(i => i.SentById)
+                .OnDelete(DeleteBehavior.ClientNoAction);
             
             builder.HasIndex(u => u.Email)
                 .IsUnique();

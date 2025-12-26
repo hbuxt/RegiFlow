@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251224160139_Initial")]
+    [Migration("20251226094539_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,6 +19,46 @@ namespace Api.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
+
+            modelBuilder.Entity("Api.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(6);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(8);
+
+                    b.Property<Guid>("RecipientId")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.ToTable("Notifications", (string)null);
+
+                    b.HasDiscriminator<int>("Type").HasValue(0);
+
+                    b.UseTphMappingStrategy();
+                });
 
             modelBuilder.Entity("Api.Domain.Entities.Permission", b =>
                 {
@@ -84,6 +124,20 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to view their notifications.",
+                            Name = "notifications.read"
+                        },
+                        new
+                        {
+                            Id = new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to respond to notifications.",
+                            Name = "notifications.update"
+                        },
+                        new
+                        {
                             Id = new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view system roles.",
@@ -126,10 +180,31 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to change the user's roles in a project.",
+                            Name = "project.users.update"
+                        },
+                        new
+                        {
                             Id = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their permissions in a project.",
                             Name = "project.permissions.read"
+                        },
+                        new
+                        {
+                            Id = new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to invite users into a project.",
+                            Name = "project.invitations.invite"
+                        },
+                        new
+                        {
+                            Id = new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to revoke invitations in a project.",
+                            Name = "project.invitations.revoke"
                         });
                 });
 
@@ -276,6 +351,30 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Description = "Allows the user to perform all project operations, including project deletion.",
                             Name = "Owner",
                             Scope = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to read and update tickets, invite and kick users, and update user roles",
+                            Name = "Admin",
+                            Scope = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to read and update tickets",
+                            Name = "Admin",
+                            Scope = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Restricts the user to reading data.",
+                            Name = "Admin",
+                            Scope = 1
                         });
                 });
 
@@ -324,6 +423,16 @@ namespace Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
+                            PermissionId = new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
+                            PermissionId = new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
                             PermissionId = new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0")
                         },
                         new
@@ -350,6 +459,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
                             PermissionId = new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("da91b68a-e3bf-4f88-8a72-382a9b868759"),
+                            PermissionId = new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540")
                         },
                         new
                         {
@@ -384,6 +498,86 @@ namespace Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"),
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"),
+                            PermissionId = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("625484d1-e87e-4df0-9997-b53bbd150df0"),
+                            PermissionId = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"),
+                            PermissionId = new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"),
+                            PermissionId = new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("fe40c9dd-0205-4231-a9e7-da887545636a"),
                             PermissionId = new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f")
                         });
                 });
@@ -473,6 +667,48 @@ namespace Api.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Api.Domain.Entities.Invitation", b =>
+                {
+                    b.HasBaseType("Api.Domain.Entities.Notification");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(9);
+
+                    b.Property<Guid>("RelatesToId")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(3);
+
+                    b.Property<Guid>("SentById")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(7);
+
+                    b.HasIndex("RelatesToId");
+
+                    b.HasIndex("SentById");
+
+                    b.HasIndex("Token");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Api.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("Api.Domain.Entities.User", "Recipient")
+                        .WithMany("Notifications")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+                });
+
             modelBuilder.Entity("Api.Domain.Entities.Project", b =>
                 {
                     b.HasOne("Api.Domain.Entities.User", "CreatedBy")
@@ -560,6 +796,25 @@ namespace Api.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Api.Domain.Entities.Invitation", b =>
+                {
+                    b.HasOne("Api.Domain.Entities.Project", "RelatesTo")
+                        .WithMany("Invitations")
+                        .HasForeignKey("RelatesToId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("Api.Domain.Entities.User", "SentBy")
+                        .WithMany("Invitations")
+                        .HasForeignKey("SentById")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("RelatesTo");
+
+                    b.Navigation("SentBy");
+                });
+
             modelBuilder.Entity("Api.Domain.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -567,6 +822,8 @@ namespace Api.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Api.Domain.Entities.Project", b =>
                 {
+                    b.Navigation("Invitations");
+
                     b.Navigation("ProjectUsers");
                 });
 
@@ -586,6 +843,10 @@ namespace Api.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Api.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Invitations");
+
+                    b.Navigation("Notifications");
+
                     b.Navigation("ProjectUsers");
 
                     b.Navigation("Projects");

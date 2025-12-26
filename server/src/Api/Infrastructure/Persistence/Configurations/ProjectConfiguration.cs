@@ -45,6 +45,11 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .WithOne(pu => pu.Project)
                 .HasForeignKey(pu => pu.ProjectId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.HasMany(p => p.Invitations)
+                .WithOne(p => p.RelatesTo)
+                .HasForeignKey(p => p.RelatesToId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
         }
     }
 }

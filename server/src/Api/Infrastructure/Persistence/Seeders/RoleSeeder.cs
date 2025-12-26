@@ -35,12 +35,42 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
+        public static Role Admin { get; set; } = new Role()
+        {
+            Id = new Guid("1FBB98C3-37AC-4DEF-8824-83032CFDFB54"),
+            Name = RoleNames.Admin,
+            Description = "Allows the user to read and update tickets, invite and kick users, and update user roles",
+            Scope = RoleScope.Project,
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Role Developer { get; set; } = new Role()
+        {
+            Id = new Guid("625484D1-E87E-4DF0-9997-B53BBD150DF0"),
+            Name = RoleNames.Admin,
+            Description = "Allows the user to read and update tickets",
+            Scope = RoleScope.Project,
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Role Viewer { get; set; } = new Role()
+        {
+            Id = new Guid("FE40C9DD-0205-4231-A9E7-DA887545636A"),
+            Name = RoleNames.Admin,
+            Description = "Restricts the user to reading data.",
+            Scope = RoleScope.Project,
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
         public static List<Role> Generate()
         {
             return [
                 General, 
                 Demo,
-                Owner
+                Owner,
+                Admin,
+                Developer,
+                Viewer
             ];
         }
     }

@@ -9,6 +9,7 @@ namespace Api.Domain.Entities
         {
             Name = string.Empty;
             ProjectUsers = new List<ProjectUser>();
+            Invitations = new List<Invitation>();
         }
         
         public Guid Id { get; set; }
@@ -19,5 +20,6 @@ namespace Api.Domain.Entities
         
         public User? CreatedBy { get; set; }
         public ICollection<ProjectUser> ProjectUsers { get; set; }
+        public ICollection<Invitation> Invitations { get; set; }
     }
 }

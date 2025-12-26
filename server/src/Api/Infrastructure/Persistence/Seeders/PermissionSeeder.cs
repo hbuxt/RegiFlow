@@ -47,6 +47,22 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
+        public static Permission NotificationsRead { get; set; } = new Permission()
+        {
+            Id = new Guid("63727AF0-737F-4F10-9320-1FA0FFDFD540"),
+            Name = PermissionNames.NotificationsRead,
+            Description = "Allows the user to view their notifications.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Permission NotificationsUpdate { get; set; } = new Permission()
+        {
+            Id = new Guid("47F20733-C0E4-4A0B-AD5F-BEE44B3EDBE7"),
+            Name = PermissionNames.NotificationsUpdate,
+            Description = "Allows the user to respond to notifications.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
         public static Permission RolesRead { get; set; } = new Permission()
         {
             Id = new Guid("6A856BB1-3865-4BB2-9FA9-8CC74968F1E0"),
@@ -94,12 +110,36 @@ namespace Api.Infrastructure.Persistence.Seeders
             Description = "Allows the user to view the users in a project.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
+        
+        public static Permission ProjectUsersUpdate { get; set; } = new Permission()
+        {
+            Id = new Guid("FFBC21EF-EBAB-4459-ADD6-7AC5D748C416"),
+            Name = PermissionNames.ProjectUsersUpdate,
+            Description = "Allows the user to change the user's roles in a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
 
         public static Permission ProjectPermissionsRead { get; set; } = new Permission()
         {
             Id = new Guid("5967EAC1-DABF-4C13-880A-3B25C4078A4F"),
             Name = PermissionNames.ProjectPermissionsRead,
             Description = "Allows the user to view their permissions in a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Permission ProjectInvitationInvite { get; set; } = new Permission()
+        {
+            Id = new Guid("8C2A9606-A6FA-4D1B-8068-1F3A4767EDA2"),
+            Name = PermissionNames.ProjectInvitationsInvite,
+            Description = "Allows the user to invite users into a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Permission ProjectInvitationRevoke { get; set; } = new Permission()
+        {
+            Id = new Guid("3AE302BE-A68C-4A1F-827C-B35EDABDF0BB"),
+            Name = PermissionNames.ProjectInvitationsRevoke,
+            Description = "Allows the user to revoke invitations in a project.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
 
@@ -111,13 +151,18 @@ namespace Api.Infrastructure.Persistence.Seeders
                 UserDelete,
                 UserRolesRead,
                 UserPermissionsRead,
+                NotificationsRead,
+                NotificationsUpdate,
                 RolesRead,
                 ProjectCreate,
                 ProjectRead,
                 ProjectUpdate,
                 ProjectDelete,
                 ProjectUsersRead,
-                ProjectPermissionsRead
+                ProjectUsersUpdate,
+                ProjectPermissionsRead,
+                ProjectInvitationInvite,
+                ProjectInvitationRevoke
             ];
         }
     }
