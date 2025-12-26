@@ -84,12 +84,12 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Update.Response))]
+        [ProducesDefaultResponseType(typeof(UpdateDescription.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Projects)]
-        public async Task<IResult> Update([FromRoute] Guid? id, [FromBody] Update.Request? request, CancellationToken cancellationToken)
+        public async Task<IResult> Update([FromRoute] Guid? id, [FromBody] UpdateDescription.Request? request, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Update.Command(
+            var result = await _mediator.Send(new UpdateDescription.Command(
                 User.GetUserId(), 
                 id,
                 request?.Description), cancellationToken);
@@ -156,12 +156,12 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Users.List.Response))]
+        [ProducesDefaultResponseType(typeof(ListUsers.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Projects)]
         public async Task<IResult> ListUsersInProject([FromRoute] Guid? id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Users.List.Query(User.GetUserId(), id), cancellationToken);
+            var result = await _mediator.Send(new ListUsers.Query(User.GetUserId(), id), cancellationToken);
             
             return result.Match(
                 _ => Results.Ok(result.Value),
@@ -178,12 +178,12 @@ namespace Api.Features.Projects
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Users.Me.Permissions.Response))]
+        [ProducesDefaultResponseType(typeof(ListMyPermissions.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Projects)]
         public async Task<IResult> ListMyPermissionsInProject([FromRoute] Guid? id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new Users.Me.Permissions.Query(User.GetUserId(), id), cancellationToken);
+            var result = await _mediator.Send(new ListMyPermissions.Query(User.GetUserId(), id), cancellationToken);
             
             return result.Match(
                 _ => Results.Ok(result.Value),
