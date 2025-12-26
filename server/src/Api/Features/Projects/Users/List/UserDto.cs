@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Api.Domain.Constants;
 
-namespace Api.Features.Projects.Users.Members
+namespace Api.Features.Projects.Users.List
 {
     public sealed record UserDto
     {

@@ -1,7 +1,7 @@
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 
-namespace Api.Features.Projects.Users.Members
+namespace Api.Features.Projects.Users.List
 {
     public static class Errors
     {

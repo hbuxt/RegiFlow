@@ -9,7 +9,7 @@ using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Features.Projects.Users.Members
+namespace Api.Features.Projects.Users.List
 {
     public sealed class QueryHandler : IQueryHandler<Query, Response>
     {

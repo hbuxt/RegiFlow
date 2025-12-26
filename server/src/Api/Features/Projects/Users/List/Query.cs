@@ -1,7 +1,7 @@
 using System;
 using Api.Application.Behaviours;
 
-namespace Api.Features.Projects.Users.Members
+namespace Api.Features.Projects.Users.List
 {
     public sealed record Query : IQuery<Response>
     {
