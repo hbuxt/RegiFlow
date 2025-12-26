@@ -131,7 +131,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     RecipientId = table.Column<Guid>(type: "TEXT", nullable: false),
                     SentById = table.Column<Guid>(type: "TEXT", nullable: true),
-                    RelatesToId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    RegardingId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Content = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
@@ -143,8 +143,8 @@ namespace Api.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Projects_RelatesToId",
-                        column: x => x.RelatesToId,
+                        name: "FK_Notifications_Projects_RegardingId",
+                        column: x => x.RegardingId,
                         principalTable: "Projects",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -304,9 +304,9 @@ namespace Api.Infrastructure.Persistence.Migrations
                 column: "RecipientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_RelatesToId",
+                name: "IX_Notifications_RegardingId",
                 table: "Notifications",
-                column: "RelatesToId");
+                column: "RegardingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_SentById",

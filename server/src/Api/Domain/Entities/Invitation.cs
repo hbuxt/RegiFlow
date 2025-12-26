@@ -10,11 +10,11 @@ namespace Api.Domain.Entities
         }
         
         public Guid SentById { get; set; }
-        public Guid RelatesToId { get; set; }
+        public Guid RegardingId { get; set; }
         public string Token { get; set; }
-        public DateTime? ExpiresAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
         
         public User? SentBy { get; set; }
-        public Project? RelatesTo { get; set; }
+        public Project? Regarding { get; set; }
     }
 }

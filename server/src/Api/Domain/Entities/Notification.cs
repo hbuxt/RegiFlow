@@ -14,7 +14,7 @@ namespace Api.Domain.Entities
         public NotificationType Type { get; set; }
         public NotificationStatus Status { get; set; }
         public string? Content { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         
         public User? Recipient { get; set; }
     }

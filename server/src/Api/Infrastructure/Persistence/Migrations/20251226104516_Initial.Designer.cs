@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251226094539_Initial")]
+    [Migration("20251226104516_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -675,7 +675,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnOrder(9);
 
-                    b.Property<Guid>("RelatesToId")
+                    b.Property<Guid>("RegardingId")
                         .HasColumnType("TEXT")
                         .HasColumnOrder(3);
 
@@ -689,7 +689,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnOrder(7);
 
-                    b.HasIndex("RelatesToId");
+                    b.HasIndex("RegardingId");
 
                     b.HasIndex("SentById");
 
@@ -798,9 +798,9 @@ namespace Api.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Api.Domain.Entities.Invitation", b =>
                 {
-                    b.HasOne("Api.Domain.Entities.Project", "RelatesTo")
+                    b.HasOne("Api.Domain.Entities.Project", "Regarding")
                         .WithMany("Invitations")
-                        .HasForeignKey("RelatesToId")
+                        .HasForeignKey("RegardingId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
@@ -810,7 +810,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
-                    b.Navigation("RelatesTo");
+                    b.Navigation("Regarding");
 
                     b.Navigation("SentBy");
                 });

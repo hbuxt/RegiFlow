@@ -15,7 +15,7 @@ namespace Api.Infrastructure.Persistence.Configurations
             builder.Property(i => i.SentById)
                 .HasColumnOrder(2);
 
-            builder.Property(i => i.RelatesToId)
+            builder.Property(i => i.RegardingId)
                 .HasColumnOrder(3);
 
             builder.Property(i => i.Token)
@@ -27,9 +27,9 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .HasColumnOrder(9)
                 .IsRequired();
 
-            builder.HasOne(i => i.RelatesTo)
+            builder.HasOne(i => i.Regarding)
                 .WithMany(p => p.Invitations)
-                .HasForeignKey(i => i.RelatesToId)
+                .HasForeignKey(i => i.RegardingId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.HasIndex(i => i.Token);

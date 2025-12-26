@@ -47,8 +47,8 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.HasMany(p => p.Invitations)
-                .WithOne(p => p.RelatesTo)
-                .HasForeignKey(p => p.RelatesToId)
+                .WithOne(p => p.Regarding)
+                .HasForeignKey(p => p.RegardingId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
         }
     }

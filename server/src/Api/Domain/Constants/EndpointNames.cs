@@ -11,6 +11,7 @@ namespace Api.Domain.Constants
         public const string ListMyRoles = "ListMyRoles";
         public const string ListMyProjects = "ListMyProjects";
         public const string ListMyPermissions = "ListMyPermissions";
+        public const string ListMyNotifications = "ListMyNotifications";
 
         public const string ListRoles = "ListRoles";
 
