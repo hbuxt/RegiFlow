@@ -31,10 +31,10 @@ namespace Api.Features.Roles
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(ListByScope.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> ListMyRoles([FromQuery] ListByScope.Request? request, CancellationToken cancellationToken)
+        public async Task<IResult> ListRoles([FromQuery] ListByScope.Request? request, 
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new ListByScope.Query(
                 User.GetUserId(),

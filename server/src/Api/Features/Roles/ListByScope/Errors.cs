@@ -12,13 +12,5 @@ namespace Api.Features.Roles.ListByScope
 
             return new Error(ErrorStatus.Forbidden, code, message);
         }
-
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when retrieving roles. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
     }
 }

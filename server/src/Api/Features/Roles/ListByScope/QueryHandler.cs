@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,34 +30,28 @@ namespace Api.Features.Roles.ListByScope
         {
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.RolesRead, query.UserId))
             {
-                _logger.LogInformation("Roles retrieval for scope: {RoleScope} failed for user: {UserId}. User does not have permission", query.Scope, query.UserId);
+                _logger.LogInformation("Roles retrieval by scope: {RoleScope} failed for user: {UserId}. " +
+                    "User does not have permission", query.Scope, query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var roles = await _dbContext.Roles
-                    .AsNoTracking()
-                    .Where(r => r.Scope == query.Scope)
-                    .ToListAsync(cancellationToken);
+            var roles = await _dbContext.Roles
+                .AsNoTracking()
+                .Where(r => r.Scope == query.Scope)
+                .ToListAsync();
                 
-                _logger.LogInformation("Roles retrieval for scope: {RoleScope} succeeded for user: {UserId}", query.Scope, query.UserId);
-                return Result.Success(new Response()
-                {
-                    Roles = roles
-                        .Select(r => new RoleDto()
-                        {
-                            Id = r.Id,
-                            Name = r.Name
-                        })
-                        .ToList()
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("Roles retrieval by scope: {RoleScope} succeeded for user: {UserId}", 
+                query.Scope, query.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "Roles retrieval for scope: {RoleScope} failed for user: {UserId}. Unexpected error occurred", query.Scope, query.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Roles = roles
+                    .Select(r => new RoleDto()
+                    {
+                        Id = r.Id,
+                        Name = r.Name
+                    })
+                    .ToList()
+            });
         }
     }
 }
