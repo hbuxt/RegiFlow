@@ -20,13 +20,5 @@ namespace Api.Features.Projects.ListUsers
 
             return new Error(ErrorStatus.Forbidden, code, message);
         }
-        
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when retrieving users. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
     }
 }

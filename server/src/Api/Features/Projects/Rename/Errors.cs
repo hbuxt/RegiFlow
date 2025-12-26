@@ -8,7 +8,7 @@ namespace Api.Features.Projects.Rename
         public static Error ProjectNotFound()
         {
             var code = "project_not_found";
-            var message = "We couldn't locate your project when renaming it.";
+            var message = "We couldn't locate your project.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
@@ -27,14 +27,6 @@ namespace Api.Features.Projects.Rename
             var message = "Unable to create project, one of your other projects has the same name.";
 
             return new Error(ErrorStatus.Conflict, code, message);
-        }
-        
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when renaming your project. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
         }
     }
 }

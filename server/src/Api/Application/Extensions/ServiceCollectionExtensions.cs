@@ -16,7 +16,6 @@ namespace Api.Application.Extensions
             });
 
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IPermissionService, PermissionService>();
             

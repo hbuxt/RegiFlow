@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,37 +33,32 @@ namespace Api.Features.Projects.ListMyPermissions
         {
             if (!await _projectService.ExistsAsync(query.ProjectId))
             {
-                _logger.LogInformation("List My Permissions failed for user: {UserId} in project: {ProjectId}. Project not found", query.UserId, query.ProjectId);
+                _logger.LogInformation("List my permissions failed for user: {UserId} in project: {ProjectId}. " +
+                    "Project not found", query.UserId, query.ProjectId);
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectPermissionsRead, query.UserId, query.ProjectId))
             {
-                _logger.LogInformation("List My Permissions failed for user: {UserId} in project: {ProjectId}. User does not have permission", query.UserId, query.ProjectId);
+                _logger.LogInformation("List my permissions failed for user: {UserId} in project: {ProjectId}. " +
+                    "User does not have permission", query.UserId, query.ProjectId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var permissions = await _dbContext.ProjectUsers
-                    .AsNoTracking()
-                    .Where(pu => pu.ProjectId == query.ProjectId && pu.UserId == query.UserId)
-                    .SelectMany(pu => pu.ProjectUserRoles)
-                    .SelectMany(pur => pur.Role!.RolePermissions)
-                    .Select(rp => rp.Permission!)
-                    .ToListAsync(cancellationToken);
+            var permissions = await _dbContext.ProjectUsers
+                .AsNoTracking()
+                .Where(pu => pu.ProjectId == query.ProjectId && pu.UserId == query.UserId)
+                .SelectMany(pu => pu.ProjectUserRoles)
+                .SelectMany(pur => pur.Role!.RolePermissions)
+                .Select(rp => rp.Permission!)
+                .ToListAsync();
                 
-                _logger.LogInformation("List My Permissions failed for user: {UserId} in project: {ProjectId}", query.UserId, query.ProjectId);
-                return Result.Success(new Response()
-                {
-                    Permissions = permissions.Select(p => p.Name).ToList()
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("List my permissions failed for user: {UserId} in project: {ProjectId}", 
+                query.UserId, query.ProjectId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "List My Permissions failed for user: {UserId} in project: {ProjectId}. An unexpected error occurred", query.UserId, query.ProjectId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Permissions = permissions.Select(p => p.Name).ToList()
+            });
         }
     }
 }

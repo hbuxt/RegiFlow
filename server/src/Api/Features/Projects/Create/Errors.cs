@@ -8,7 +8,7 @@ namespace Api.Features.Projects.Create
         public static Error UserNotFound()
         {
             var code = "user_not_found";
-            var message = "We couldn't locate your account when creating your project.";
+            var message = "We couldn't locate your account.";
 
             return new Error(ErrorStatus.NotFound, code, message);
         }
@@ -32,14 +32,6 @@ namespace Api.Features.Projects.Create
         public static Error RoleNotFound()
         {
             var code = "role_not_found";
-            var message = "An unexpected error occurred when creating your project. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
-        
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
             var message = "An unexpected error occurred when creating your project. Please try again.";
 
             return new Error(ErrorStatus.Failure, code, message);

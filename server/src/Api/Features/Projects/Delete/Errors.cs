@@ -20,13 +20,5 @@ namespace Api.Features.Projects.Delete
 
             return new Error(ErrorStatus.Forbidden, code, message);
         }
-        
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when deleting your project. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
     }
 }

@@ -30,7 +30,7 @@ namespace Api.Features.Roles.ListByScope
         {
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.RolesRead, query.UserId))
             {
-                _logger.LogInformation("Roles retrieval by scope: {RoleScope} failed for user: {UserId}. " +
+                _logger.LogInformation("List roles by scope: {RoleScope} failed for user: {UserId}. " +
                     "User does not have permission", query.Scope, query.UserId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
@@ -40,7 +40,7 @@ namespace Api.Features.Roles.ListByScope
                 .Where(r => r.Scope == query.Scope)
                 .ToListAsync();
                 
-            _logger.LogInformation("Roles retrieval by scope: {RoleScope} succeeded for user: {UserId}", 
+            _logger.LogInformation("List roles by scope: {RoleScope} succeeded for user: {UserId}", 
                 query.Scope, query.UserId);
             return Result.Success(new Response()
             {

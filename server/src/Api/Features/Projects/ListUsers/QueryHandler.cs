@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,50 +33,46 @@ namespace Api.Features.Projects.ListUsers
         {
             if (!await _projectService.ExistsAsync(query.ProjectId))
             {
-                _logger.LogInformation("Project: {ProjectId} query failed for user: {UserId}. Project not found", query.ProjectId, query.UserId);
+                _logger.LogInformation("List project users failed for user: {UserId} in project: {ProjectId}. " +
+                "   Project not found", query.UserId, query.ProjectId);
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUsersRead, query.UserId, query.ProjectId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUsersRead, query.UserId, 
+                query.ProjectId))
             {
-                _logger.LogInformation("Project: {ProjectId} query failed for user: {UserId}. User does not have permission", query.ProjectId, query.UserId);
+                _logger.LogInformation("List project users failed for user: {UserId} in project: {ProjectId}. " +
+                "   User does not have permission", query.UserId, query.ProjectId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var users = await _dbContext.ProjectUsers
-                    .AsNoTracking()
-                    .Include(pu => pu.User)
-                    .Include(pu => pu.ProjectUserRoles)
-                    .ThenInclude(pur => pur.Role)
-                    .Where(pu => pu.ProjectId == query.ProjectId)
-                    .ToListAsync(cancellationToken);
+            var users = await _dbContext.ProjectUsers
+                .AsNoTracking()
+                .Include(pu => pu.User)
+                .Include(pu => pu.ProjectUserRoles)
+                .ThenInclude(pur => pur.Role)
+                .Where(pu => pu.ProjectId == query.ProjectId)
+                .ToListAsync();
                 
-                _logger.LogInformation("Project: {ProjectId} query succeeded for user: {UserId}", query.ProjectId, query.UserId);
-                return Result.Success(new Response()
-                {
-                    Users = users
-                        .Select(pu => new UserDto()
-                        {
-                            Id = pu.User!.Id,
-                            Email = pu.User.Email,
-                            Roles = pu.ProjectUserRoles
-                                .Select(pur => new RoleDto()
-                                {
-                                    Id = pur.Role!.Id,
-                                    Name = pur.Role.Name
-                                })
-                                .ToList()
-                        })
-                        .ToList()
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("List project users succeeded for user: {UserId} in project: {ProjectId}", 
+                query.ProjectId, query.UserId);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "Project: {ProjectId} query failed for user: {UserId}. Unexpected error occurred", query.ProjectId, query.UserId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                Users = users
+                    .Select(pu => new UserDto()
+                    {
+                        Id = pu.User!.Id,
+                        Email = pu.User.Email,
+                        Roles = pu.ProjectUserRoles
+                            .Select(pur => new RoleDto()
+                            {
+                                Id = pur.Role!.Id,
+                                Name = pur.Role.Name
+                            })
+                            .ToList()
+                    })
+                    .ToList()
+            });
         }
     }
 }

@@ -41,60 +41,52 @@ namespace Api.Features.Projects.Rename
 
             if (!validationResult.IsValid)
             {
-                _logger.LogInformation("Rename Project failed for user: {UserId} in project: {ProjectId}. Validation errors occurred: {@Errors}", command.UserId, command.ProjectId, validationResult.ToFormattedDictionary());
-                return Result.Failure<Response>(validationResult.ToFormattedDictionary());
+                var validationErrors = validationResult.ToFormattedDictionary();
+                
+                _logger.LogInformation("Rename project failed for user: {UserId} in project: {ProjectId}. " +
+                    "Validation errors occurred: {@Errors}", command.UserId, command.ProjectId, validationErrors);
+                return Result.Failure<Response>(validationErrors);
             }
             
             if (!await _projectService.ExistsAsync(command.ProjectId))
             {
-                _logger.LogInformation("Rename Project failed for user: {UserId} in project: {ProjectId}. Project not found", command.UserId, command.ProjectId);
+                _logger.LogInformation("Rename project failed for user: {UserId} in project: {ProjectId}. " +
+                    "Project not found", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUpdate, command.UserId, command.ProjectId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUpdate, command.UserId, 
+                command.ProjectId))
             {
-                _logger.LogInformation("Rename Project failed for user: {UserId} in project: {ProjectId}. User does not have permission", command.UserId, command.ProjectId);
+                _logger.LogInformation("Rename project failed for user: {UserId} in project: {ProjectId}. " +
+                "User does not have permission", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var isDuplicate = await _dbContext.Projects
-                    .AsNoTracking()
-                    .Where(p => p.CreatedById == command.UserId && p.Id != command.ProjectId)
-                    .AnyAsync(p => string.Equals(p.Name, command.Name), cancellationToken);
+            var isDuplicate = await _dbContext.Projects
+                .AsNoTracking()
+                .Where(p => p.CreatedById == command.UserId && p.Id != command.ProjectId)
+                .AnyAsync(p => string.Equals(p.Name, command.Name));
                 
-                if (isDuplicate)
-                {
-                    _logger.LogInformation("Rename Project failed for user: {UserId} in project: {ProjectId}. Duplicate projects: {ProjectName} found", command.UserId, command.ProjectId, command.Name);
-                    return Result.Failure<Response>(Errors.DuplicateProjectName());
-                }
-            }
-            catch (Exception ex)
+            if (isDuplicate)
             {
-                _logger.LogError(ex, "Rename Project failed for user: {UserId} in project: {ProjectId}. Unexpected error occurred", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
+                _logger.LogInformation("Rename project failed for user: {UserId} in project: {ProjectId}. " +
+                    "Duplicate projects: {ProjectName} found", command.UserId, command.ProjectId, command.Name);
+                return Result.Failure<Response>(Errors.DuplicateProjectName());
             }
 
-            try
+            var project = await _dbContext.Projects.FirstAsync(p => p.Id == command.ProjectId);
+
+            project.Name = command.Name;
+
+            _ = await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Rename Project succeeded for user: {UserId} in project: {ProjectId}", 
+                command.UserId, command.ProjectId);
+            return Result.Success(new Response()
             {
-                var project = await _dbContext.Projects.FirstAsync(p => p.Id == command.ProjectId, cancellationToken);
-
-                project.Name = command.Name;
-
-                _ = await _dbContext.SaveChangesAsync(cancellationToken);
-
-                _logger.LogInformation("Rename Project succeeded for user: {UserId} in project: {ProjectId}", command.UserId, command.ProjectId);
-                return Result.Success(new Response()
-                {
-                    ProjectId = project.Id
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Rename Project failed for user: {UserId} in project: {ProjectId}. Unexpected error occurred", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                ProjectId = project.Id
+            });
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,43 +33,37 @@ namespace Api.Features.Projects.Delete
         {
             if (!await _projectService.ExistsAsync(command.ProjectId))
             {
-                _logger.LogInformation("Delete Project failed for user: {UserId} in project: {ProjectId}. Project not found", command.UserId, command.ProjectId);
+                _logger.LogInformation("Delete project failed for user: {UserId} in project: {ProjectId}. " +
+                    "Project not found", command.UserId, command.ProjectId);
                 return Result.Failure(Errors.ProjectNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectDelete, command.UserId, command.ProjectId))
             {
-                _logger.LogInformation("Delete Project failed for user: {UserId} in project: {ProjectId}. User does not have permission", command.UserId, command.ProjectId);
+                _logger.LogInformation("Delete project failed for user: {UserId} in project: {ProjectId}. " +
+                        "User does not have permission", command.UserId, command.ProjectId);
                 return Result.Failure(Errors.UserNotAuthorized());
             }
 
-            try
-            {
-                var project = await _dbContext.Projects.FirstAsync(p => p.Id == command.ProjectId, cancellationToken);
+            var project = await _dbContext.Projects.FirstAsync(p => p.Id == command.ProjectId);
                 
-                var projectUsers = await _dbContext.ProjectUsers
-                    .Where(pu => pu.ProjectId == project.Id)
-                    .ToListAsync(cancellationToken);
+            var projectUsers = await _dbContext.ProjectUsers
+                .Where(pu => pu.ProjectId == project.Id)
+                .ToListAsync();
 
-                var projectUserIds = projectUsers.Select(pu => pu.Id);
-                var projectUserRoles = await _dbContext.ProjectUserRoles
-                    .Where(pur => projectUserIds.Contains(pur.ProjectUserId))
-                    .ToListAsync(cancellationToken);
+            var projectUserIds = projectUsers.Select(pu => pu.Id);
+            var projectUserRoles = await _dbContext.ProjectUserRoles
+                .Where(pur => projectUserIds.Contains(pur.ProjectUserId))
+                .ToListAsync();
 
-                _dbContext.ProjectUserRoles.RemoveRange(projectUserRoles);
-                _dbContext.ProjectUsers.RemoveRange(projectUsers);
-                _dbContext.Projects.Remove(project);
-
-                _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.ProjectUserRoles.RemoveRange(projectUserRoles);
+            _dbContext.ProjectUsers.RemoveRange(projectUsers);
+            _dbContext.Projects.Remove(project);
+            _ = await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                _logger.LogInformation("Delete Project succeeded for user: {UserId} in project: {ProjectId}", command.UserId, command.ProjectId);
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Delete Project failed for user: {UserId} in project: {ProjectId}. Unexpected error occurred", command.UserId, command.ProjectId);
-                return Result.Failure(Errors.SomethingWentWrong());
-            }
+            _logger.LogInformation("Delete project succeeded for user: {UserId} in project: {ProjectId}", 
+                command.UserId, command.ProjectId);
+            return Result.Success();
         }
     }
 }

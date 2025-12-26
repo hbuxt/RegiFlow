@@ -17,67 +17,71 @@ namespace Api.Features.Projects.InviteUser
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
         private readonly AppDbContext _dbContext;
-        private readonly IProjectService _projectService;
-        private readonly IUserService _userService;
-        private readonly IRoleService _roleService;
         private readonly IPermissionService _permissionService;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
             AppDbContext dbContext, 
-            IProjectService projectService,
-            IUserService userService,
-            IRoleService roleService,
             IPermissionService permissionService, 
             ILogger<CommandHandler> logger)
         {
             _dbContext = dbContext;
-            _projectService = projectService;
-            _userService = userService;
-            _roleService = roleService;
             _permissionService = permissionService;
             _logger = logger;
         }
 
         public async Task<Result<Response>> Handle(Command command, CancellationToken cancellationToken)
         {
-            var roles = await _roleService.GetAsync(command.Roles, RoleScope.Project);
+            var roles = await _dbContext.Roles
+                .AsNoTracking()
+                .Where(r => r.Scope == RoleScope.Project && command.Roles.Contains(r.Id))
+                .ToListAsync();
             
             if (roles.Count != command.Roles.Count)
             {
-                _logger.LogInformation("Project: {ProjectId} invitation failed for user: {UserId}. One of the roles did not exist", command.ProjectId, command.UserId);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "One of the roles did not exist", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.RoleNotFound());
             }
-            
-            var project = await _projectService.GetAsync(command.ProjectId);
+
+            var project = await _dbContext.Projects
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.Id == command.ProjectId);
             
             if (project == null)
             {
-                _logger.LogInformation("Project: {Projectid} invitation failed for user: {UserId}. Project does not exist", command.ProjectId, command.UserId);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "Project does not exist", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectInvitationsInvite, command.UserId, command.ProjectId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectInvitationsInvite, command.UserId, 
+                command.ProjectId))
             {
-                _logger.LogInformation("Project: {ProjectId} invitation failed for user: {UserId}. User does not have permission", command.ProjectId, command.UserId);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "User does not have permission", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
-            
-            var recipient = await _userService.GetAsync(command.Email);
+
+            var recipient = await _dbContext.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => !u.IsDeleted && u.Email == command.Email);
 
             if (recipient == null)
             {
-                _logger.LogInformation("Project: {ProjectId} invitation failed for user: {UserId}. User: {UserEmail} does not exist", command.ProjectId, command.UserId, command.Email);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "User: {UserEmail} does not exist", command.UserId, command.ProjectId, command.Email);
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
             var isInProject = await _dbContext.ProjectUsers
                 .AsNoTracking()
-                .AnyAsync(pu => pu.UserId == recipient.Id, cancellationToken);
+                .AnyAsync(pu => pu.UserId == recipient.Id);
 
             if (isInProject)
             {
-                _logger.LogInformation("Project: {ProjectId} invitation for user: {UserId}. Duplicate user in project.", command.ProjectId, command.UserId);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                "   Duplicate user in project.", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.DuplicateUser());
             }
 
@@ -85,11 +89,12 @@ namespace Api.Features.Projects.InviteUser
                 .AsNoTracking()
                 .AnyAsync(i => i.RegardingId == project.Id &&
                                i.Status == NotificationStatus.Pending &&
-                               i.RecipientId == recipient.Id, cancellationToken);
+                               i.RecipientId == recipient.Id);
 
             if (pendingInvitationExists)
             {
-                _logger.LogInformation("Project: {ProjectId} invitation for user: {UserId}. Duplicate invitation in project.", command.ProjectId, command.UserId);
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "Duplicate invitation in project.", command.UserId, command.ProjectId);
                 return Result.Failure<Response>(Errors.DuplicateInvitation());
             }
 
@@ -112,9 +117,10 @@ namespace Api.Features.Projects.InviteUser
             };
 
             _ = _dbContext.Notifications.Add(invitation);
-            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            _ = await _dbContext.SaveChangesAsync();
                 
-            _logger.LogInformation("Project: {ProjectId} invitation to recipient: {RecipientId} succeded for user: {UserId}", command.ProjectId, recipient.Id, command.UserId);
+            _logger.LogInformation("Project invitation succeded for user: {UserId} in " +
+                "project: {ProjectId} to recipient: {RecipientId}", command.UserId, command.ProjectId, recipient.Id);
             return Result.Success(new Response()
             {
                 Id = invitation.Id

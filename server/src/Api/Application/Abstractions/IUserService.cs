@@ -8,6 +8,5 @@ namespace Api.Application.Abstractions
     {
         Task<bool> ExistsAsync(Guid? id);
         Task<bool> ExistsAsync(string? email);
-        Task<User?> GetAsync(string? email);
     }
 }
