@@ -4,10 +4,7 @@ namespace Api.Features.Auth.Register
 {
     public sealed record Command : ICommand<Response>
     {
-        public Command(
-            string? email,
-            string? password,
-            string? confirmPassword)
+        public Command(string? email, string? password, string? confirmPassword)
         {
             Email = email?.Trim() ?? string.Empty;
             Password = password ?? string.Empty;

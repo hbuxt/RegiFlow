@@ -11,6 +11,6 @@ namespace Api.Features.Auth.Register
 
         [JsonPropertyName(FieldNames.AccessToken)]
         [JsonPropertyOrder(0)]
-        public string? AccessToken { get; set; }
+        public string? AccessToken { get; init; }
     }
 }

@@ -10,12 +10,12 @@ namespace Api.Features.Auth.Register
         }
 
         [FromForm(Name = FieldNames.Email)]
-        public string? Email { get; set; }
+        public string? Email { get; init; }
 
         [FromForm(Name = FieldNames.Password)]
-        public string? Password { get; set; }
+        public string? Password { get; init; }
 
         [FromForm(Name = FieldNames.ConfirmPassword)]
-        public string? ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; init; }
     }
 }

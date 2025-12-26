@@ -12,13 +12,5 @@ namespace Api.Features.Auth.Login
             
             return new Error(ErrorStatus.NotFound, code, message);
         }
-
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred when signing you in. Please try again later.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
     }
 }

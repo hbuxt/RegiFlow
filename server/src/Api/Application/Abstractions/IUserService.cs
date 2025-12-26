@@ -7,6 +7,7 @@ namespace Api.Application.Abstractions
     public interface IUserService
     {
         Task<bool> ExistsAsync(Guid? id);
+        Task<bool> ExistsAsync(string? email);
         Task<User?> GetAsync(Guid? id);
         Task<User?> GetAsync(string? email);
     }

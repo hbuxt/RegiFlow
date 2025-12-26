@@ -1,31 +1,32 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Application.Extensions;
 using Api.Infrastructure.Identity;
+using Api.Infrastructure.Persistence.Contexts;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Auth.Login
 {
     public sealed class CommandHandler : ICommandHandler<Command, Response>
     {
-        private readonly IUserService _userService;
+        private readonly AppDbContext _dbContext;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
         
         public CommandHandler(
-            IUserService userService,
+            AppDbContext dbContext,
             IPasswordHasher passwordHasher,
             ITokenGenerator tokenGenerator,
             IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
-            _userService = userService;
+            _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _tokenGenerator = tokenGenerator;
             _validator = validator;
@@ -38,37 +39,34 @@ namespace Api.Features.Auth.Login
 
             if (!validationResult.IsValid)
             {
-                _logger.LogInformation("Login failed for user: {Email}. Validation errors occurred: {@Errors}", command.Email, validationResult.ToFormattedDictionary());
-                return Result.Failure<Response>(validationResult.ToFormattedDictionary());
+                var validationErrors = validationResult.ToFormattedDictionary();
+                
+                _logger.LogInformation("Login failed for user: {Email}. Validation errors occurred: {@Errors}", 
+                    command.Email, validationErrors);
+                return Result.Failure<Response>(validationErrors);
             }
 
-            var user = await _userService.GetAsync(command.Email);
+            var user = await _dbContext.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => !u.IsDeleted && u.Email == command.Email);
 
             if (user == null)
             {
-                _logger.LogInformation("Login failed for user: {Email}. User not found", command.Email);
+                _logger.LogWarning("Login failed for user: {Email}. User not found", command.Email);
                 return Result.Failure<Response>(Errors.InvalidCredentials());
             }
 
-            try
+            if (!_passwordHasher.VerifyPassword(command.Password, user.HashedPassword))
             {
-                if (!_passwordHasher.VerifyPassword(command.Password, user.HashedPassword))
-                {
-                    _logger.LogInformation("Login failed for user: {Email}. Invalid password", command.Email);
-                    return Result.Failure<Response>(Errors.InvalidCredentials());
-                }
+                _logger.LogWarning("Login failed for user: {Email}. Invalid password", command.Email);
+                return Result.Failure<Response>(Errors.InvalidCredentials());
+            }
 
-                _logger.LogInformation("Login succeeded for user: {UserId}", user.Id);
-                return Result.Success(new Response()
-                {
-                    AccessToken = _tokenGenerator.GenerateAccessToken(user)
-                });
-            }
-            catch (Exception ex)
+            _logger.LogInformation("Login succeeded for user: {UserId}", user.Id);
+            return Result.Success(new Response()
             {
-                _logger.LogError(ex, "Login failed for user: {Email}. Unexpected error occurred", command.Email);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
+                AccessToken = _tokenGenerator.GenerateAccessToken(user)
+            });
         }
     }
 }

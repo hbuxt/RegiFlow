@@ -10,6 +10,7 @@ using Api.Domain.Enums;
 using Api.Infrastructure.Identity;
 using Api.Infrastructure.Persistence.Contexts;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Auth.Register
@@ -18,7 +19,6 @@ namespace Api.Features.Auth.Register
     {
         private readonly AppDbContext _dbContext;
         private readonly IUserService _userService;
-        private readonly IRoleService _roleService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IValidator<Command> _validator;
@@ -27,7 +27,6 @@ namespace Api.Features.Auth.Register
         public CommandHandler(
             AppDbContext dbContext,
             IUserService userService,
-            IRoleService roleService,
             IPasswordHasher passwordHasher,
             ITokenGenerator tokenGenerator,
             IValidator<Command> validator,
@@ -35,7 +34,6 @@ namespace Api.Features.Auth.Register
         {
             _dbContext = dbContext;
             _userService = userService;
-            _roleService = roleService;
             _passwordHasher = passwordHasher;
             _tokenGenerator = tokenGenerator;
             _validator = validator;
@@ -48,19 +46,24 @@ namespace Api.Features.Auth.Register
 
             if (!validationResult.IsValid)
             {
-                _logger.LogInformation("Registration failed for user: {Email}. Validation errors occurred: {@Errors}", command.Email, validationResult.ToFormattedDictionary());
-                return Result.Failure<Response>(validationResult.ToFormattedDictionary());
+                var validationErrors = validationResult.ToFormattedDictionary();
+                
+                _logger.LogInformation("Registration failed for user: {Email}. Validation errors occurred: {@Errors}", 
+                    command.Email, validationErrors);
+                return Result.Failure<Response>(validationErrors);
             }
 
-            var existingUser = await _userService.GetAsync(command.Email);
-
-            if (existingUser != null)
+            if (!await _userService.ExistsAsync(command.Email))
             {
                 _logger.LogInformation("Registration failed for user: {Email}. User already exists", command.Email);
                 return Result.Failure<Response>(Errors.AccountAlreadyExists());
             }
 
-            var role = await _roleService.GetAsync(RoleNames.General, RoleScope.Application);
+            var role = await _dbContext.Roles
+                .AsNoTracking()
+                .SingleOrDefaultAsync(r => 
+                    r.Scope == RoleScope.Application && 
+                    r.Name == RoleNames.General);
 
             if (role == null)
             {
@@ -72,6 +75,7 @@ namespace Api.Features.Auth.Register
             {
                 Id = Guid.NewGuid(),
                 Email = command.Email,
+                HashedPassword = _passwordHasher.HashPassword(command.Password),
                 CreatedAt = DateTime.UtcNow
             };
             
@@ -81,38 +85,15 @@ namespace Api.Features.Auth.Register
                 RoleId = role.Id
             };
 
-            try
+            _ = _dbContext.Users.Add(user);
+            _ = _dbContext.UserRoles.Add(userRole);
+            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Registration succeeded for user: {UserId}", user.Id);
+            return Result.Success(new Response()
             {
-                user.HashedPassword = _passwordHasher.HashPassword(command.Password);
-                
-                _ = _dbContext.Users.Add(user);
-                _ = _dbContext.UserRoles.Add(userRole);
-                _ = await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Registration failed for user: {UserEmail}. Unexpected error occurred", command.Email);
-                return Result.Failure<Response>(Errors.SomethingWentWrong());
-            }
-            
-            try
-            {
-                var accessToken = _tokenGenerator.GenerateAccessToken(user);
-                    
-                _logger.LogInformation("Registration succeeded for user: {UserId}", user.Id);
-                return Result.Success(new Response()
-                {
-                    AccessToken = accessToken
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Registration succeeded for user: {UserId}. Access token failed to generate", user.Id);
-                return Result.Success(new Response()
-                {
-                    AccessToken = null
-                });
-            }
+                AccessToken = _tokenGenerator.GenerateAccessToken(user)
+            });
         }
     }
 }

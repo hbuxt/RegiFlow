@@ -20,13 +20,5 @@ namespace Api.Features.Auth.Register
 
             return new Error(ErrorStatus.Failure, code, message);
         }
-
-        public static Error SomethingWentWrong()
-        {
-            var code = "unexpected_error";
-            var message = "An unexpected error occurred while registering your account. Please try again.";
-
-            return new Error(ErrorStatus.Failure, code, message);
-        }
     }
 }

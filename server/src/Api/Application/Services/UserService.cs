@@ -28,17 +28,21 @@ namespace Api.Application.Services
                 return false;
             }
 
-            try
+            return await _dbContext.Users
+                .AsNoTracking()
+                .AnyAsync(u => !u.IsDeleted && u.Id == id.Value);
+        }
+        
+        public async Task<bool> ExistsAsync(string? email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
             {
-                return await _dbContext.Users
-                    .AsNoTracking()
-                    .AnyAsync(u => !u.IsDeleted && u.Id == id.Value);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "User: {UserId} existence check failed", id);
                 return false;
             }
+
+            return await _dbContext.Users
+                .AsNoTracking()
+                .AnyAsync(u => !u.IsDeleted && u.Email == email);
         }
 
         public async Task<User?> GetAsync(Guid? id)

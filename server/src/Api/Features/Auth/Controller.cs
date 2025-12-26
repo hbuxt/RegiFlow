@@ -32,7 +32,6 @@ namespace Api.Features.Auth
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Register.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Authentication)]
         public async Task<IResult> Register([FromForm] Register.Request? request, CancellationToken cancellationToken)
@@ -57,7 +56,6 @@ namespace Api.Features.Auth
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesDefaultResponseType(typeof(Login.Response))]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Authentication)]
         public async Task<IResult> Login([FromForm] Login.Request? request, CancellationToken cancellationToken)
