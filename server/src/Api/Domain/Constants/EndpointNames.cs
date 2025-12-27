@@ -8,6 +8,7 @@ namespace Api.Domain.Constants
         public const string GetMyDetails = "GetMyDetails";
         public const string UpdateMyDetails = "UpdateMyDetails";
         public const string DeleteMyAccount = "DeleteMyAccount";
+        public const string RespondToMyInvitation = "RespondToMyInvitation";
         public const string ListMyRoles = "ListMyRoles";
         public const string ListMyProjects = "ListMyProjects";
         public const string ListMyPermissions = "ListMyPermissions";

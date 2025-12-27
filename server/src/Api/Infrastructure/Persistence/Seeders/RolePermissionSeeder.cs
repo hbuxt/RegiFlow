@@ -26,6 +26,11 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
+                    PermissionId = PermissionSeeder.UserInvitationsUpdate.Id,
+                    RoleId = RoleSeeder.General.Id
+                },
+                new RolePermission()
+                {
                     PermissionId = PermissionSeeder.UserRolesRead.Id,
                     RoleId = RoleSeeder.General.Id
                 },
@@ -36,12 +41,7 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.NotificationsRead.Id,
-                    RoleId = RoleSeeder.General.Id
-                },
-                new RolePermission()
-                {
-                    PermissionId = PermissionSeeder.NotificationsUpdate.Id,
+                    PermissionId = PermissionSeeder.UserNotificationsRead.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()
@@ -80,7 +80,7 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.NotificationsRead.Id,
+                    PermissionId = PermissionSeeder.UserNotificationsRead.Id,
                     RoleId = RoleSeeder.Demo.Id
                 },
                 new RolePermission()

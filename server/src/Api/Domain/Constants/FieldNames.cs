@@ -24,6 +24,7 @@ namespace Api.Domain.Constants
         public const string InvitationToken = "token";
         public const string InvitationRegarding = "regarding";
         public const string InvitationExpiresAt = "expires_at";
+        public const string InvitationStatus = "status";
 
         public const string Roles = "roles";
         public const string RoleId = "id";

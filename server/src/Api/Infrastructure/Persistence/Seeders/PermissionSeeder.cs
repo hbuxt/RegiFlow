@@ -30,6 +30,14 @@ namespace Api.Infrastructure.Persistence.Seeders
             Description = "Allows the user to delete their details.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
+        
+        public static Permission UserInvitationsUpdate { get; set; } = new Permission()
+        {
+            Id = new Guid("87EDFA7A-1FCD-4114-BEA8-4B89CD21FBDE"),
+            Name = PermissionNames.UserInvitationsUpdate,
+            Description = "Allows the user to respond to invitations.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
 
         public static Permission UserRolesRead { get; set; } = new Permission()
         {
@@ -47,19 +55,11 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
-        public static Permission NotificationsRead { get; set; } = new Permission()
+        public static Permission UserNotificationsRead { get; set; } = new Permission()
         {
             Id = new Guid("63727AF0-737F-4F10-9320-1FA0FFDFD540"),
-            Name = PermissionNames.NotificationsRead,
+            Name = PermissionNames.UserNotificationsRead,
             Description = "Allows the user to view their notifications.",
-            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
-        };
-        
-        public static Permission NotificationsUpdate { get; set; } = new Permission()
-        {
-            Id = new Guid("47F20733-C0E4-4A0B-AD5F-BEE44B3EDBE7"),
-            Name = PermissionNames.NotificationsUpdate,
-            Description = "Allows the user to respond to notifications.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
@@ -149,10 +149,10 @@ namespace Api.Infrastructure.Persistence.Seeders
                 UserRead,
                 UserUpdate,
                 UserDelete,
+                UserInvitationsUpdate,
                 UserRolesRead,
                 UserPermissionsRead,
-                NotificationsRead,
-                NotificationsUpdate,
+                UserNotificationsRead,
                 RolesRead,
                 ProjectCreate,
                 ProjectRead,

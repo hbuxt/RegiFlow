@@ -53,7 +53,7 @@ namespace Api.Features.Auth.Register
                 return Result.Failure<Response>(validationErrors);
             }
 
-            if (!await _userService.ExistsAsync(command.Email))
+            if (await _userService.ExistsAsync(command.Email))
             {
                 _logger.LogInformation("Registration failed for user: {Email}. User already exists", command.Email);
                 return Result.Failure<Response>(Errors.AccountAlreadyExists());
@@ -79,13 +79,14 @@ namespace Api.Features.Auth.Register
                 CreatedAt = DateTime.UtcNow
             };
             
+            _ = _dbContext.Users.Add(user);
+            
             var userRole = new UserRole()
             {
                 UserId = user.Id,
                 RoleId = role.Id
             };
-
-            _ = _dbContext.Users.Add(user);
+            
             _ = _dbContext.UserRoles.Add(userRole);
             _ = await _dbContext.SaveChangesAsync(cancellationToken);
 

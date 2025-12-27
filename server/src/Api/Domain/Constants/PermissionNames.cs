@@ -5,11 +5,10 @@ namespace Api.Domain.Constants
         public const string UserRead = "user.read";
         public const string UserUpdate = "user.update";
         public const string UserDelete = "user.delete";
+        public const string UserInvitationsUpdate = "user.invitations.update";
         public const string UserRolesRead = "user.roles.read";
         public const string UserPermissionsRead = "user.permissions.read";
-
-        public const string NotificationsRead = "notifications.read";
-        public const string NotificationsUpdate = "notifications.update";
+        public const string UserNotificationsRead = "user.notifications.read";
 
         public const string RolesRead = "roles.read";
 

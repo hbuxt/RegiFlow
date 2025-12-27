@@ -39,7 +39,7 @@ namespace Api.Features.Users.ListMyNotifications
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.NotificationsRead, query.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserNotificationsRead, query.UserId))
             {
                 _logger.LogInformation("List my notifications for user: {UserId} failed. User does not have permission", 
                     query.UserId);

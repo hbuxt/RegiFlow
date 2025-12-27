@@ -107,6 +107,13 @@ namespace Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("87edfa7a-1fcd-4114-bea8-4b89cd21fbde"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to respond to invitations.",
+                            Name = "user.invitations.update"
+                        },
+                        new
+                        {
                             Id = new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their roles.",
@@ -124,14 +131,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to view their notifications.",
-                            Name = "notifications.read"
-                        },
-                        new
-                        {
-                            Id = new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to respond to notifications.",
-                            Name = "notifications.update"
+                            Name = "user.notifications.read"
                         },
                         new
                         {
@@ -410,6 +410,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
+                            PermissionId = new Guid("87edfa7a-1fcd-4114-bea8-4b89cd21fbde")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
                             PermissionId = new Guid("0e9b858f-164d-4c75-a559-9c13d3794547")
                         },
                         new
@@ -421,11 +426,6 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
                             PermissionId = new Guid("63727af0-737f-4f10-9320-1fa0ffdfd540")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("ec9607b4-eeb3-4fa2-bb21-0a728ced03f1"),
-                            PermissionId = new Guid("47f20733-c0e4-4a0b-ad5f-bee44b3edbe7")
                         },
                         new
                         {
