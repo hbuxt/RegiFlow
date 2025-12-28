@@ -106,7 +106,7 @@ namespace Api.Features.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         [Tags(EndpointTags.Users)]
-        public async Task<IResult> RespondToInvitation([FromRoute] Guid? id, 
+        public async Task<IResult> RespondToMyInvitation([FromRoute] Guid? id, 
             [FromBody] RespondToMyInvitation.Request? request, 
             CancellationToken cancellationToken)
         {
