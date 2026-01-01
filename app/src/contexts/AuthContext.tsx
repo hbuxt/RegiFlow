@@ -19,15 +19,15 @@ export interface Token {
 interface AuthContextType {
   session: Session | null,
   isAuthenticated: boolean;
-  login: (accessToken: string) => void;
-  logout: () => void;
+  authenticate: (accessToken: string) => void;
+  deauthenticate: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   isAuthenticated: false,
-  login: () => {},
-  logout: () => {}
+  authenticate: () => {},
+  deauthenticate: () => {}
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
   }, []);
 
-  const login = (accessToken: string) => {
+  const authenticate = (accessToken: string) => {
     const data = jwtDecode<Token>(accessToken);
 
     setSession({
@@ -59,13 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("RegiContext", accessToken);
   };
 
-  const logout = () => {
+  const deauthenticate = () => {
     setSession(null);
     localStorage.removeItem("RegiContext");
   };
 
   return (
-    <AuthContext.Provider value={{ session, isAuthenticated: !!session, login, logout }}>
+    <AuthContext.Provider value={{ session, isAuthenticated: !!session, authenticate, deauthenticate }}>
       {children}
     </AuthContext.Provider>
   );

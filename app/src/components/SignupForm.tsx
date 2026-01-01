@@ -13,9 +13,9 @@ import { AlertCircleIcon, Loader } from "lucide-react";
 import { ApiError } from "@/lib/shared/utils/result";
 
 export default function SignUpForm() {
-  const { login } = useAuth();
+  const { authenticate } = useAuth();
   const [processing, setProcessing] = useState(false);
-  const [signingIn, setSigningIn] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
   const signupForm = useForm<SignupSchema>({
@@ -29,22 +29,22 @@ export default function SignUpForm() {
 
   async function onSignup(values: SignupSchema) {
     setProcessing(true);
-    setSigningIn(false);
+    setLoggingIn(false);
 
     const response = await signup(values);
 
     if (!response.success) {
       setProcessing(false);
-      setSigningIn(false);
+      setLoggingIn(false);
       setError(response.error ?? null);
 
       return;
     }
 
     if (response.value && response.value.accessToken) {
-      setSigningIn(true);
+      setLoggingIn(true);
       setTimeout(() => {
-        login(response.value!.accessToken!);
+        authenticate(response.value!.accessToken!);
         window.location.href = "/";
       }, 3000);
       return;
@@ -55,7 +55,7 @@ export default function SignUpForm() {
     }, 3000);
   }
 
-  if (signingIn) {
+  if (loggingIn) {
     return (
       <Card>
         <CardHeader className="flex flex-col-reverse justify-center items-center">
@@ -128,7 +128,7 @@ export default function SignUpForm() {
               ) : "Create account"}
             </Button>
             <FormDescription className="mt-4 text-center">
-              Already have an account? <a href="#" className="text-primary hover:underline">Log in</a>
+              Already have an account? <a href="/account/login" className="text-primary hover:underline">Log in</a>
             </FormDescription>
           </form>
         </CardContent>
