@@ -50,6 +50,11 @@ class HttpClient {
     };
 
     const response = await this.pipeline.execute(new Request(url, request));
+
+    if (response.status === 204) {
+      return null as T;
+    }
+
     const json = await response.json();
 
     if (response.ok) {

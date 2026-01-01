@@ -41,10 +41,8 @@ export default function LoginForm() {
     }
 
     setLoggingIn(true);
-    setTimeout(() => {
-      authenticate(response.value!.accessToken!);
-      window.location.href = "/";
-    }, 3000);
+    authenticate(response.value!.accessToken!);
+    window.location.href = "/";
   }
 
   if (loggingIn) {

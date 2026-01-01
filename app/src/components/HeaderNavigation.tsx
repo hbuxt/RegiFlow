@@ -9,15 +9,18 @@ import { useEffect, useState } from "react";
 import { useMyDetails } from "@/hooks/useUser";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function HeaderNavigation() {
   const { deauthenticate } = useAuth();
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useMyDetails();
   const [loggingOut, setLoggingOut] = useState(false);
 
   function onLogout() {
     setLoggingOut(true);
     deauthenticate();
+    queryClient.clear();
     window.location.href = "/";
     return;
   }
@@ -94,9 +97,11 @@ export default function HeaderNavigation() {
                     <Skeleton className="h-6 w-[50%]" />
                   </div>
                 ) : (
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings />
-                    Settings
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <NavLink to="/account/settings">
+                      <Settings />
+                      Settings
+                    </NavLink>
                   </DropdownMenuItem>
                 )}
               </DropdownMenuGroup>

@@ -1,4 +1,4 @@
-import { SortBy, sortByAz, sortByMostRecent, sortByOldest, sortByZa } from "@/lib/schemas/common";
+import { SortBy, sortByAz, sortByMostRecent, sortByOldest, sortByZa } from "@/lib/types/common";
 import { sortProjects } from "@/lib/services/project";
 import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, House, Layers2, Plus } from "lucide-react";
 import { useState } from "react";

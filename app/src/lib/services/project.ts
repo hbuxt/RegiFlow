@@ -1,4 +1,4 @@
-import { SortBy, sortByAz, sortByMostRecent, sortByOldest, sortByZa } from "../schemas/common";
+import { SortBy, sortByAz, sortByMostRecent, sortByOldest, sortByZa } from "../types/common";
 import { Project } from "../types/project";
 
 export function sortProjects(projects: Project[], sortBy: SortBy): Project[] {

@@ -43,16 +43,12 @@ export default function SignUpForm() {
 
     if (response.value && response.value.accessToken) {
       setLoggingIn(true);
-      setTimeout(() => {
-        authenticate(response.value!.accessToken!);
-        window.location.href = "/";
-      }, 3000);
+      authenticate(response.value!.accessToken!);
+      window.location.href = "/";
       return;
     }
 
-    setTimeout(() => {
-      window.location.href = "/account/login";
-    }, 3000);
+    window.location.href = "/account/login";
   }
 
   if (loggingIn) {
