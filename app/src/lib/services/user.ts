@@ -1,5 +1,5 @@
 import { deleteAccountSchema, DeleteAccountSchema } from "../schemas/user";
-import { GetMyDetailsResponse, User } from "../types/user";
+import { GetMyDetailsResponse, GetMyPermissionsResponse, User } from "../types/user";
 import http, { HttpClientError } from "../utils/http";
 import { errorResult, Result, successResult, ValueResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";
@@ -48,6 +48,28 @@ export async function deleteMyAccount(values: DeleteAccountSchema): Promise<Resu
     });
 
     return successResult();
+  } catch (e) {
+    console.error(e);
+
+    if (e instanceof HttpClientError) {
+      return errorResult({
+        title: e.message,
+        errors: e.data!
+      });
+    }
+
+    throw e;
+  }
+}
+
+export async function getMyPermissions(): Promise<ValueResult<string[]>> {
+  try {
+    const response = await http.get<GetMyPermissionsResponse>({
+      url: "/users/me/permissions",
+      contentType: "none"
+    });
+
+    return successResult(response.permissions);
   } catch (e) {
     console.error(e);
 

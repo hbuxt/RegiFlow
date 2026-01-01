@@ -11,3 +11,7 @@ export interface GetMyDetailsResponse {
   last_name : string | null;
   email: string;
 }
+
+export interface GetMyPermissionsResponse {
+  permissions: string[]
+}
