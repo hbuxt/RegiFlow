@@ -1,5 +1,5 @@
-import { LoginData, LoginResponse, SignupData, SignupResponse } from "../dtos/auth";
 import { loginSchema, LoginSchema, signupSchema, SignupSchema } from "../schemas/auth";
+import { LoginData, LoginResponse, SignupData, SignupResponse } from "../types/auth";
 import http, { HttpClientError } from "../utils/http";
 import { errorResult, successResult, ValueResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";

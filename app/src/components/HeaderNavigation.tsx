@@ -5,17 +5,34 @@ import { Bell, Loader, LogOut, Settings } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMyDetails } from "@/hooks/useUser";
+import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
 
 export default function HeaderNavigation() {
   const { deauthenticate } = useAuth();
+  const { data, isLoading, isError } = useMyDetails();
   const [loggingOut, setLoggingOut] = useState(false);
 
   function onLogout() {
     setLoggingOut(true);
     deauthenticate();
     window.location.href = "/";
+    return;
   }
+
+  useEffect(() => {
+    if (!data?.error) {
+      return;
+    }
+
+    toast.error("Failed to fetch your details", {
+      description: data.error?.errors?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+
+  }, [data?.error]);
 
   return (
     <div className="ml-auto px-6">
@@ -35,37 +52,70 @@ export default function HeaderNavigation() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="cursor-pointer rounded-full">
             <Avatar className="h-8 w-8 rounded-full">
-              <AvatarFallback className="rounded-full bg-cyan-500 text-white">H</AvatarFallback>
+              {isLoading || isError || data?.error ? (
+                <Skeleton className="h-12 w-12 rounded-full" />
+              ) : (
+                <AvatarFallback className="rounded-full bg-cyan-500 text-white">
+                  {data?.value?.email?.[0].toUpperCase()}
+                </AvatarFallback>
+              )}
             </Avatar>
           </DropdownMenuTrigger>
             <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side="bottom" align="end" sideOffset={4}>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-full">
-                    <AvatarFallback className="rounded-full bg-cyan-500 text-white">H</AvatarFallback>
+                    {isLoading || isError || data?.error ? (
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                    ) : (
+                      <AvatarFallback className="rounded-full bg-cyan-500 text-white">{data?.value?.email?.[0].toUpperCase()}</AvatarFallback>
+                    )}
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">Me</span>
-                    <span className="truncate text-xs">me@testing.com</span>
+                    {isLoading || isError || data?.error ? (
+                        <div className="flex flex-col gap-1">
+                          <Skeleton className="h-4 w-[25%]" />
+                          <Skeleton className="h-4 w-[80%]" />
+                        </div>
+                    ) : (
+                      <>
+                        <span className="truncate font-medium">Me</span>
+                        <span className="truncate text-xs">{data?.value?.email}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Settings />
-                  Settings
-                </DropdownMenuItem>
+                {isLoading || isError || data?.error ? (
+                  <div className="flex flex-row gap-1 px-1 items-center">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-6 w-[50%]" />
+                  </div>
+                ) : (
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings />
+                    Settings
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer" onSelect={onLogout}>
-                  {loggingOut ? (
-                    <><Loader className="animate-spin" /><span>Logging out</span></>
-                  ) : (
-                    <><LogOut /><span>Log out</span></>
-                  )}
-                </DropdownMenuItem>
+                {isLoading || isError || data?.error ? (
+                  <div className="flex flex-row gap-1 px-1 items-center">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-6 w-[35%]" />
+                  </div>
+                ) : (
+                  <DropdownMenuItem className="cursor-pointer" onSelect={onLogout}>
+                    {loggingOut ? (
+                      <><Loader className="animate-spin" /><span>Logging out</span></>
+                    ) : (
+                      <><LogOut /><span>Log out</span></>
+                    )}
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

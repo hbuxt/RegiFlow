@@ -1,5 +1,6 @@
 import { getBaseApiUrl } from "@/lib/utils/env";
 import { ApiErrorMessage } from "@/lib/utils/result";
+import { getSession } from "./session";
 
 export interface HttpClientOptions {
   baseAddress: string;
@@ -197,6 +198,12 @@ const options: HttpClientOptions = {
 };
 
 pipeline.useBefore((request) => {
+  const session = getSession();
+
+  if (session?.rawToken) {
+    request.headers.set("Authorization", `Bearer ${session.rawToken}`);
+  }
+
   return request;
 });
 
