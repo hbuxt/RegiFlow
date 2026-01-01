@@ -25,8 +25,7 @@ namespace Api.Infrastructure.Identity
             {
                 Subject = new ClaimsIdentity(claims:
                 [
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(_options.Value.ExpiryInMinutes),
                 SigningCredentials = credentials,
