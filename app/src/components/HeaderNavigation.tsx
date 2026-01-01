@@ -1,0 +1,75 @@
+import { NavLink } from "react-router";
+import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Bell, Loader, LogOut, Settings } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+
+export default function HeaderNavigation() {
+  const { deauthenticate } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  function onLogout() {
+    setLoggingOut(true);
+    deauthenticate();
+    window.location.href = "/";
+  }
+
+  return (
+    <div className="ml-auto px-6">
+      <div className="flex items-center gap-3">
+        <Tooltip delayDuration={400}>
+          <TooltipTrigger asChild>
+            <Button className="rounded-full cursor-pointer" variant="ghost" size="icon">
+              <NavLink to="/">
+                <Bell className="size-4" />
+              </NavLink>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            Notifications
+          </TooltipContent>
+        </Tooltip>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="cursor-pointer rounded-full">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarFallback className="rounded-full bg-cyan-500 text-white">H</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side="bottom" align="end" sideOffset={4}>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="h-8 w-8 rounded-full">
+                    <AvatarFallback className="rounded-full bg-cyan-500 text-white">H</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">Me</span>
+                    <span className="truncate text-xs">me@testing.com</span>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Settings />
+                  Settings
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer" onSelect={onLogout}>
+                  {loggingOut ? (
+                    <><Loader className="animate-spin" /><span>Logging out</span></>
+                  ) : (
+                    <><LogOut /><span>Log out</span></>
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+}

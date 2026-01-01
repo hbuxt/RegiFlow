@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormProvider, useForm } from "react-hook-form";
-import { SignupSchema, signupSchema } from "@/lib/features/auth/signup/schema";
+import { SignupSchema, signupSchema } from "@/lib/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { signup } from "@/lib/features/auth/signup/service";
 import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircleIcon, Loader } from "lucide-react";
-import { ApiError } from "@/lib/shared/utils/result";
+import { ApiError } from "@/lib/utils/result";
+import { signup } from "@/lib/services/auth";
 
 export default function SignUpForm() {
   const { authenticate } = useAuth();

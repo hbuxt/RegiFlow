@@ -1,5 +1,5 @@
-import { getBaseApiUrl } from "@/lib/shared/utils/env";
-import { ApiErrorMessage } from "@/lib/shared/utils/result";
+import { getBaseApiUrl } from "@/lib/utils/env";
+import { ApiErrorMessage } from "@/lib/utils/result";
 
 export interface HttpClientOptions {
   baseAddress: string;

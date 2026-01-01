@@ -31,22 +31,25 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
+  const [session, setSession] = useState<Session | null>(() => {
     const accessToken = localStorage.getItem("RegiContext");
-    
-    if (accessToken) {
-      const data = jwtDecode<Token>(accessToken);
 
-      setSession({
-        id: data.sub,
-        token: data,
-        rawToken: accessToken
-      });
+    if (!accessToken) {
+      return null;
     }
-    
-  }, []);
+
+    const data = jwtDecode<Token>(accessToken);
+
+    if (!data) {
+      return null;
+    }
+
+    return {
+      id: data.sub,
+      token: data,
+      rawToken: accessToken
+    };
+  });
 
   const authenticate = (accessToken: string) => {
     const data = jwtDecode<Token>(accessToken);

@@ -1,16 +1,16 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
-import { ApiError } from "@/lib/shared/utils/result";
+import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
-import { loginSchema, LoginSchema } from "@/lib/features/auth/login/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "@/lib/features/auth/login/service";
 import { AlertCircleIcon, Loader } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { loginSchema, LoginSchema } from "@/lib/schemas/auth";
+import { login } from "@/lib/services/auth";
 
 export default function LoginForm() {
   const { authenticate } = useAuth();
