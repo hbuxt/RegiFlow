@@ -15,11 +15,12 @@ import { FormControl, FormDescription, FormField, FormItem, FormMessage } from "
 import { Input } from "./ui/input";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { PERMISSIONS } from "@/lib/constants/permissions";
+import { Skeleton } from "./ui/skeleton";
 
 export default function DeleteMyAccountForm() {
   const queryClient = useQueryClient();
   const { session, deauthenticate } = useAuthentication();
-  const { hasPermission } = useAuthorization();
+  const { hasPermission, isLoading, isError } = useAuthorization();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
   
@@ -55,27 +56,33 @@ export default function DeleteMyAccountForm() {
           </p>
         </div>
         <div className="flex md:justify-end md:items-center">
-          {hasPermission(PERMISSIONS.USER_DELETE) ? (
-            <AlertDialogTrigger asChild>
-              <Button className="cursor-pointer" variant="destructive">
-                Delete Account
-              </Button>
-            </AlertDialogTrigger>
+          {isLoading || isError ? (
+            <Skeleton className="h-10 w-32 rounded-md" />
           ) : (
-            <Tooltip delayDuration={400}>
-            <TooltipTrigger asChild>
-              <span className="inline-block">
+            <>
+              {hasPermission(PERMISSIONS.USER_DELETE) ? (
                 <AlertDialogTrigger asChild>
-                  <Button className="cursor-not-allowed" variant="destructive" disabled>
+                  <Button className="cursor-pointer" variant="destructive">
                     Delete Account
                   </Button>
                 </AlertDialogTrigger>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              You don&apos;t have permission to delete your account.
-            </TooltipContent>
-          </Tooltip>
+              ) : (
+                <Tooltip delayDuration={400}>
+                  <TooltipTrigger asChild>
+                    <span className="inline-block">
+                      <AlertDialogTrigger asChild>
+                        <Button className="cursor-not-allowed" variant="destructive" disabled>
+                          Delete Account
+                        </Button>
+                      </AlertDialogTrigger>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    You don&apos;t have permission to delete your account.
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </>
           )}
         </div>
       </div>

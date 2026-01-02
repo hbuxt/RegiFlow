@@ -1,4 +1,7 @@
+import ChangeMyEmailForm from "@/components/ChangeMyEmailForm";
+import ChangeMyPasswordForm from "@/components/ChangeMyPassword";
 import DeleteMyAccountForm from "@/components/DeleteMyAccountForm";
+import UpdateMyDetailsForm from "@/components/UpdateMyDetailsForm";
 
 export default function AccountSettings() {
   return (
@@ -8,6 +11,9 @@ export default function AccountSettings() {
           <h2 className="text-lg font-normal">Account</h2>
         </div>
       </div>
+      <UpdateMyDetailsForm />
+      <ChangeMyEmailForm />
+      <ChangeMyPasswordForm />
       <DeleteMyAccountForm />
     </div>
   )
