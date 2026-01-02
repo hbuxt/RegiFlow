@@ -96,7 +96,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to update their details.",
-                            Name = "user.update"
+                            Name = "user.profile.update"
                         },
                         new
                         {

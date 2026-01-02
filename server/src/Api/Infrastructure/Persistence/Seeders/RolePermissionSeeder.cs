@@ -16,7 +16,7 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.UserUpdate.Id,
+                    PermissionId = PermissionSeeder.UserProfileUpdate.Id,
                     RoleId = RoleSeeder.General.Id
                 },
                 new RolePermission()

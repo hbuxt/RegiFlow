@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class MigrationName : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -215,7 +215,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                 {
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their roles.", "user.roles.read" },
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete a project.", "project.delete" },
-                    { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "user.update" },
+                    { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "user.profile.update" },
                     { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to revoke invitations in a project.", "project.invitations.revoke" },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their permissions.", "user.permissions.read" },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete their details.", "user.delete" },

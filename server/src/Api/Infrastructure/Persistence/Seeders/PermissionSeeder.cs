@@ -15,10 +15,10 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
 
-        public static Permission UserUpdate { get; set; } = new Permission()
+        public static Permission UserProfileUpdate { get; set; } = new Permission()
         {
             Id = new Guid("37FAD974-167B-4D6F-9CC6-C57B488B72A7"),
-            Name = PermissionNames.UserUpdate,
+            Name = PermissionNames.UserProfileUpdate,
             Description = "Allows the user to update their details.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
@@ -147,7 +147,7 @@ namespace Api.Infrastructure.Persistence.Seeders
         {
             return [
                 UserRead,
-                UserUpdate,
+                UserProfileUpdate,
                 UserDelete,
                 UserInvitationsUpdate,
                 UserRolesRead,

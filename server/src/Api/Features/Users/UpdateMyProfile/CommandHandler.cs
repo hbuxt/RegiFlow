@@ -52,7 +52,7 @@ namespace Api.Features.Users.UpdateMyProfile
                 return Result.Failure<Response>(Errors.UserNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserUpdate, command.UserId))
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.UserProfileUpdate, command.UserId))
             {
                 _logger.LogInformation("Update my details failed for user: {UserId}. User does not have permission", 
                     command.UserId);
