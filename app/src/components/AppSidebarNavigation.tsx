@@ -1,7 +1,6 @@
-import { SortBy, sortByAz, sortByMostRecent, sortByOldest, sortByZa } from "@/lib/types/common";
 import { sortProjects } from "@/lib/services/project";
 import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, House, Layers2, Plus } from "lucide-react";
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { Button } from "./ui/button";
@@ -9,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { isRouteActive } from "@/lib/utils/route";
 import { ellipsizable, ellipsize } from "@/lib/utils/strings";
+import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "@/lib/constants/sort";
 
 const generalLinks = [
   { name: "Home", url: "/", icon: <House /> }
@@ -22,15 +22,15 @@ const data = [
   { id: "131415", name: "Royal Osteoporosis Society", createdAt: new Date(2025, 1, 12) }
 ];
 
-const sortByOptions = [
-  { name: sortByAz, icon: <ArrowDownAZ /> },
-  { name: sortByZa, icon: <ArrowDownZA /> },
-  { name: sortByMostRecent, icon: <CalendarArrowDown /> },
-  { name: sortByOldest, icon: <CalendarArrowUp /> }
+const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
+  { name: SORT_BY_AZ, icon: <ArrowDownAZ /> },
+  { name: SORT_BY_ZA, icon: <ArrowDownZA /> },
+  { name: SORT_BY_MOST_RECENT, icon: <CalendarArrowDown /> },
+  { name: SORT_BY_OLDEST, icon: <CalendarArrowUp /> }
 ];
 
 export default function AppSidebarNavigation() {
-  const [sortBy, setSortBy] = useState<SortBy>(sortByAz);
+  const [sortBy, setSortBy] = useState<SortBy>(SORT_BY_AZ);
   const location = useLocation();
 
   const projects = sortProjects(data, sortBy);

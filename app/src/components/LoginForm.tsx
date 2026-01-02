@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
 import { ApiError } from "@/lib/utils/result";
@@ -11,14 +10,15 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { loginSchema, LoginSchema } from "@/lib/schemas/auth";
 import { login } from "@/lib/services/auth";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function LoginForm() {
-  const { authenticate } = useAuth();
+  const { authenticate } = useAuthentication();
   const [processing, setProcessing] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
-  const loginForm = useForm<LoginSchema>({
+  const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -26,7 +26,7 @@ export default function LoginForm() {
     }
   });
 
-  async function onLogin(values: LoginSchema) {
+  async function onSubmit(values: LoginSchema) {
     setProcessing(true);
     setLoggingIn(false);
 
@@ -57,7 +57,7 @@ export default function LoginForm() {
   }
 
   return (
-    <FormProvider {...loginForm}>
+    <FormProvider {...form}>
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader className="text-center">
@@ -67,7 +67,7 @@ export default function LoginForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={loginForm.handleSubmit(onLogin)}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               {error ? (
                 <Alert variant="destructive">
                   <AlertCircleIcon />
@@ -85,7 +85,7 @@ export default function LoginForm() {
                   </AlertDescription>
                 </Alert>
               ) : null}
-              <FormField control={loginForm.control} name="email" render={({ field }: {field: any }) => (
+              <FormField control={form.control} name="email" render={({ field }: {field: any }) => (
                 <FormItem className="gap-0 py-4">
                   <FormLabel className="mb-2">Email</FormLabel>
                   <FormControl className="mb-2">
@@ -95,7 +95,7 @@ export default function LoginForm() {
                   <FormMessage />
                 </FormItem>
               )} />
-              <FormField control={loginForm.control} name="password" render={({ field }: {field: any }) => (
+              <FormField control={form.control} name="password" render={({ field }: {field: any }) => (
                 <FormItem className="gap-0 py-4">
                   <FormLabel className="mb-2">Password</FormLabel>
                   <FormControl className="mb-2">

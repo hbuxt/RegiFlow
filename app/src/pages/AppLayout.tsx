@@ -2,11 +2,11 @@ import AppSidebarNavigation from "@/components/AppSidebarNavigation";
 import AppSidebarTrigger from "@/components/AppSidebarTrigger";
 import HeaderNavigation from "@/components/HeaderNavigation";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { Outlet } from "react-router";
 
 export default function AppLayout() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthentication();
   
   if (!isAuthenticated) {
     window.location.href = "/account/login";

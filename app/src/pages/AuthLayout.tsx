@@ -1,8 +1,8 @@
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { Outlet } from "react-router";
 
 export default function AuthLayout() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthentication();
   
   if (isAuthenticated) {
     window.location.href = "/";

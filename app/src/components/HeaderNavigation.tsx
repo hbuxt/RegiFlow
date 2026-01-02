@@ -4,16 +4,16 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Bell, Loader, LogOut, Settings } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { useMyDetails } from "@/hooks/useUser";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function HeaderNavigation() {
-  const { deauthenticate } = useAuth();
   const queryClient = useQueryClient();
+  const { deauthenticate } = useAuthentication();
   const { data, isLoading, isError } = useMyDetails();
   const [loggingOut, setLoggingOut] = useState(false);
 

@@ -6,19 +6,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircleIcon, Loader } from "lucide-react";
 import { ApiError } from "@/lib/utils/result";
 import { signup } from "@/lib/services/auth";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function SignUpForm() {
-  const { authenticate } = useAuth();
+  const { authenticate } = useAuthentication();
   const [processing, setProcessing] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
-  const signupForm = useForm<SignupSchema>({
+  const form = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
@@ -27,7 +27,7 @@ export default function SignUpForm() {
     }
   });
 
-  async function onSignup(values: SignupSchema) {
+  async function onSubmit(values: SignupSchema) {
     setProcessing(true);
     setLoggingIn(false);
 
@@ -63,14 +63,14 @@ export default function SignUpForm() {
   }
   
   return (
-    <FormProvider {...signupForm}>
+    <FormProvider {...form}>
       <Card>
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>Enter your information below to create your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={signupForm.handleSubmit(onSignup)}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             {error ? (
               <Alert variant="destructive">
                 <AlertCircleIcon />
@@ -88,7 +88,7 @@ export default function SignUpForm() {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <FormField control={signupForm.control} name="email" render={({ field }: {field: any }) => (
+            <FormField control={form.control} name="email" render={({ field }: {field: any }) => (
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Email</FormLabel>
                 <FormControl className="mb-2">
@@ -98,7 +98,7 @@ export default function SignUpForm() {
                 <FormMessage />
               </FormItem>
             )} />
-            <FormField control={signupForm.control} name="password" render={({ field }: {field: any }) => (
+            <FormField control={form.control} name="password" render={({ field }: {field: any }) => (
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Password</FormLabel>
                 <FormControl className="mb-2">
@@ -108,7 +108,7 @@ export default function SignUpForm() {
                 <FormMessage className="mb-2" />
               </FormItem>
             )} />
-            <FormField control={signupForm.control} name="confirmPassword" render={({ field }: {field: any }) => (
+            <FormField control={form.control} name="confirmPassword" render={({ field }: {field: any }) => (
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Confirm password</FormLabel>
                 <FormControl className="mb-2">

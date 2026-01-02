@@ -1,22 +1,30 @@
 import { getMyPermissions } from "@/lib/services/user";
-import { ValueResult } from "@/lib/utils/result";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthentication } from "./useAuthentication";
+import { useCallback } from "react";
+import { ValueResult } from "@/lib/utils/result";
+import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 
 export function useAuthorization() {
-  const { data, isLoading, isError } = useQuery<ValueResult<string[]>>({
-    queryKey: ["myPermissions"],
+  const { isAuthenticated } = useAuthentication();
+
+  const query = useQuery<ValueResult<string[]>>({
+    queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
     queryFn: getMyPermissions,
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     retry: false,
   });
 
-  const hasPermission = (permission: string) => {
-    return data?.value?.includes(permission) ?? false;
-  }
+  const hasPermission = useCallback((permission: string) =>
+    query.data?.value?.includes(permission) ?? false, 
+    [query.data]
+  );
 
   return {
     hasPermission,
-    isLoading,
-    isError
+    permissions: query.data?.value ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError,
   };
 }

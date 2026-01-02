@@ -1,19 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-
-export interface Session {
-  id: string;
-  token: Token;
-  rawToken: string;
-}
-
-export interface Token {
-  sub: string;
-  aud: string;
-  iss: string;
-  exp: number;
-  iat: number;
-  nbf: number;
-}
+import { Session, Token } from "../types/auth";
 
 export function getSession(): Session | null {
   const accessToken = localStorage.getItem("RegiContext");

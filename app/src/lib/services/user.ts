@@ -1,4 +1,4 @@
-import { deleteAccountSchema, DeleteAccountSchema } from "../schemas/user";
+import { deleteMyAccountSchema, DeleteMyAccountSchema } from "../schemas/user";
 import { GetMyDetailsResponse, GetMyPermissionsResponse, User } from "../types/user";
 import http, { HttpClientError } from "../utils/http";
 import { errorResult, Result, successResult, ValueResult } from "../utils/result";
@@ -31,8 +31,8 @@ export async function getMyDetails(): Promise<ValueResult<User>> {
   }
 }
 
-export async function deleteMyAccount(values: DeleteAccountSchema): Promise<Result> {
-  const validationResult = deleteAccountSchema.safeParse(values);
+export async function deleteMyAccount(values: DeleteMyAccountSchema): Promise<Result> {
+  const validationResult = deleteMyAccountSchema.safeParse(values);
     
   if (!validationResult.success) {
     return errorResult({

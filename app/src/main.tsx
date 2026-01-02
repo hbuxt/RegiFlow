@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import Signup from './pages/Signup';
 import './main.css';
 import AuthLayout from './pages/AuthLayout';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthenticationProvider } from './contexts/AuthenticationContext';
 import Login from './pages/Login';
 import AppLayout from './pages/AppLayout';
 import { TooltipProvider } from './components/ui/tooltip';
@@ -20,7 +20,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TooltipProvider delayDuration={800}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <AuthenticationProvider>
           <BrowserRouter>
             <Routes>
               <Route element={<AppLayout />}>
@@ -35,7 +35,7 @@ createRoot(document.getElementById('root')!).render(
               </Route>
             </Routes>
           </BrowserRouter>
-        </AuthProvider>
+        </AuthenticationProvider>
       </QueryClientProvider>
     </TooltipProvider>
     <Toaster richColors closeButton />
