@@ -15,7 +15,9 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
   const [sessionState, setSessionState] = useState<Session | null>(() => getSession());
 
   const authenticate = useCallback((accessToken: string) => {
-    const session = setSession(accessToken);
+    setSession(accessToken);
+
+    const session = getSession();
     setSessionState(session);
   }, []);
 

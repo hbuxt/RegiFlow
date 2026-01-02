@@ -21,17 +21,10 @@ export function getSession(): Session | null {
   };
 }
 
-export function setSession(accessToken: string): Session {
+export function setSession(accessToken: string): void {
   localStorage.setItem("RegiContext", accessToken);
-  const data = jwtDecode<Token>(accessToken);
-  
-  return {
-    id: data.sub,
-    token: data,
-    rawToken: accessToken
-  };
 }
 
-export function deleteSession() {
+export function deleteSession(): void {
   localStorage.removeItem("RegiContext");
 }
