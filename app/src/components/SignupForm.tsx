@@ -41,9 +41,9 @@ export default function SignUpForm() {
       return;
     }
 
-    if (response.value && response.value.accessToken) {
+    if (response.value) {
       setLoggingIn(true);
-      authenticate(response.value!.accessToken!);
+      authenticate(response.value);
       window.location.href = "/";
       return;
     }

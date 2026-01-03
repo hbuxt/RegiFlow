@@ -6,21 +6,39 @@ import { Button } from "./ui/button";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Skeleton } from "./ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function ChangeMyEmailForm() {
-  const { data, isLoading: isMyDetailsLoading, isError: isMyDetailsError } = useMyDetails();
-  const { hasPermission, isLoading: isPermissionLoading, isError: isPermissionError } = useAuthorization();
+  const { data, isPending: isMyDetailsPending, error: myDetailsError } = useMyDetails();
+  const { hasPermission, isPending: isPermissionsPending, error: permissionError } = useAuthorization();
+
+  useEffect(() => {
+    if (myDetailsError) {
+      toast.error("Failed to fetch your details", {
+        description: myDetailsError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+
+    if (permissionError) {
+      toast.error("Failed to fetch your permissions", {
+        description: permissionError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+  }, [myDetailsError, permissionError]);
 
   return (
     <div className="pb-3">
       <div className="flex flex-row gap-4 justify-between py-3">
         <div className="flex flex-col flex-1 gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" defaultValue={data?.value?.email} disabled={isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_EMAIL_UPDATE)} />
+          <Input id="email" type="email" defaultValue={data?.email} disabled={isMyDetailsPending || !!myDetailsError || isPermissionsPending || !!permissionError || !hasPermission(PERMISSIONS.USER_EMAIL_UPDATE)} />
         </div>
         <div className="flex items-end md:justify-end">
           <div className="flex items-center justify-end">
-              {isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError ? (
+              {isMyDetailsPending || myDetailsError || isPermissionsPending || permissionError ? (
                 <Skeleton className="h-10 w-32 rounded-md" />
               ) : (
                 <>

@@ -14,7 +14,7 @@ import { useAuthentication } from "@/hooks/useAuthentication";
 export default function HeaderNavigation() {
   const queryClient = useQueryClient();
   const { deauthenticate } = useAuthentication();
-  const { data, isLoading, isError } = useMyDetails();
+  const { data, isPending, error } = useMyDetails();
   const [loggingOut, setLoggingOut] = useState(false);
 
   function onLogout() {
@@ -26,16 +26,16 @@ export default function HeaderNavigation() {
   }
 
   useEffect(() => {
-    if (!data?.error) {
+    if (!error) {
       return;
     }
 
     toast.error("Failed to fetch your details", {
-      description: data.error?.errors?.map(e => e.message).join(", ") ?? "",
+      description: error.errors?.map(e => e.message).join(", ") ?? "",
       duration: Infinity
     });
 
-  }, [data?.error]);
+  }, [error]);
 
   return (
     <div className="ml-auto px-6">
@@ -55,11 +55,11 @@ export default function HeaderNavigation() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="cursor-pointer rounded-full">
             <Avatar className="h-8 w-8 rounded-full">
-              {isLoading || isError || data?.error ? (
+              {isPending || error ? (
                 <Skeleton className="h-12 w-12 rounded-full" />
               ) : (
                 <AvatarFallback className="rounded-full bg-cyan-500 text-white">
-                  {data?.value?.email?.[0].toUpperCase()}
+                  {data.email[0].toUpperCase()}
                 </AvatarFallback>
               )}
             </Avatar>
@@ -68,14 +68,14 @@ export default function HeaderNavigation() {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-full">
-                    {isLoading || isError || data?.error ? (
+                    {isPending || error ? (
                       <Skeleton className="h-12 w-12 rounded-full" />
                     ) : (
-                      <AvatarFallback className="rounded-full bg-cyan-500 text-white">{data?.value?.email?.[0].toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="rounded-full bg-cyan-500 text-white">{data.email[0].toUpperCase()}</AvatarFallback>
                     )}
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    {isLoading || isError || data?.error ? (
+                    {isPending || error ? (
                         <div className="flex flex-col gap-1">
                           <Skeleton className="h-4 w-[25%]" />
                           <Skeleton className="h-4 w-[80%]" />
@@ -83,7 +83,7 @@ export default function HeaderNavigation() {
                     ) : (
                       <>
                         <span className="truncate font-medium">Me</span>
-                        <span className="truncate text-xs">{data?.value?.email}</span>
+                        <span className="truncate text-xs">{data.email}</span>
                       </>
                     )}
                   </div>
@@ -91,7 +91,7 @@ export default function HeaderNavigation() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                {isLoading || isError || data?.error ? (
+                {isPending || error ? (
                   <div className="flex flex-row gap-1 px-1 items-center">
                     <Skeleton className="h-8 w-8 rounded-full" />
                     <Skeleton className="h-6 w-[50%]" />
@@ -107,7 +107,7 @@ export default function HeaderNavigation() {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                {isLoading || isError || data?.error ? (
+                {isPending || error ? (
                   <div className="flex flex-row gap-1 px-1 items-center">
                     <Skeleton className="h-8 w-8 rounded-full" />
                     <Skeleton className="h-6 w-[35%]" />

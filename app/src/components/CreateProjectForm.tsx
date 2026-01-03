@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { useAuthorization } from "@/hooks/useAuthorization";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
 import { createProjectSchema, CreateProjectSchema } from "@/lib/schemas/project";
@@ -17,13 +17,25 @@ import { createProject } from "@/lib/services/project";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
+import { toast } from "sonner";
 
 export default function CreateProjectForm() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { hasPermission, isLoading, isError } = useAuthorization();
+  const { hasPermission, isPending, error: permissionsError } = useAuthorization();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+
+  useEffect(() => {
+    if (!permissionsError) {
+      return;
+    }
+
+    toast.error("Failed to fetch your permissions", {
+      description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+  }, [permissionsError]);
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
@@ -78,7 +90,7 @@ export default function CreateProjectForm() {
               <FormItem className="gap-0 pt-4">
                 <FormLabel className="mb-2">Project name</FormLabel>
                 <FormControl className="mb-3">
-                  <Input type="text" {...field} disabled={processing || isLoading || isError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
+                  <Input type="text" {...field} disabled={processing || isPending || !!permissionsError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
                 </FormControl>
                 <FormDescription>A unique name for your project. Don&apos;t worry, you can change this later.</FormDescription>
                 <FormMessage />
@@ -91,7 +103,7 @@ export default function CreateProjectForm() {
                 Back
               </NavLink>
             </Button>
-            {isLoading || isError ? (
+            {isPending || permissionsError ? (
               <Skeleton className="h-9 w-32 rounded-md" />
             ) : (
               <>

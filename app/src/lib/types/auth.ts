@@ -14,17 +14,9 @@ export interface Token {
 }
 
 export interface LoginResponse {
-  access_token?: string;
-}
-
-export interface LoginData {
-  accessToken?: string;
+  access_token: string | null;
 }
 
 export interface SignupResponse {
-  access_token?: string;
-}
-
-export interface SignupData {
-  accessToken?: string;
+  access_token: string | null;
 }

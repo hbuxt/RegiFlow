@@ -1,11 +1,11 @@
 export interface Project {
   id: string,
-  name?: string,
-  createdAt?: Date | null
+  name: string | null,
+  createdAt: Date | null
 }
 
 export interface CreateProjectRequest {
-  name: string;
+  name: string | null;
 }
 
 export interface CreateProjectResponse {

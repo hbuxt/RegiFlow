@@ -28,7 +28,8 @@ export async function createProject(values: CreateProjectSchema): Promise<ValueR
 
     return successResult({
       id: response.id,
-      name: response.name
+      name: response.name,
+      createdAt: null
     });
   } catch (e) {
     console.error(e);
@@ -44,7 +45,7 @@ export async function createProject(values: CreateProjectSchema): Promise<ValueR
   }
 }
 
-export async function getMyProjects(): Promise<ValueResult<Project[]>> {
+export async function getMyProjects(): Promise<Project[]> {
   try {
     const response = await http.get<GetMyProjectsResponse>({
       url: "/users/me/projects",
@@ -54,22 +55,22 @@ export async function getMyProjects(): Promise<ValueResult<Project[]>> {
     const projects = response.projects.map((dto) => {
       const project: Project = {
         id: dto.id,
-        name: dto.name!,
+        name: dto.name,
         createdAt: dto.created_at ? new Date(dto.created_at) : null
       };
 
       return project;
     })
 
-    return successResult(projects);
+    return projects;
   } catch (e) {
     console.error(e);
 
     if (e instanceof HttpClientError) {
-      return errorResult({
+      throw {
         title: e.message,
         errors: e.data!
-      });
+      };
     }
 
     throw e;

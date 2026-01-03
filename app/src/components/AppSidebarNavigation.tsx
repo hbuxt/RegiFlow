@@ -1,6 +1,6 @@
 import { sortProjects } from "@/lib/services/project";
 import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, CircleMinus, FolderCode, House, Layers2, Plus } from "lucide-react";
-import { JSX, useMemo, useState } from "react";
+import { JSX, useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { Button } from "./ui/button";
@@ -14,6 +14,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Skeleton } from "./ui/skeleton";
 import { useAuthorization } from "@/hooks/useAuthorization";
 import { PERMISSIONS } from "@/lib/constants/permissions";
+import { toast } from "sonner";
 
 const generalLinks = [
   { name: "Home", url: "/", icon: <House /> }
@@ -28,16 +29,32 @@ const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
 
 export default function AppSidebarNavigation() {
   const location = useLocation();
-  const { hasPermission, isLoading: isPermissionLoading, isError: isPermissionError } = useAuthorization();
-  const { data, isLoading: isMyProjectLoading, isError: isMyProjectsError } = useMyProjects();
+  const { hasPermission, isPending: isPermissionsPending, error: permissionsError } = useAuthorization();
+  const { data, isPending: isMyProjectsPending, error: myProjectsError } = useMyProjects();
   const [sortBy, setSortBy] = useState<SortBy>(SORT_BY_AZ);
 
+  useEffect(() => {
+    if (myProjectsError) {
+      toast.error("Failed to fetch your projects", {
+        description: myProjectsError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+
+    if (permissionsError) {
+      toast.error("Failed to fetch your permissions", {
+        description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+  }, [myProjectsError, permissionsError]);
+
   const projects = useMemo(() => {
-    if (!data?.value) {
+    if (!data) {
       return [];
     }
 
-    return sortProjects(data.value, sortBy);
+    return sortProjects(data, sortBy);
   }, [data, sortBy]);
 
   return (
@@ -107,7 +124,7 @@ export default function AppSidebarNavigation() {
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {isMyProjectLoading || isMyProjectsError || isPermissionLoading || isPermissionError ? (
+              {isMyProjectsPending || myProjectsError || isPermissionsPending || permissionsError ? (
                 <>
                   <Skeleton className="h-8 w-full rounded-md" />
                   <Skeleton className="h-8 w-2/3 rounded-md" />

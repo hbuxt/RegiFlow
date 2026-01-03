@@ -1,5 +1,5 @@
-export function normalizeUrl(url?: string): string {
-  let formattedUrl = url?.trim() || "/";
+export function normalizeUrl(url: string | null): string {
+  let formattedUrl = url?.trim() ?? "/";
 
   // Prepend URL with a forward slash 
   if (!formattedUrl.startsWith("/")) {
@@ -16,7 +16,7 @@ export function normalizeUrl(url?: string): string {
   return formattedUrl;
 }
 
-export function isRouteActive(current: string, target?: string): boolean {
+export function isRouteActive(current: string, target: string | null): boolean {
   const normalizedCurrent = normalizeUrl(current);
   const normalizedTarget = normalizeUrl(target);
 
@@ -25,7 +25,7 @@ export function isRouteActive(current: string, target?: string): boolean {
   return normalizedCurrent === encodedTarget || normalizedCurrent.startsWith(encodedTarget + "/");
 }
 
-export function isExactRouteActive(current: string, target?: string): boolean {
+export function isExactRouteActive(current: string, target: string | null): boolean {
   const normalizedCurrent = normalizeUrl(current);
   const normalizedTarget = normalizeUrl(target);
 

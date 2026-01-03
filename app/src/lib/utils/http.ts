@@ -131,7 +131,14 @@ class HttpClientPipeline {
       request = await handler(request) || request;
     }
 
-    let response = await fetch(request);
+    let response: Response;
+
+    try {
+      response = await fetch(request);
+    } catch (e) {
+      console.error(e);
+      throw new NetworkError(request.url);
+    }
 
     for (const handler of this.afterHandlers) {
       response = await handler(response, request) || response;
@@ -194,6 +201,12 @@ export class RateLimitError extends HttpClientError {
 export class ServerError extends HttpClientError {
   constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
     super("Oops, something went wrong!", resource, status, data);
+  }
+}
+
+export class NetworkError extends HttpClientError {
+  constructor(resource: string) {
+    super("Network error!", resource, 0, [{ code: "network_error", message: "Network error. Please check your internet connection." }])
   }
 }
 

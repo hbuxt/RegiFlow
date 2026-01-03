@@ -1,10 +1,10 @@
 import { loginSchema, LoginSchema, signupSchema, SignupSchema } from "../schemas/auth";
-import { LoginData, LoginResponse, SignupData, SignupResponse } from "../types/auth";
+import { LoginResponse, SignupResponse } from "../types/auth";
 import http, { HttpClientError } from "../utils/http";
 import { errorResult, successResult, ValueResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";
 
-export async function login(values: LoginSchema): Promise<ValueResult<LoginData>> {
+export async function login(values: LoginSchema): Promise<ValueResult<string | null>> {
   const validationResult = loginSchema.safeParse(values);
   
   if (!validationResult.success) {
@@ -26,9 +26,7 @@ export async function login(values: LoginSchema): Promise<ValueResult<LoginData>
       body: formBody.toString()
     });
 
-    return successResult({
-      accessToken: response.access_token
-    });
+    return successResult(response.access_token);
   } catch (e) {
     console.error(e);
 
@@ -43,7 +41,7 @@ export async function login(values: LoginSchema): Promise<ValueResult<LoginData>
   }
 }
 
-export async function signup(values: SignupSchema): Promise<ValueResult<SignupData>> {
+export async function signup(values: SignupSchema): Promise<ValueResult<string | null>> {
   const validationResult = signupSchema.safeParse(values);
   
   if (!validationResult.success) {
@@ -66,9 +64,7 @@ export async function signup(values: SignupSchema): Promise<ValueResult<SignupDa
       body: formBody.toString()
     });
 
-    return successResult({
-      accessToken: response.access_token
-    });
+    return successResult(response.access_token);
   } catch (e) {
     console.error(e);
 

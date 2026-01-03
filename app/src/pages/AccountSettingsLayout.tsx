@@ -4,36 +4,50 @@ import { useMyDetails } from "@/hooks/useUser";
 import { isRouteActive } from "@/lib/utils/route";
 import { cn } from "@/lib/utils/styles";
 import { Settings } from "lucide-react";
+import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
+import { toast } from "sonner";
 
 const links = [
   { name: "Account", url: `/account/settings`, icon: <Settings size={16} /> }
 ]
 
 export default function AccountSettingsLayout() {
-  const { data, isLoading, isError } = useMyDetails();
+  const { data, isPending, error } = useMyDetails();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    toast.error("Failed to fetch your details", {
+      description: error?.errors?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+
+  }, [error]);
 
   return (
     <>
       <div className="px-8 pt-8">
         <div className="flex items-center gap-2 text-left text-sm">
           <Avatar className="h-16 w-16 rounded-full">
-            {isLoading || isError || data?.error ? (
+            {isPending || error ? (
               <Skeleton className="h-16 w-16 rounded-full" />
             ) : (
-              <AvatarFallback className="rounded-full bg-cyan-500 text-white text-xl">{data?.value?.email?.[0].toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="rounded-full bg-cyan-500 text-white text-xl">{data.email[0].toUpperCase()}</AvatarFallback>
             )}
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            {isLoading || isError || data?.error ? (
+            {isPending || error ? (
                 <div className="flex flex-col gap-2">
                   <Skeleton className="h-6 w-[150px]" />
                   <Skeleton className="h-6 w-[125px]" />
                 </div>
             ) : (
               <>
-                <span className="truncate font-medium text-lg">{data?.value?.email}</span>
+                <span className="truncate font-medium text-lg">{data.email}</span>
                 <span className="truncate text-md text-muted-foreground">Your account details</span>
               </>
             )}

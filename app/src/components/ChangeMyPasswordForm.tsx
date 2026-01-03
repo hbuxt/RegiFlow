@@ -5,19 +5,32 @@ import { Button } from "./ui/button";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Skeleton } from "./ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function ChangeMyPasswordForm() {
-  const { hasPermission, isLoading, isError } = useAuthorization();
+  const { hasPermission, isPending, error } = useAuthorization();
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    toast.error("Failed to fetch your permissions", {
+      description: error.errors?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+  }, [error]);
 
   return (
     <div className="flex flex-row gap-4 justify-between pt-3">
       <div className="flex flex-col flex-1 gap-2">
         <Label htmlFor="email">Password</Label>
-        <Input id="password" type="password" defaultValue="0000-0000-0000-0000-0000" disabled={isLoading || isError || !hasPermission(PERMISSIONS.USER_PASSWORD_UPDATE)} />
+        <Input id="password" type="password" defaultValue="0000-0000-0000-0000-0000" disabled={isPending || !!error || !hasPermission(PERMISSIONS.USER_PASSWORD_UPDATE)} />
       </div>
       <div className="flex items-end md:justify-end">
         <div className="flex items-center justify-end">
-            {isLoading || isError ? (
+            {isPending || error ? (
               <Skeleton className="h-10 w-32 rounded-md" />
             ) : (
               <>

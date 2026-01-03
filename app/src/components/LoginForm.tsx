@@ -32,7 +32,7 @@ export default function LoginForm() {
 
     const response = await login(values);
 
-    if (!response.success) {
+    if (!response.success || !response.value) {
       setProcessing(false);
       setLoggingIn(false);
       setError(response.error ?? null);
@@ -41,7 +41,7 @@ export default function LoginForm() {
     }
 
     setLoggingIn(true);
-    authenticate(response.value!.accessToken!);
+    authenticate(response.value);
     window.location.href = "/";
   }
 

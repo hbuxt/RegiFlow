@@ -16,11 +16,12 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useAuthorization } from "@/hooks/useAuthorization";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { toast } from "sonner";
 
 export default function UpdateMyDetailsForm() {
   const queryClient = useQueryClient();
-  const { data, isLoading: isMyDetailsLoading, isError: isMyDetailsError } = useMyDetails();
-  const { hasPermission, isLoading: isPermissionLoading, isError: isPermissionError } = useAuthorization();
+  const { data, isLoading: isMyDetailsPending, error: myDetailsError } = useMyDetails();
+  const { hasPermission, isPending: isPermissionPending, error: permissionError } = useAuthorization();
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -34,10 +35,28 @@ export default function UpdateMyDetailsForm() {
   });
 
   useEffect(() => {
-    form.reset({
-      firstName: data?.value?.firstName ?? "",
-      lastName: data?.value?.lastName ?? ""
-    });
+    if (myDetailsError) {
+      toast.error("Failed to fetch your details", {
+        description: myDetailsError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+
+    if (permissionError) {
+      toast.error("Failed to fetch your permissions", {
+        description: permissionError.errors?.map(e => e.message).join(", ") ?? "",
+        duration: Infinity
+      });
+    }
+  }, [myDetailsError, permissionError]);
+
+  useEffect(() => {
+    if (data) {
+      form.reset({
+        firstName: data.firstName ?? "",
+        lastName: data.lastName ?? ""
+      });
+    }
   }, [data, form]);
 
   async function onSubmit(values: UpdateMyDetailsSchema) {
@@ -95,7 +114,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">First name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || isMyDetailsPending || myDetailsError || isPermissionPending || permissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -105,7 +124,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">Last name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || isMyDetailsPending || myDetailsError || isPermissionPending || permissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -115,7 +134,7 @@ export default function UpdateMyDetailsForm() {
         <div>
           <FormDescription>Your name may appear around RegiFlow where you contribute or are mentioned. You can remove it at any time.</FormDescription>
           <div className="flex items-center justify-end">
-            {isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError ? (
+            {isMyDetailsPending || myDetailsError || isPermissionPending || permissionError ? (
               <Skeleton className="h-10 w-32 rounded-md" />
             ) : (
               <>

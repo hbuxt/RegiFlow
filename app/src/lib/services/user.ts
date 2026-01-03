@@ -4,27 +4,27 @@ import http, { HttpClientError } from "../utils/http";
 import { errorResult, Result, successResult, ValueResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";
 
-export async function getMyDetails(): Promise<ValueResult<User>> {
+export async function getMyDetails(): Promise<User> {
   try {
     const response = await http.get<GetMyDetailsResponse>({
       url: "/users/me",
       contentType: "none"
     });
 
-    return successResult({
+    return {
       id: response.id,
       firstName: response.first_name,
       lastName: response.last_name,
       email: response.email
-    });
+    };
   } catch (e) {
     console.error(e);
 
     if (e instanceof HttpClientError) {
-      return errorResult({
+      throw {
         title: e.message,
         errors: e.data!
-      });
+      };
     }
 
     throw e;
@@ -47,7 +47,7 @@ export async function updateMyDetails(values: UpdateMyDetailsSchema): Promise<Re
       last_name: values.lastName ?? ""
     };
 
-    const response = await http.put<UpdateMyDetailsResponse>({
+    await http.put<UpdateMyDetailsResponse>({
       url: "/users/me",
       body: JSON.stringify(request),
       contentType: "application/json"
@@ -99,22 +99,22 @@ export async function deleteMyAccount(values: DeleteMyAccountSchema): Promise<Re
   }
 }
 
-export async function getMyPermissions(): Promise<ValueResult<string[]>> {
+export async function getMyPermissions(): Promise<string[]> {
   try {
     const response = await http.get<GetMyPermissionsResponse>({
       url: "/users/me/permissions",
       contentType: "none"
     });
 
-    return successResult(response.permissions);
+    return response.permissions;
   } catch (e) {
     console.error(e);
 
     if (e instanceof HttpClientError) {
-      return errorResult({
+      throw {
         title: e.message,
         errors: e.data!
-      });
+      };
     }
 
     throw e;

@@ -4,7 +4,7 @@ import { deleteMyAccount } from "@/lib/services/user";
 import { ApiError } from "@/lib/utils/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
@@ -16,13 +16,25 @@ import { Input } from "./ui/input";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
 
 export default function DeleteMyAccountForm() {
   const queryClient = useQueryClient();
   const { session, deauthenticate } = useAuthentication();
-  const { hasPermission, isLoading, isError } = useAuthorization();
+  const { hasPermission, isPending, error: permissionsError } = useAuthorization();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+
+  useEffect(() => {
+    if (!permissionsError) {
+      return;
+    }
+
+    toast.error("Failed to fetch your permissions", {
+      description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+  }, [permissionsError]);
   
   const form = useForm<DeleteMyAccountSchema>({
     resolver: zodResolver(deleteMyAccountSchema),
@@ -56,7 +68,7 @@ export default function DeleteMyAccountForm() {
           </p>
         </div>
         <div className="flex md:justify-end md:items-center">
-          {isLoading || isError ? (
+          {isPending || permissionsError ? (
             <Skeleton className="h-10 w-32 rounded-md" />
           ) : (
             <>

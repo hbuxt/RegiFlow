@@ -1,4 +1,4 @@
-export function ellipsizable(input?: string, maxlength: number = 15): boolean {
+export function ellipsizable(input: string | null, maxlength: number = 15): boolean {
   if (!input) {
     return false;
   }
@@ -10,7 +10,7 @@ export function ellipsizable(input?: string, maxlength: number = 15): boolean {
   return false;
 }
 
-export function ellipsize(input?: string, maxLength: number = 15): string {
+export function ellipsize(input: string | null, maxLength: number = 15): string {
   if (!input) {
     return "";
   }
