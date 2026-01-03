@@ -1,5 +1,5 @@
 import ChangeMyEmailForm from "@/components/ChangeMyEmailForm";
-import ChangeMyPasswordForm from "@/components/ChangeMyPassword";
+import ChangeMyPasswordForm from "@/components/ChangeMyPasswordForm";
 import DeleteMyAccountForm from "@/components/DeleteMyAccountForm";
 import UpdateMyDetailsForm from "@/components/UpdateMyDetailsForm";
 

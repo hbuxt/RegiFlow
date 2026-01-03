@@ -95,7 +95,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">First name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -105,7 +105,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">Last name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || isMyDetailsLoading || isMyDetailsError || isPermissionLoading || isPermissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />

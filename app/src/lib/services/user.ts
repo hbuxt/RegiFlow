@@ -1,5 +1,5 @@
 import { deleteMyAccountSchema, DeleteMyAccountSchema, updateMyDetailsSchema, UpdateMyDetailsSchema } from "../schemas/user";
-import { GetMyDetailsResponse, GetMyPermissionsResponse, UpdateMyDetailsRequest, User } from "../types/user";
+import { GetMyDetailsResponse, GetMyPermissionsResponse, UpdateMyDetailsRequest, UpdateMyDetailsResponse, User } from "../types/user";
 import http, { HttpClientError } from "../utils/http";
 import { errorResult, Result, successResult, ValueResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";
@@ -47,7 +47,7 @@ export async function updateMyDetails(values: UpdateMyDetailsSchema): Promise<Re
       last_name: values.lastName ?? ""
     };
 
-    const response = await http.put<GetMyDetailsResponse>({
+    const response = await http.put<UpdateMyDetailsResponse>({
       url: "/users/me",
       body: JSON.stringify(request),
       contentType: "application/json"

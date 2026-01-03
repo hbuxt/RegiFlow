@@ -1,5 +1,80 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
-import { Project } from "../types/project";
+import { createProjectSchema, CreateProjectSchema } from "../schemas/project";
+import { CreateProjectRequest, CreateProjectResponse, GetMyProjectsResponse, Project } from "../types/project";
+import http, { HttpClientError } from "../utils/http";
+import { errorResult, successResult, ValueResult } from "../utils/result";
+import { toErrorMessages } from "../utils/zod";
+
+export async function createProject(values: CreateProjectSchema): Promise<ValueResult<Project>> {
+  const validationResult = createProjectSchema.safeParse(values);
+      
+  if (!validationResult.success) {
+    return errorResult({
+      title: "Validation errors occurred",
+      errors: toErrorMessages(validationResult.error)
+    });
+  }
+
+  try {
+    const request: CreateProjectRequest = {
+      name: values.name
+    };
+
+    const response = await http.post<CreateProjectResponse>({
+      url: "/projects",
+      body: JSON.stringify(request),
+      contentType: "application/json"
+    });
+
+    return successResult({
+      id: response.id,
+      name: response.name
+    });
+  } catch (e) {
+    console.error(e);
+    
+    if (e instanceof HttpClientError) {
+      return errorResult({
+        title: e.message,
+        errors: e.data!
+      });
+    }
+
+    throw e;
+  }
+}
+
+export async function getMyProjects(): Promise<ValueResult<Project[]>> {
+  try {
+    const response = await http.get<GetMyProjectsResponse>({
+      url: "/users/me/projects",
+      contentType: "none"
+    });
+
+    const projects = response.projects.map((dto) => {
+      const project: Project = {
+        id: dto.id,
+        name: dto.name!,
+        createdAt: dto.created_at ? new Date(dto.created_at) : null
+      };
+
+      return project;
+    })
+
+    return successResult(projects);
+  } catch (e) {
+    console.error(e);
+
+    if (e instanceof HttpClientError) {
+      return errorResult({
+        title: e.message,
+        errors: e.data!
+      });
+    }
+
+    throw e;
+  }
+}
 
 export function sortProjects(projects: Project[], sortBy: SortBy): Project[] {
   const sortedProjects = [...projects];

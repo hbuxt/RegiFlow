@@ -1,25 +1,22 @@
 import { sortProjects } from "@/lib/services/project";
-import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, House, Layers2, Plus } from "lucide-react";
-import { JSX, useState } from "react";
+import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, CircleMinus, FolderCode, House, Layers2, Plus } from "lucide-react";
+import { JSX, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { isRouteActive } from "@/lib/utils/route";
-import { ellipsizable, ellipsize } from "@/lib/utils/strings";
+import { ellipsize } from "@/lib/utils/strings";
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "@/lib/constants/sort";
+import { useMyProjects } from "@/hooks/useProjects";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./ui/empty";
+import { Skeleton } from "./ui/skeleton";
+import { useAuthorization } from "@/hooks/useAuthorization";
+import { PERMISSIONS } from "@/lib/constants/permissions";
 
 const generalLinks = [
   { name: "Home", url: "/", icon: <House /> }
-];
-
-const data = [
-  { id: "123", name: "Royal Academy of Engineering", createdAt: new Date(2021, 6, 14) },
-  { id: "456", name: "Geological Society", createdAt: new Date(2024, 10, 3) },
-  { id: "789", name: "RegiFlow", createdAt: new Date(2025, 12, 25) },
-  { id: "101112", name: "Hastions", createdAt: new Date(2025, 7, 16) },
-  { id: "131415", name: "Royal Osteoporosis Society", createdAt: new Date(2025, 1, 12) }
 ];
 
 const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
@@ -30,10 +27,18 @@ const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
 ];
 
 export default function AppSidebarNavigation() {
-  const [sortBy, setSortBy] = useState<SortBy>(SORT_BY_AZ);
   const location = useLocation();
+  const { hasPermission, isLoading: isPermissionLoading, isError: isPermissionError } = useAuthorization();
+  const { data, isLoading: isMyProjectLoading, isError: isMyProjectsError } = useMyProjects();
+  const [sortBy, setSortBy] = useState<SortBy>(SORT_BY_AZ);
 
-  const projects = sortProjects(data, sortBy);
+  const projects = useMemo(() => {
+    if (!data?.value) {
+      return [];
+    }
+
+    return sortProjects(data.value, sortBy);
+  }, [data, sortBy]);
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -49,7 +54,7 @@ export default function AppSidebarNavigation() {
         <SidebarGroup className="flex gap-2 py-3">
           <SidebarGroupContent className="flex gap-2 overflow-visible">
             <Button asChild variant="outline" className="flex-1">
-              <NavLink to="/">
+              <NavLink to="/project/create">
                 <Plus />
                 <span>Project</span>
               </NavLink>
@@ -102,21 +107,74 @@ export default function AppSidebarNavigation() {
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <Tooltip delayDuration={800}>
-                    <TooltipTrigger asChild>
-                      <SidebarMenuButton asChild isActive={isRouteActive(location.pathname, item.name)} className="cursor-pointer">
-                        <NavLink to={`/${item.name}`}>{ellipsize(item.name, 28)}</NavLink>
-                      </SidebarMenuButton>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {ellipsizable(item.name, 28) ? <p>{ellipsize(item.name, 28)}</p> : null}
-                      {item.createdAt ? <p>Created on {item.createdAt.toDateString()}</p> : null}
-                    </TooltipContent>
-                  </Tooltip>
-                </SidebarMenuItem>
-              ))}
+              {isMyProjectLoading || isMyProjectsError || isPermissionLoading || isPermissionError ? (
+                <>
+                  <Skeleton className="h-8 w-full rounded-md" />
+                  <Skeleton className="h-8 w-2/3 rounded-md" />
+                  <Skeleton className="h-8 w-3/4 rounded-md" />
+                  <Skeleton className="h-8 w-1/2 rounded-md" />
+                  <Skeleton className="h-8 w-full rounded-md" />
+                  <Skeleton className="h-8 w-3/4 rounded-md" />
+                </>
+              ) : (
+                <>
+                  {hasPermission(PERMISSIONS.PROJECT_READ) ? (
+                    <>
+                      {!projects || projects.length == 0 ? (
+                        <Empty className="px-0 md:px-0">
+                          <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                              <FolderCode />
+                            </EmptyMedia>
+                            <EmptyTitle>No Projects Yet</EmptyTitle>
+                            <EmptyDescription>
+                              You haven&apos;t created any projects yet. Get started by creating
+                              your first project.
+                            </EmptyDescription>
+                          </EmptyHeader>
+                          <EmptyContent>
+                            <div className="flex">
+                              <Button variant="default" type="button" asChild>
+                                <NavLink to="/project/create">Create project</NavLink>
+                              </Button>
+                            </div>
+                          </EmptyContent>
+                        </Empty>
+                      ) : (
+                        <>
+                          {projects.map((item) => (
+                            <SidebarMenuItem key={item.id}>
+                              <Tooltip delayDuration={800}>
+                                <TooltipTrigger asChild>
+                                  <SidebarMenuButton asChild isActive={isRouteActive(location.pathname, item.name)} className="cursor-pointer truncate">
+                                    <NavLink to={`/${item.id}`}>{ellipsize(item.name, 25)}</NavLink>
+                                  </SidebarMenuButton>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {item.name}
+                                  {item.createdAt ? <p>Created on {item.createdAt.toDateString()}</p> : null}
+                                </TooltipContent>
+                              </Tooltip>
+                            </SidebarMenuItem>
+                          ))}
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <Empty className="px-0 md:px-0">
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <CircleMinus />
+                        </EmptyMedia>
+                        <EmptyTitle>No Permission</EmptyTitle>
+                        <EmptyDescription>
+                          You don&apos;t have permission to view projects.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  )}
+                </>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

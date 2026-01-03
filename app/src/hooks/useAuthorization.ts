@@ -1,9 +1,9 @@
-import { getMyPermissions } from "@/lib/services/user";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthentication } from "./useAuthentication";
 import { useCallback } from "react";
 import { ValueResult } from "@/lib/utils/result";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
+import { getMyPermissions } from "@/lib/services/user";
 
 export function useAuthorization() {
   const { isAuthenticated } = useAuthentication();

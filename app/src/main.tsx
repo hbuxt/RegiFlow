@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from './components/ui/sonner';
 import AccountSettingsLayout from './pages/AccountSettingsLayout';
 import AccountSettings from './pages/AccountSettings';
+import CreateProject from './pages/CreateProject';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
               <Route element={<AppLayout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/project/create" element={<CreateProject />} />
                 <Route element={<AccountSettingsLayout />}>
                   <Route path="/account/settings" element={<AccountSettings />} />
                 </Route>
