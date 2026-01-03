@@ -120,6 +120,7 @@ namespace Api.Features.Projects.Create
                 command.UserId, project.Id);
             return Result.Success(new Response()
             {
+                Id = project.Id,
                 Name = project.Name
             });
         }
