@@ -1,7 +1,7 @@
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { Outlet } from "react-router";
 
-export default function AuthLayout() {
+export default function PlainLayout() {
   const { isAuthenticated } = useAuthentication();
   
   if (isAuthenticated) {

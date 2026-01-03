@@ -9,10 +9,10 @@ import { NavLink, Outlet, useLocation } from "react-router";
 import { toast } from "sonner";
 
 const links = [
-  { name: "Account", url: `/account/settings`, icon: <Settings size={16} /> }
+  { name: "Account", url: "/account", icon: <Settings size={16} /> }
 ]
 
-export default function AccountSettingsLayout() {
+export default function AccountLayout() {
   const { data, isPending, error } = useMyDetails();
   const location = useLocation();
 

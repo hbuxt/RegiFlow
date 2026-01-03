@@ -3,7 +3,7 @@ import ChangeMyPasswordForm from "@/components/ChangeMyPasswordForm";
 import DeleteMyAccountForm from "@/components/DeleteMyAccountForm";
 import UpdateMyDetailsForm from "@/components/UpdateMyDetailsForm";
 
-export default function AccountSettings() {
+export default function Account() {
   return (
     <div className="flex flex-col gap-4">
       <div>

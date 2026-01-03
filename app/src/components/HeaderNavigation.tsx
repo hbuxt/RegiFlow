@@ -98,9 +98,9 @@ export default function HeaderNavigation() {
                   </div>
                 ) : (
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <NavLink to="/account/settings">
+                    <NavLink to="/account">
                       <Settings />
-                      Settings
+                      Account
                     </NavLink>
                   </DropdownMenuItem>
                 )}
