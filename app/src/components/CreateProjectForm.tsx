@@ -18,11 +18,15 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { toast } from "sonner";
+import { Textarea } from "./ui/textarea";
 
 export default function CreateProjectForm() {
+  const characterMaxLength = 256;
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { hasPermission, isPending, error: permissionsError } = useAuthorization();
+  const [characterCounter, setCharacterCounter] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -40,7 +44,8 @@ export default function CreateProjectForm() {
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
-      name: ""
+      name: "",
+      description: ""
     }
   });
 
@@ -87,12 +92,22 @@ export default function CreateProjectForm() {
               </Alert>
             ) : null}
             <FormField control={form.control} name="name" render={({ field }: {field: any }) => (
-              <FormItem className="gap-0 pt-4">
-                <FormLabel className="mb-2">Project name</FormLabel>
+              <FormItem className="gap-0 py-4">
+                <FormLabel className="mb-2">Name</FormLabel>
                 <FormControl className="mb-3">
                   <Input type="text" {...field} disabled={processing || isPending || !!permissionsError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
                 </FormControl>
                 <FormDescription>A unique name for your project. Don&apos;t worry, you can change this later.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="description" render={({ field }: {field: any }) => (
+              <FormItem className="gap-0 pt-4">
+                <FormLabel className="mb-2">Description</FormLabel>
+                <FormControl className="mb-1">
+                  <Textarea {...field} rows={8} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} disabled={processing || isPending || !!permissionsError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
+                </FormControl>
+                <FormDescription>{characterCounter}/{characterMaxLength}</FormDescription>
                 <FormMessage />
               </FormItem>
             )} />

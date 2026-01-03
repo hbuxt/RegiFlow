@@ -17,7 +17,8 @@ export async function createProject(values: CreateProjectSchema): Promise<ValueR
 
   try {
     const request: CreateProjectRequest = {
-      name: values.name
+      name: values.name,
+      description: values.description
     };
 
     const response = await http.post<CreateProjectResponse>({

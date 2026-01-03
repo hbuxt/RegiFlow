@@ -6,6 +6,7 @@ export interface Project {
 
 export interface CreateProjectRequest {
   name: string | null;
+  description: string | null;
 }
 
 export interface CreateProjectResponse {
