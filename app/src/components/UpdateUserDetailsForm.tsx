@@ -1,27 +1,27 @@
-import { useMyDetails } from "@/hooks/useUser";
 import { updateMyDetailsSchema, UpdateMyDetailsSchema } from "@/lib/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ApiError } from "@/lib/utils/result";
 import { updateMyDetails } from "@/lib/services/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { AlertCircleIcon, CheckCircle2Icon, Loader } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { useAuthorization } from "@/hooks/useAuthorization";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { toast } from "sonner";
+import { User } from "@/lib/types/user";
 
-export default function UpdateMyDetailsForm() {
+interface UpdateDetailsFormProps {
+  user: User;
+  permissions: string[]
+}
+
+export default function UpdateUserDetailsForm(props: UpdateDetailsFormProps) {
   const queryClient = useQueryClient();
-  const { data, isLoading: isMyDetailsPending, error: myDetailsError } = useMyDetails();
-  const { hasPermission, isPending: isPermissionPending, error: permissionError } = useAuthorization();
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -29,35 +29,10 @@ export default function UpdateMyDetailsForm() {
   const form = useForm<UpdateMyDetailsSchema>({
     resolver: zodResolver(updateMyDetailsSchema),
     defaultValues: {
-      firstName: "",
-      lastName: ""
+      firstName: props.user.firstName ?? "",
+      lastName: props.user.lastName ?? ""
     }
   });
-
-  useEffect(() => {
-    if (myDetailsError) {
-      toast.error("Failed to fetch your details", {
-        description: myDetailsError.errors?.map(e => e.message).join(", ") ?? "",
-        duration: Infinity
-      });
-    }
-
-    if (permissionError) {
-      toast.error("Failed to fetch your permissions", {
-        description: permissionError.errors?.map(e => e.message).join(", ") ?? "",
-        duration: Infinity
-      });
-    }
-  }, [myDetailsError, permissionError]);
-
-  useEffect(() => {
-    if (data) {
-      form.reset({
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? ""
-      });
-    }
-  }, [data, form]);
 
   async function onSubmit(values: UpdateMyDetailsSchema) {
     setProcessing(true);
@@ -114,7 +89,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">First name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || isMyDetailsPending || myDetailsError || isPermissionPending || permissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -124,7 +99,7 @@ export default function UpdateMyDetailsForm() {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">Last name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || isMyDetailsPending || myDetailsError || isPermissionPending || permissionError || !hasPermission(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={processing || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -133,34 +108,28 @@ export default function UpdateMyDetailsForm() {
         </div>
         <div>
           <FormDescription>Your name may appear around RegiFlow where you contribute or are mentioned. You can remove it at any time.</FormDescription>
-          <div className="flex items-center justify-end">
-            {isMyDetailsPending || myDetailsError || isPermissionPending || permissionError ? (
-              <Skeleton className="h-10 w-32 rounded-md" />
-            ) : (
-              <>
-                {hasPermission(PERMISSIONS.USER_PROFILE_UPDATE) ? (
-                  <Button type="submit" variant="outline" className="cursor-pointer" disabled={processing}>
-                    {processing ? (
-                    <><Loader className="animate-spin" /><span>Saving...</span></>
-                    ) : (
-                      <span>Save changes</span>
-                    )}
-                  </Button>
+          <div className="flex items-center justify-end pt-3">
+            {props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE) ? (
+              <Button type="submit" variant="outline" className="cursor-pointer" disabled={processing}>
+                {processing ? (
+                <><Loader className="animate-spin" /><span>Saving...</span></>
                 ) : (
-                  <Tooltip delayDuration={400}>
-                    <TooltipTrigger asChild>
-                      <span className="inline-block">
-                        <Button className="cursor-not-allowed" variant="outline" disabled>
-                          Save changes
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      You don&apos;t have permission to update your details.
-                    </TooltipContent>
-                  </Tooltip>
+                  <span>Save changes</span>
                 )}
-              </>
+              </Button>
+            ) : (
+              <Tooltip delayDuration={400}>
+                <TooltipTrigger asChild>
+                  <span className="inline-block">
+                    <Button className="cursor-not-allowed" variant="outline" disabled>
+                      Save changes
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  You don&apos;t have permission to update your details.
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>

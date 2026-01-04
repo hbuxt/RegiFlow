@@ -33,8 +33,6 @@ export async function createProject(values: CreateProjectSchema): Promise<ValueR
       createdAt: null
     });
   } catch (e) {
-    console.error(e);
-    
     if (e instanceof HttpClientError) {
       return errorResult({
         title: e.message,
@@ -47,35 +45,22 @@ export async function createProject(values: CreateProjectSchema): Promise<ValueR
 }
 
 export async function getMyProjects(): Promise<Project[]> {
-  try {
-    const response = await http.get<GetMyProjectsResponse>({
-      url: "/users/me/projects",
-      contentType: "none"
-    });
+  const response = await http.get<GetMyProjectsResponse>({
+    url: "/users/me/projects",
+    contentType: "none"
+  });
 
-    const projects = response.projects.map((dto) => {
-      const project: Project = {
-        id: dto.id,
-        name: dto.name,
-        createdAt: dto.created_at ? new Date(dto.created_at) : null
-      };
+  const projects = response.projects.map((dto) => {
+    const project: Project = {
+      id: dto.id,
+      name: dto.name,
+      createdAt: dto.created_at ? new Date(dto.created_at) : null
+    };
 
-      return project;
-    })
+    return project;
+  })
 
-    return projects;
-  } catch (e) {
-    console.error(e);
-
-    if (e instanceof HttpClientError) {
-      throw {
-        title: e.message,
-        errors: e.data!
-      };
-    }
-
-    throw e;
-  }
+  return projects;
 }
 
 export function sortProjects(projects: Project[], sortBy: SortBy): Project[] {

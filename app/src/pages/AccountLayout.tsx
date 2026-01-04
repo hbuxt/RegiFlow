@@ -1,56 +1,98 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useMyDetails } from "@/hooks/useUser";
+import { QUERY_KEYS } from "@/lib/constants/queryKeys";
+import { getMyDetails, getMyPermissions } from "@/lib/services/user";
+import { User } from "@/lib/types/user";
+import { HttpClientError } from "@/lib/utils/http";
+import { ApiError } from "@/lib/utils/result";
 import { isRouteActive } from "@/lib/utils/route";
 import { cn } from "@/lib/utils/styles";
+import queryClient from "@/lib/utils/tanstack";
+import { useQuery } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
-import { useEffect } from "react";
-import { NavLink, Outlet, useLocation } from "react-router";
-import { toast } from "sonner";
+import { isRouteErrorResponse, NavLink, Outlet, redirect, useLoaderData, useLocation, useRouteError } from "react-router";
+import Error from "./Error";
 
-const links = [
-  { name: "Account", url: "/account", icon: <Settings size={16} /> }
-]
-
-export default function AccountLayout() {
-  const { data, isPending, error } = useMyDetails();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!error) {
-      return;
-    }
-
-    toast.error("Failed to fetch your details", {
-      description: error?.errors?.map(e => e.message).join(", ") ?? "",
-      duration: Infinity
+export async function accountLayoutLoader() {
+  try {
+    const user = await queryClient.fetchQuery<User, ApiError>({
+      queryKey: [QUERY_KEYS.GET_MY_DETAILS],
+      queryFn: getMyDetails,
+      staleTime: 1000 * 60 * 3,
+      retry: false
     });
 
-  }, [error]);
+    const permissions = await queryClient.fetchQuery<string[], ApiError>({
+      queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
+      queryFn: getMyPermissions,
+      staleTime: 1000 * 60 * 3,
+      retry: false
+    });
+
+    return { initUser: user, initPermissions: permissions };
+  } catch (e) {
+    if (e instanceof HttpClientError) {
+      if (e.status == 401) {
+        throw redirect("/account/login");
+      }
+
+      throw new Response(JSON.stringify(e.data ?? []), {
+        status: e.status,
+        statusText: e.message,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    throw e;
+  }
+}
+
+export function AccountLayoutError() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    const title = "Unable to load your account";
+
+    switch (error.status) {
+      case 403:
+        return <Error title={title} errors={error.data ?? []} />;
+      case 404:
+        return <Error title={title} errors={error.data ?? []} />;
+      case 503: 
+        return <Error title={title} errors={error.data ?? []} />;
+      default:
+        return <Error title={title} errors={error.data ?? []} />;
+    }
+  }
+
+  throw error;
+}
+
+export default function AccountLayout() {
+  const location = useLocation();
+  const { initUser, initPermissions } = useLoaderData() as { initUser: User, initPermissions: string[] };
+  const { data: user } = useQuery<User, ApiError>({
+    queryKey: [QUERY_KEYS.GET_MY_DETAILS],
+    queryFn: getMyDetails,
+    initialData: initUser,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
+    retry: false
+  });
+
+  const links = [
+    { name: "Account", url: "/account", icon: <Settings size={16} /> }
+  ];
 
   return (
     <>
       <div className="px-8 pt-8">
         <div className="flex items-center gap-2 text-left text-sm">
           <Avatar className="h-16 w-16 rounded-full">
-            {isPending || error ? (
-              <Skeleton className="h-16 w-16 rounded-full" />
-            ) : (
-              <AvatarFallback className="rounded-full bg-cyan-500 text-white text-xl">{data.email[0].toUpperCase()}</AvatarFallback>
-            )}
+            <AvatarFallback className="rounded-full bg-cyan-500 text-white text-xl">{user.email[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            {isPending || error ? (
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-6 w-[150px]" />
-                  <Skeleton className="h-6 w-[125px]" />
-                </div>
-            ) : (
-              <>
-                <span className="truncate font-medium text-lg">{data.email}</span>
-                <span className="truncate text-md text-muted-foreground">Your account details</span>
-              </>
-            )}
+            <span className="truncate font-medium text-lg">{user.email}</span>
+            <span className="truncate text-md text-muted-foreground">Your account details</span>
           </div>
         </div>
       </div>
@@ -70,7 +112,7 @@ export default function AccountLayout() {
           </nav>
         </aside>
         <main className="flex-1">
-          <Outlet />
+          <Outlet context={{ user, permissions: initPermissions }} />
         </main>
       </div>
     </>

@@ -1,8 +1,7 @@
 import { NavLink, useNavigate } from "react-router";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
-import { useAuthorization } from "@/hooks/useAuthorization";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
 import { createProjectSchema, CreateProjectSchema } from "@/lib/schemas/project";
@@ -10,14 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
-import { Skeleton } from "./ui/skeleton";
 import { AlertCircleIcon, Loader } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { createProject } from "@/lib/services/project";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
-import { toast } from "sonner";
 import { Textarea } from "./ui/textarea";
 
 export default function CreateProjectForm() {
@@ -25,21 +21,9 @@ export default function CreateProjectForm() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { hasPermission, isPending, error: permissionsError } = useAuthorization();
   const [characterCounter, setCharacterCounter] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
-
-  useEffect(() => {
-    if (!permissionsError) {
-      return;
-    }
-
-    toast.error("Failed to fetch your permissions", {
-      description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
-      duration: Infinity
-    });
-  }, [permissionsError]);
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
@@ -95,7 +79,7 @@ export default function CreateProjectForm() {
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Name</FormLabel>
                 <FormControl className="mb-3">
-                  <Input type="text" {...field} disabled={processing || isPending || !!permissionsError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
+                  <Input type="text" {...field} disabled={processing} />
                 </FormControl>
                 <FormDescription>A unique name for your project. Don&apos;t worry, you can change this later.</FormDescription>
                 <FormMessage />
@@ -105,7 +89,7 @@ export default function CreateProjectForm() {
               <FormItem className="gap-0 pt-4">
                 <FormLabel className="mb-2">Description</FormLabel>
                 <FormControl className="mb-1">
-                  <Textarea {...field} rows={8} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} disabled={processing || isPending || !!permissionsError || !hasPermission(PERMISSIONS.PROJECT_CREATE)} />
+                  <Textarea {...field} rows={8} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} disabled={processing} />
                 </FormControl>
                 <FormDescription>{characterCounter}/{characterMaxLength}</FormDescription>
                 <FormMessage />
@@ -118,34 +102,13 @@ export default function CreateProjectForm() {
                 Back
               </NavLink>
             </Button>
-            {isPending || permissionsError ? (
-              <Skeleton className="h-9 w-32 rounded-md" />
-            ) : (
-              <>
-                {hasPermission(PERMISSIONS.PROJECT_CREATE) ? (
-                  <Button type="submit" variant="default" className="cursor-pointer" disabled={processing}>
-                    {processing ? (
-                    <><Loader className="animate-spin" /><span>Creating...</span></>
-                    ) : (
-                      <span>Create project</span>
-                    )}
-                  </Button>
-                ) : (
-                  <Tooltip delayDuration={400}>
-                    <TooltipTrigger asChild>
-                      <span className="inline-block">
-                        <Button className="cursor-not-allowed" variant="outline" disabled>
-                          Create project
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      You don&apos;t have permission to create projects.
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </>
-            )}
+            <Button type="submit" variant="default" className="cursor-pointer" disabled={processing}>
+              {processing ? (
+                <><Loader className="animate-spin" /><span>Creating...</span></>
+              ) : (
+                <span>Create project</span>
+              )}
+            </Button>
           </CardFooter>
         </Card>
       </form>

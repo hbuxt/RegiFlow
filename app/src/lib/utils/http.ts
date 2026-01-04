@@ -98,7 +98,6 @@ class HttpClient {
         message: error.error_message,
       }));
     } catch (e) {
-      console.error(e);
       return [{
         code: data.title,
         message: data.detail
@@ -136,7 +135,6 @@ class HttpClientPipeline {
     try {
       response = await fetch(request);
     } catch (e) {
-      console.error(e);
       throw new NetworkError(request.url);
     }
 
@@ -206,7 +204,7 @@ export class ServerError extends HttpClientError {
 
 export class NetworkError extends HttpClientError {
   constructor(resource: string) {
-    super("Network error!", resource, 0, [{ code: "network_error", message: "Network error. Please check your internet connection." }])
+    super("Network error!", resource, 503, [{ code: "network_error", message: "Network error. Please check your internet connection." }])
   }
 }
 

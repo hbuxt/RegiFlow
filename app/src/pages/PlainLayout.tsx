@@ -1,15 +1,14 @@
-import { useAuthentication } from "@/hooks/useAuthentication";
-import { Outlet } from "react-router";
+import { getSession } from "@/lib/utils/session";
+import { Outlet, redirect } from "react-router";
+
+export function plainLayoutLoader() {
+  const session = getSession();
+
+  if (session) {
+    throw redirect("/");
+  }
+}
 
 export default function PlainLayout() {
-  const { isAuthenticated } = useAuthentication();
-  
-  if (isAuthenticated) {
-    window.location.href = "/";
-    return;
-  }
-
-  return (
-    <Outlet />
-  );
+  return <Outlet />;
 }

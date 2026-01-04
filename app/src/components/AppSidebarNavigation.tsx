@@ -1,4 +1,4 @@
-import { sortProjects } from "@/lib/services/project";
+import { getMyProjects, sortProjects } from "@/lib/services/project";
 import { ArrowDownAZ, ArrowDownZA, ArrowUpDown, CalendarArrowDown, CalendarArrowUp, Check, CircleMinus, FolderCode, House, Layers2, Plus } from "lucide-react";
 import { JSX, useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router";
@@ -9,12 +9,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { isRouteActive } from "@/lib/utils/route";
 import { ellipsize } from "@/lib/utils/strings";
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "@/lib/constants/sort";
-import { useMyProjects } from "@/hooks/useProjects";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./ui/empty";
 import { Skeleton } from "./ui/skeleton";
-import { useAuthorization } from "@/hooks/useAuthorization";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { toast } from "sonner";
+import { QUERY_KEYS } from "@/lib/constants/queryKeys";
+import { useQuery } from "@tanstack/react-query";
+import { Project } from "@/lib/types/project";
+import { ApiError } from "@/lib/utils/result";
+import { getMyPermissions } from "@/lib/services/user";
 
 const generalLinks = [
   { name: "Home", url: "/", icon: <House /> }
@@ -28,10 +31,23 @@ const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
 ];
 
 export default function AppSidebarNavigation() {
-  const location = useLocation();
-  const { hasPermission, isPending: isPermissionsPending, error: permissionsError } = useAuthorization();
-  const { data, isPending: isMyProjectsPending, error: myProjectsError } = useMyProjects();
+  const { data: permissions, isPending: isPermissionsPending, error: permissionsError } = useQuery<string[], ApiError>({
+    queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
+    queryFn: getMyPermissions,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
+  const { data, isPending: isMyProjectsPending, error: myProjectsError } = useQuery<Project[], ApiError>({
+    queryKey: [QUERY_KEYS.GET_MY_PROJECTS],
+    queryFn: getMyProjects,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
+    retry: false
+  });
+  
   const [sortBy, setSortBy] = useState<SortBy>(SORT_BY_AZ);
+  const location = useLocation();
 
   useEffect(() => {
     if (myProjectsError) {
@@ -70,12 +86,34 @@ export default function AppSidebarNavigation() {
       <SidebarContent>
         <SidebarGroup className="flex gap-2 py-3">
           <SidebarGroupContent className="flex gap-2 overflow-visible">
-            <Button asChild variant="outline" className="flex-1">
-              <NavLink to="/project/create">
-                <Plus />
-                <span>Project</span>
-              </NavLink>
-            </Button>
+            {isPermissionsPending || permissionsError ? (
+              <Skeleton className="h-8 w-full rounded-md" />
+            ) : (
+              <>
+                {permissions.includes(PERMISSIONS.PROJECT_CREATE) ? (
+                  <Button asChild variant="outline" className="flex-1">
+                    <NavLink to="/project/create">
+                      <Plus />
+                      <span>Project</span>
+                    </NavLink>
+                  </Button>
+                ) : (
+                  <Tooltip delayDuration={400}>
+                    <TooltipTrigger asChild>
+                      <span className="inline-block w-full">
+                        <Button className="cursor-not-allowed w-full" variant="outline" disabled>
+                          <Plus />
+                          <span>Project</span>
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      You don&apos;t have permission to create projects.
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </>
+            )}
             <Tooltip delayDuration={800}>
               <DropdownMenu>
                   <DropdownMenuTrigger asChild className="rounded-md">
@@ -135,7 +173,7 @@ export default function AppSidebarNavigation() {
                 </>
               ) : (
                 <>
-                  {hasPermission(PERMISSIONS.PROJECT_READ) ? (
+                  {permissions.includes(PERMISSIONS.PROJECT_READ) ? (
                     <>
                       {!projects || projects.length == 0 ? (
                         <Empty className="px-0 md:px-0">

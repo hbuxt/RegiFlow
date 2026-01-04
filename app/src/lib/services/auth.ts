@@ -28,8 +28,6 @@ export async function login(values: LoginSchema): Promise<ValueResult<string | n
 
     return successResult(response.access_token);
   } catch (e) {
-    console.error(e);
-
     if (e instanceof HttpClientError) {
       return errorResult({
         title: e.message,
@@ -66,8 +64,6 @@ export async function signup(values: SignupSchema): Promise<ValueResult<string |
 
     return successResult(response.access_token);
   } catch (e) {
-    console.error(e);
-
     if (e instanceof HttpClientError) {
       return errorResult({
         title: e.message,

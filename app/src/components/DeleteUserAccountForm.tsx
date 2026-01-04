@@ -1,10 +1,9 @@
-import { useAuthorization } from "@/hooks/useAuthorization";
 import { deleteMyAccountSchema, DeleteMyAccountSchema } from "@/lib/schemas/user";
 import { deleteMyAccount } from "@/lib/services/user";
 import { ApiError } from "@/lib/utils/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
@@ -15,31 +14,23 @@ import { FormControl, FormDescription, FormField, FormItem, FormMessage } from "
 import { Input } from "./ui/input";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { PERMISSIONS } from "@/lib/constants/permissions";
-import { Skeleton } from "./ui/skeleton";
-import { toast } from "sonner";
+import { User } from "@/lib/types/user";
 
-export default function DeleteMyAccountForm() {
+interface DeleteUserAccountFormProps {
+  user: User;
+  permissions: string[];
+}
+
+export default function DeleteMyAccountForm(props: DeleteUserAccountFormProps) {
   const queryClient = useQueryClient();
-  const { session, deauthenticate } = useAuthentication();
-  const { hasPermission, isPending, error: permissionsError } = useAuthorization();
+  const { deauthenticate } = useAuthentication();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
-
-  useEffect(() => {
-    if (!permissionsError) {
-      return;
-    }
-
-    toast.error("Failed to fetch your permissions", {
-      description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
-      duration: Infinity
-    });
-  }, [permissionsError]);
   
   const form = useForm<DeleteMyAccountSchema>({
     resolver: zodResolver(deleteMyAccountSchema),
     defaultValues: {
-      id: session?.id
+      id: props.user.id
     }
   });
 
@@ -68,33 +59,27 @@ export default function DeleteMyAccountForm() {
           </p>
         </div>
         <div className="flex md:justify-end md:items-center">
-          {isPending || permissionsError ? (
-            <Skeleton className="h-10 w-32 rounded-md" />
+          {props.permissions.includes(PERMISSIONS.USER_DELETE) ? (
+            <AlertDialogTrigger asChild>
+              <Button className="cursor-pointer" variant="destructive">
+                Delete Account
+              </Button>
+            </AlertDialogTrigger>
           ) : (
-            <>
-              {hasPermission(PERMISSIONS.USER_DELETE) ? (
-                <AlertDialogTrigger asChild>
-                  <Button className="cursor-pointer" variant="destructive">
-                    Delete Account
-                  </Button>
-                </AlertDialogTrigger>
-              ) : (
-                <Tooltip delayDuration={400}>
-                  <TooltipTrigger asChild>
-                    <span className="inline-block">
-                      <AlertDialogTrigger asChild>
-                        <Button className="cursor-not-allowed" variant="destructive" disabled>
-                          Delete Account
-                        </Button>
-                      </AlertDialogTrigger>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    You don&apos;t have permission to delete your account.
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </>
+            <Tooltip delayDuration={400}>
+              <TooltipTrigger asChild>
+                <span className="inline-block">
+                  <AlertDialogTrigger asChild>
+                    <Button className="cursor-not-allowed" variant="destructive" disabled>
+                      Delete Account
+                    </Button>
+                  </AlertDialogTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                You don&apos;t have permission to delete your account.
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
       </div>

@@ -5,16 +5,26 @@ import { Bell, Loader, LogOut, Settings } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useEffect, useState } from "react";
-import { useMyDetails } from "@/hooks/useUser";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import { User } from "@/lib/types/user";
+import { ApiError } from "@/lib/utils/result";
+import { QUERY_KEYS } from "@/lib/constants/queryKeys";
+import { getMyDetails } from "@/lib/services/user";
 
 export default function HeaderNavigation() {
+  const { data, isPending, error } = useQuery<User, ApiError>({
+    queryKey: [QUERY_KEYS.GET_MY_DETAILS],
+    queryFn: getMyDetails,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
+    retry: false
+  });
+
   const queryClient = useQueryClient();
   const { deauthenticate } = useAuthentication();
-  const { data, isPending, error } = useMyDetails();
   const [loggingOut, setLoggingOut] = useState(false);
 
   function onLogout() {
