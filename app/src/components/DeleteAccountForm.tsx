@@ -16,12 +16,12 @@ import { useAuthentication } from "@/hooks/useAuthentication";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { User } from "@/lib/types/user";
 
-interface DeleteUserAccountFormProps {
+interface DeleteAccountFormProps {
   user: User;
   permissions: string[];
 }
 
-export default function DeleteMyAccountForm(props: DeleteUserAccountFormProps) {
+export default function DeleteAccountForm(props: DeleteAccountFormProps) {
   const queryClient = useQueryClient();
   const { deauthenticate } = useAuthentication();
   const [processing, setProcessing] = useState(false);

@@ -5,12 +5,12 @@ import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { User } from "@/lib/types/user";
 
-interface ChangePasswordFormProps {
+interface ChangeEmailFormProps {
   user: User;
   permissions: string[]
 }
 
-export default function ChangeUserEmailForm(props: ChangePasswordFormProps) {
+export default function ChangeEmailForm(props: ChangeEmailFormProps) {
   return (
     <div className="pb-3">
       <div className="flex flex-row gap-4 justify-between py-3">

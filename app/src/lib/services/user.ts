@@ -1,7 +1,7 @@
 import { deleteMyAccountSchema, DeleteMyAccountSchema, updateMyDetailsSchema, UpdateMyDetailsSchema } from "../schemas/user";
 import { GetMyDetailsResponse, GetMyPermissionsResponse, UpdateMyDetailsRequest, UpdateMyDetailsResponse, User } from "../types/user";
 import http, { HttpClientError } from "../utils/http";
-import { errorResult, Result, successResult, ValueResult } from "../utils/result";
+import { errorResult, Result, successResult } from "../utils/result";
 import { toErrorMessages } from "../utils/zod";
 
 export async function getMyDetails(): Promise<User> {

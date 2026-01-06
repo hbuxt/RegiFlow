@@ -10,7 +10,7 @@ interface ChangePasswordFormProps {
   permissions: string[];
 }
 
-export default function ChangeMyPasswordForm(props: ChangePasswordFormProps) {
+export default function ChangePasswordForm(props: ChangePasswordFormProps) {
   return (
     <div className="flex flex-row gap-4 justify-between pt-3">
       <div className="flex flex-col flex-1 gap-2">

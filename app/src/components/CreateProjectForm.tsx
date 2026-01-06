@@ -6,7 +6,6 @@ import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
 import { createProjectSchema, CreateProjectSchema } from "@/lib/schemas/project";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PERMISSIONS } from "@/lib/constants/permissions";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { AlertCircleIcon, Loader } from "lucide-react";

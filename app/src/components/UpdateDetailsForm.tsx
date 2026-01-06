@@ -20,7 +20,7 @@ interface UpdateDetailsFormProps {
   permissions: string[]
 }
 
-export default function UpdateUserDetailsForm(props: UpdateDetailsFormProps) {
+export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
   const queryClient = useQueryClient();
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);

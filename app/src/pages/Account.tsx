@@ -1,7 +1,7 @@
-import ChangeUserEmailForm from "@/components/ChangeUserEmailForm";
-import ChangeUserPasswordForm from "@/components/ChangeUserPasswordForm";
-import DeleteUserAccountForm from "@/components/DeleteUserAccountForm";
-import UpdateUserDetailsForm from "@/components/UpdateUserDetailsForm";
+import ChangeEmailForm from "@/components/ChangeEmailForm";
+import ChangePasswordForm from "@/components/ChangePasswordForm";
+import DeleteAccountForm from "@/components/DeleteAccountForm";
+import UpdateDetailsForm from "@/components/UpdateDetailsForm";
 import { User } from "@/lib/types/user";
 import { useOutletContext } from "react-router";
 
@@ -15,10 +15,10 @@ export default function Account() {
           <h2 className="text-lg font-normal">Account</h2>
         </div>
       </div>
-      <UpdateUserDetailsForm user={user} permissions={permissions} />
-      <ChangeUserEmailForm user={user} permissions={permissions} />
-      <ChangeUserPasswordForm user={user} permissions={permissions} />
-      <DeleteUserAccountForm user={user} permissions={permissions} />
+      <UpdateDetailsForm user={user} permissions={permissions} />
+      <ChangeEmailForm user={user} permissions={permissions} />
+      <ChangePasswordForm user={user} permissions={permissions} />
+      <DeleteAccountForm user={user} permissions={permissions} />
     </div>
   )
 }

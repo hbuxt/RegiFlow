@@ -35,6 +35,7 @@ export default function AppSidebarNavigation() {
     queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
     queryFn: getMyPermissions,
     staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
     retry: false,
   });
 
@@ -87,7 +88,7 @@ export default function AppSidebarNavigation() {
         <SidebarGroup className="flex gap-2 py-3">
           <SidebarGroupContent className="flex gap-2 overflow-visible">
             {isPermissionsPending || permissionsError ? (
-              <Skeleton className="h-8 w-full rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
             ) : (
               <>
                 {permissions.includes(PERMISSIONS.PROJECT_CREATE) ? (
