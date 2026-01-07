@@ -1,47 +1,33 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
 import { createProjectSchema, CreateProjectSchema } from "../schemas/project";
 import { CreateProjectRequest, CreateProjectResponse, GetMyProjectsResponse, Project } from "../types/project";
-import http, { HttpClientError } from "../utils/http";
-import { errorResult, successResult, ValueResult } from "../utils/result";
-import { toErrorMessages } from "../utils/zod";
+import { appErrors } from "../utils/errors";
+import http from "../utils/http";
+import { toErrorDetails } from "../utils/zod";
 
-export async function createProject(values: CreateProjectSchema): Promise<ValueResult<Project>> {
+export async function createProject(values: CreateProjectSchema): Promise<Project> {
   const validationResult = createProjectSchema.safeParse(values);
       
   if (!validationResult.success) {
-    return errorResult({
-      title: "Validation errors occurred",
-      errors: toErrorMessages(validationResult.error)
-    });
+    throw appErrors.badRequest("Create project", toErrorDetails(validationResult.error));
   }
 
-  try {
-    const request: CreateProjectRequest = {
-      name: values.name,
-      description: values.description
-    };
+  const request: CreateProjectRequest = {
+    name: values.name,
+    description: values.description
+  };
 
-    const response = await http.post<CreateProjectResponse>({
-      url: "/projects",
-      body: JSON.stringify(request),
-      contentType: "application/json"
-    });
+  const response = await http.post<CreateProjectResponse>({
+    url: "/projects",
+    body: JSON.stringify(request),
+    contentType: "application/json"
+  });
 
-    return successResult({
-      id: response.id,
-      name: response.name,
-      createdAt: null
-    });
-  } catch (e) {
-    if (e instanceof HttpClientError) {
-      return errorResult({
-        title: e.message,
-        errors: e.data!
-      });
-    }
-
-    throw e;
-  }
+  return {
+    id: response.id,
+    name: response.name,
+    createdAt: null
+  };
 }
 
 export async function getMyProjects(): Promise<Project[]> {

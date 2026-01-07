@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
-import { ApiErrorMessage } from "./result";
+import { AppErrorDetail } from "./errors";
 
-export function toErrorMessages(errors: ZodError<any>): ApiErrorMessage[] {
+export function toErrorDetails(errors: ZodError<any>): AppErrorDetail[] {
   return errors.issues.map(issue => ({
     code: issue.path.join("."),
     message: issue.message

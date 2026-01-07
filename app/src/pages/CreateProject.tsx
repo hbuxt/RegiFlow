@@ -1,15 +1,14 @@
 import CreateProjectForm from "@/components/CreateProjectForm";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { getMyPermissions } from "@/lib/services/user";
-import { HttpClientError } from "@/lib/utils/http";
-import { ApiError } from "@/lib/utils/result";
 import queryClient from "@/lib/utils/tanstack";
 import { isRouteErrorResponse, redirect, useRouteError } from "react-router";
 import Error from "./Error";
+import { AppError } from "@/lib/utils/errors";
 
 export async function createProjectLoader() {
   try {
-    const permissions = await queryClient.fetchQuery<string[], ApiError>({
+    const permissions = await queryClient.fetchQuery<string[], AppError>({
       queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
       queryFn: getMyPermissions,
       staleTime: 1000 * 60 * 3,
@@ -18,12 +17,12 @@ export async function createProjectLoader() {
 
     return permissions;
   } catch (e) {
-    if (e instanceof HttpClientError) {
+    if (e instanceof AppError) {
       if (e.status == 401) {
         throw redirect("/account/login");
       }
 
-      throw new Response(JSON.stringify(e.data ?? []), {
+      throw new Response(JSON.stringify(e.details ?? []), {
         status: e.status,
         statusText: e.message,
         headers: { "Content-Type": "application/json" }

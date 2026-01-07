@@ -4,16 +4,15 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useState } from "react";
-import { ApiError } from "@/lib/utils/result";
 import { updateMyDetails } from "@/lib/services/user";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { AlertCircleIcon, CheckCircle2Icon, Loader } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { User } from "@/lib/types/user";
+import { AppError } from "@/lib/utils/errors";
 
 interface UpdateDetailsFormProps {
   user: User;
@@ -22,9 +21,6 @@ interface UpdateDetailsFormProps {
 
 export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
   const queryClient = useQueryClient();
-  const [processing, setProcessing] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
 
   const form = useForm<UpdateMyDetailsSchema>({
     resolver: zodResolver(updateMyDetailsSchema),
@@ -34,28 +30,21 @@ export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
     }
   });
 
-  async function onSubmit(values: UpdateMyDetailsSchema) {
-    setProcessing(true);
-    setSuccess(false);
-    const response = await updateMyDetails(values);
-
-    if (!response.success) {
-      setProcessing(false);
-      setSuccess(false);
-      setError(response.error ?? null);
-      return;
+  const mutation = useMutation<undefined, AppError | Error, UpdateMyDetailsSchema>({
+    mutationFn: updateMyDetails,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_MY_DETAILS], exact: true });
     }
+  })
 
-    setProcessing(false);
-    setSuccess(true);
-    setError(null);
-    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_MY_DETAILS], exact: true });
+  async function onSubmit(values: UpdateMyDetailsSchema) {
+    mutation.mutate(values);
   }
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        {success ? (
+        {mutation.isSuccess ? (
           <Alert className="border-emerald-600/50 text-emerald-600">
             <CheckCircle2Icon />
             <AlertTitle>Success! Your details have been saved</AlertTitle>
@@ -65,19 +54,23 @@ export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
           </Alert>
         ) : (
           <>
-            {error ? (
+            {mutation.isError ? (
               <Alert variant="destructive">
                 <AlertCircleIcon />
                 <AlertTitle>Unable to update your details</AlertTitle>
                 <AlertDescription>
-                  {error.errors.length == 1 ? (
-                    <p>{error.errors[0].message}</p>
+                  {mutation.error instanceof AppError ? (
+                    mutation.error.details.length === 1 ? (
+                      <p>{mutation.error.details[0].message}</p>
+                    ) : (
+                      <ul className="list-inside list-disc text-sm">
+                        {mutation.error.details.map((error, index) => (
+                          <li key={index}>{error.message}</li>
+                        ))}
+                      </ul>
+                    )
                   ) : (
-                    <ul className="list-inside list-disc text-sm">
-                      {error.errors.map((error, index) => (
-                        <li key={index}>{error.message}</li>
-                      ))}
-                    </ul>
+                    <p>Something went wrong. Please try again later.</p>
                   )}
                 </AlertDescription>
               </Alert>
@@ -89,7 +82,7 @@ export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">First name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -99,7 +92,7 @@ export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
             <FormItem className="gap-0 pt-4">
               <FormLabel className="mb-2">Last name</FormLabel>
               <FormControl className="mb-3">
-                <Input type="text" {...field} disabled={processing || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
+                <Input type="text" {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -110,8 +103,8 @@ export default function UpdateDetailsForm(props: UpdateDetailsFormProps) {
           <FormDescription>Your name may appear around RegiFlow where you contribute or are mentioned. You can remove it at any time.</FormDescription>
           <div className="flex items-center justify-end pt-3">
             {props.permissions.includes(PERMISSIONS.USER_PROFILE_UPDATE) ? (
-              <Button type="submit" variant="outline" className="cursor-pointer" disabled={processing}>
-                {processing ? (
+              <Button type="submit" variant="outline" className="cursor-pointer" disabled={mutation.isPending}>
+                {mutation.isPending ? (
                 <><Loader className="animate-spin" /><span>Saving...</span></>
                 ) : (
                   <span>Save changes</span>

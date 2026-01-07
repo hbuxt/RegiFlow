@@ -16,8 +16,8 @@ import { toast } from "sonner";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 import { Project } from "@/lib/types/project";
-import { ApiError } from "@/lib/utils/result";
 import { getMyPermissions } from "@/lib/services/user";
+import { AppError } from "@/lib/utils/errors";
 
 const generalLinks = [
   { name: "Home", url: "/", icon: <House /> }
@@ -31,7 +31,7 @@ const sortByOptions: { name: SortBy; icon: JSX.Element }[] = [
 ];
 
 export default function AppSidebarNavigation() {
-  const { data: permissions, isPending: isPermissionsPending, error: permissionsError } = useQuery<string[], ApiError>({
+  const { data: permissions, isPending: isPermissionsPending, error: permissionsError } = useQuery<string[], AppError>({
     queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
     queryFn: getMyPermissions,
     staleTime: 1000 * 60 * 5,
@@ -39,7 +39,7 @@ export default function AppSidebarNavigation() {
     retry: false,
   });
 
-  const { data, isPending: isMyProjectsPending, error: myProjectsError } = useQuery<Project[], ApiError>({
+  const { data, isPending: isMyProjectsPending, error: myProjectsError } = useQuery<Project[], AppError>({
     queryKey: [QUERY_KEYS.GET_MY_PROJECTS],
     queryFn: getMyProjects,
     staleTime: 1000 * 60 * 3,
@@ -53,14 +53,14 @@ export default function AppSidebarNavigation() {
   useEffect(() => {
     if (myProjectsError) {
       toast.error("Failed to fetch your projects", {
-        description: myProjectsError.errors?.map(e => e.message).join(", ") ?? "",
+        description: myProjectsError.details?.map(e => e.message).join(", ") ?? "",
         duration: Infinity
       });
     }
 
     if (permissionsError) {
       toast.error("Failed to fetch your permissions", {
-        description: permissionsError.errors?.map(e => e.message).join(", ") ?? "",
+        description: permissionsError.details?.map(e => e.message).join(", ") ?? "",
         duration: Infinity
       });
     }

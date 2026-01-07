@@ -2,8 +2,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { getMyDetails, getMyPermissions } from "@/lib/services/user";
 import { User } from "@/lib/types/user";
-import { HttpClientError } from "@/lib/utils/http";
-import { ApiError } from "@/lib/utils/result";
 import { isRouteActive } from "@/lib/utils/route";
 import { cn } from "@/lib/utils/styles";
 import queryClient from "@/lib/utils/tanstack";
@@ -11,17 +9,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 import { isRouteErrorResponse, NavLink, Outlet, redirect, useLoaderData, useLocation, useRouteError } from "react-router";
 import Error from "./Error";
+import { AppError } from "@/lib/utils/errors";
 
 export async function accountLayoutLoader() {
   try {
-    const user = await queryClient.fetchQuery<User, ApiError>({
+    const user = await queryClient.fetchQuery<User, AppError>({
       queryKey: [QUERY_KEYS.GET_MY_DETAILS],
       queryFn: getMyDetails,
       staleTime: 1000 * 60 * 3,
       retry: false
     });
 
-    const permissions = await queryClient.fetchQuery<string[], ApiError>({
+    const permissions = await queryClient.fetchQuery<string[], AppError>({
       queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS],
       queryFn: getMyPermissions,
       staleTime: 1000 * 60 * 3,
@@ -30,12 +29,12 @@ export async function accountLayoutLoader() {
 
     return { initUser: user, initPermissions: permissions };
   } catch (e) {
-    if (e instanceof HttpClientError) {
+    if (e instanceof AppError) {
       if (e.status == 401) {
         throw redirect("/account/login");
       }
 
-      throw new Response(JSON.stringify(e.data ?? []), {
+      throw new Response(JSON.stringify(e.details ?? []), {
         status: e.status,
         statusText: e.message,
         headers: { "Content-Type": "application/json" }
@@ -70,7 +69,7 @@ export function AccountLayoutError() {
 export default function AccountLayout() {
   const location = useLocation();
   const { initUser, initPermissions } = useLoaderData() as { initUser: User, initPermissions: string[] };
-  const { data: user } = useQuery<User, ApiError>({
+  const { data: user } = useQuery<User, AppError>({
     queryKey: [QUERY_KEYS.GET_MY_DETAILS],
     queryFn: getMyDetails,
     initialData: initUser,

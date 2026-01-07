@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from "react-router";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
-import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
 import { createProjectSchema, CreateProjectSchema } from "@/lib/schemas/project";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,9 +10,11 @@ import { Input } from "./ui/input";
 import { AlertCircleIcon, Loader } from "lucide-react";
 import { createProject } from "@/lib/services/project";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { Textarea } from "./ui/textarea";
+import { Project } from "@/lib/types/project";
+import { AppError } from "@/lib/utils/errors";
 
 export default function CreateProjectForm() {
   const characterMaxLength = 256;
@@ -21,8 +22,6 @@ export default function CreateProjectForm() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [characterCounter, setCharacterCounter] = useState(0);
-  const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
@@ -32,18 +31,16 @@ export default function CreateProjectForm() {
     }
   });
 
-  async function onSubmit(values: CreateProjectSchema) {
-    setProcessing(true);
-    const response = await createProject(values);
-
-    if (!response.success) {
-      setProcessing(false);
-      setError(response.error ?? null);
-      return;
+  const mutation = useMutation<Project, AppError | Error, CreateProjectSchema>({
+    mutationFn: createProject,
+    onSuccess: (project) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_MY_PROJECTS], exact: true });
+      navigate(`/project/${project.id}`);
     }
+  })
 
-    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_MY_PROJECTS], exact: true });
-    navigate(`/project/${response.value?.id}`);
+  async function onSubmit(values: CreateProjectSchema) {
+    mutation.mutate(values);
   }
 
   return (
@@ -57,19 +54,23 @@ export default function CreateProjectForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {error ? (
+            {mutation.isError ? (
               <Alert variant="destructive">
                 <AlertCircleIcon />
-                <AlertTitle>Unable to create project</AlertTitle>
+                <AlertTitle>Unable to create your project</AlertTitle>
                 <AlertDescription>
-                  {error.errors.length == 1 ? (
-                    <p>{error.errors[0].message}</p>
+                  {mutation.error instanceof AppError ? (
+                    mutation.error.details.length === 1 ? (
+                      <p>{mutation.error.details[0].message}</p>
+                    ) : (
+                      <ul className="list-inside list-disc text-sm">
+                        {mutation.error.details.map((error, index) => (
+                          <li key={index}>{error.message}</li>
+                        ))}
+                      </ul>
+                    )
                   ) : (
-                    <ul className="list-inside list-disc text-sm">
-                      {error.errors.map((error, index) => (
-                        <li key={index}>{error.message}</li>
-                      ))}
-                    </ul>
+                    <p>Something went wrong. Please try again later.</p>
                   )}
                 </AlertDescription>
               </Alert>
@@ -78,7 +79,7 @@ export default function CreateProjectForm() {
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Name</FormLabel>
                 <FormControl className="mb-3">
-                  <Input type="text" {...field} disabled={processing} />
+                  <Input type="text" {...field} disabled={mutation.isPending} />
                 </FormControl>
                 <FormDescription>A unique name for your project. Don&apos;t worry, you can change this later.</FormDescription>
                 <FormMessage />
@@ -88,7 +89,7 @@ export default function CreateProjectForm() {
               <FormItem className="gap-0 pt-4">
                 <FormLabel className="mb-2">Description</FormLabel>
                 <FormControl className="mb-1">
-                  <Textarea {...field} rows={8} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} disabled={processing} />
+                  <Textarea {...field} rows={8} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} disabled={mutation.isPending} />
                 </FormControl>
                 <FormDescription>{characterCounter}/{characterMaxLength}</FormDescription>
                 <FormMessage />
@@ -101,8 +102,8 @@ export default function CreateProjectForm() {
                 Back
               </NavLink>
             </Button>
-            <Button type="submit" variant="default" className="cursor-pointer" disabled={processing}>
-              {processing ? (
+            <Button type="submit" variant="default" className="cursor-pointer" disabled={mutation.isPending}>
+              {mutation.isPending ? (
                 <><Loader className="animate-spin" /><span>Creating...</span></>
               ) : (
                 <span>Create project</span>

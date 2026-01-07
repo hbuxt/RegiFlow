@@ -1,6 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { useState } from "react";
-import { ApiError } from "@/lib/utils/result";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon, Loader } from "lucide-react";
@@ -11,12 +9,11 @@ import { Input } from "./ui/input";
 import { loginSchema, LoginSchema } from "@/lib/schemas/auth";
 import { login } from "@/lib/services/auth";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import { useMutation } from "@tanstack/react-query";
+import { AppError } from "@/lib/utils/errors";
 
 export default function LoginForm() {
   const { authenticate } = useAuthentication();
-  const [processing, setProcessing] = useState(false);
-  const [loggingIn, setLoggingIn] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -26,26 +23,19 @@ export default function LoginForm() {
     }
   });
 
-  async function onSubmit(values: LoginSchema) {
-    setProcessing(true);
-    setLoggingIn(false);
-
-    const response = await login(values);
-
-    if (!response.success || !response.value) {
-      setProcessing(false);
-      setLoggingIn(false);
-      setError(response.error ?? null);
-
-      return;
+  const mutation = useMutation<string, AppError | Error, LoginSchema>({
+    mutationFn: login,
+    onSuccess: (session) => {
+      authenticate(session);
+      window.location.href = "/";
     }
+  });
 
-    setLoggingIn(true);
-    authenticate(response.value);
-    window.location.href = "/";
+  async function onSubmit(values: LoginSchema) {
+    mutation.mutate(values);
   }
 
-  if (loggingIn) {
+  if (mutation.isSuccess) {
     return (
       <Card>
         <CardHeader className="flex flex-col-reverse justify-center items-center">
@@ -68,19 +58,23 @@ export default function LoginForm() {
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              {error ? (
+              {mutation.isError ? (
                 <Alert variant="destructive">
                   <AlertCircleIcon />
                   <AlertTitle>Unable to sign you in</AlertTitle>
                   <AlertDescription>
-                    {error.errors.length == 1 ? (
-                      <p>{error.errors[0].message}</p>
+                    {mutation.error instanceof AppError ? (
+                      mutation.error.details.length === 1 ? (
+                        <p>{mutation.error.details[0].message}</p>
+                      ) : (
+                        <ul className="list-inside list-disc text-sm">
+                          {mutation.error.details.map((error, index) => (
+                            <li key={index}>{error.message}</li>
+                          ))}
+                        </ul>
+                      )
                     ) : (
-                      <ul className="list-inside list-disc text-sm">
-                        {error.errors.map((error, index) => (
-                          <li key={index}>{error.message}</li>
-                        ))}
-                      </ul>
+                      <p>Something went wrong. Please try again later.</p>
                     )}
                   </AlertDescription>
                 </Alert>
@@ -89,7 +83,7 @@ export default function LoginForm() {
                 <FormItem className="gap-0 py-4">
                   <FormLabel className="mb-2">Email</FormLabel>
                   <FormControl className="mb-2">
-                    <Input type="text" disabled={processing} {...field} />
+                    <Input type="text" disabled={mutation.isPending} {...field} />
                   </FormControl>
                   <FormDescription />
                   <FormMessage />
@@ -99,14 +93,14 @@ export default function LoginForm() {
                 <FormItem className="gap-0 py-4">
                   <FormLabel className="mb-2">Password</FormLabel>
                   <FormControl className="mb-2">
-                    <Input type="password" disabled={processing} {...field} />
+                    <Input type="password" disabled={mutation.isPending} {...field} />
                   </FormControl>
                   <FormDescription />
                   <FormMessage className="mb-2" />
                 </FormItem>
               )} />
-              <Button type="submit" disabled={processing} className="w-full cursor-pointer">
-                {processing ? (
+              <Button type="submit" disabled={mutation.isPending} className="w-full cursor-pointer">
+                {mutation.isPending ? (
                   <><Loader className="animate-spin" /><span>Signing you in...</span></>
                 ) : "Login"}
               </Button>

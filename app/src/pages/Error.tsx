@@ -1,10 +1,10 @@
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { ApiErrorMessage } from "@/lib/utils/result";
+import { AppErrorDetail } from "@/lib/utils/errors";
 import { Ban } from "lucide-react";
 
 interface ErrorProps {
   title: string;
-  errors: ApiErrorMessage[] | null;
+  errors: AppErrorDetail[] | null;
 }
 
 export default function Error(props: ErrorProps) {

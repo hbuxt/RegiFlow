@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormProvider, useForm } from "react-hook-form";
 import { SignupSchema, signupSchema } from "@/lib/schemas/auth";
@@ -8,15 +7,13 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircleIcon, Loader } from "lucide-react";
-import { ApiError } from "@/lib/utils/result";
 import { signup } from "@/lib/services/auth";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import { useMutation } from "@tanstack/react-query";
+import { AppError } from "@/lib/utils/errors";
 
 export default function SignUpForm() {
   const { authenticate } = useAuthentication();
-  const [processing, setProcessing] = useState(false);
-  const [loggingIn, setLoggingIn] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
 
   const form = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
@@ -27,31 +24,24 @@ export default function SignUpForm() {
     }
   });
 
-  async function onSubmit(values: SignupSchema) {
-    setProcessing(true);
-    setLoggingIn(false);
+  const mutation = useMutation<string | null, AppError | Error, SignupSchema>({
+    mutationFn: signup,
+    onSuccess: (session) => {
+      if (!session) {
+        window.location.href = "/account/login";
+        return;
+      }
 
-    const response = await signup(values);
-
-    if (!response.success) {
-      setProcessing(false);
-      setLoggingIn(false);
-      setError(response.error ?? null);
-
-      return;
-    }
-
-    if (response.value) {
-      setLoggingIn(true);
-      authenticate(response.value);
+      authenticate(session);
       window.location.href = "/";
-      return;
     }
+  });
 
-    window.location.href = "/account/login";
+  async function onSubmit(values: SignupSchema) {
+    mutation.mutate(values);
   }
 
-  if (loggingIn) {
+  if (mutation.isSuccess) {
     return (
       <Card>
         <CardHeader className="flex flex-col-reverse justify-center items-center">
@@ -71,19 +61,23 @@ export default function SignUpForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {error ? (
+            {mutation.isError ? (
               <Alert variant="destructive">
                 <AlertCircleIcon />
                 <AlertTitle>Unable to create your account</AlertTitle>
                 <AlertDescription>
-                  {error.errors.length == 1 ? (
-                    <p>{error.errors[0].message}</p>
+                  {mutation.error instanceof AppError ? (
+                    mutation.error.details.length === 1 ? (
+                      <p>{mutation.error.details[0].message}</p>
+                    ) : (
+                      <ul className="list-inside list-disc text-sm">
+                        {mutation.error.details.map((error, index) => (
+                          <li key={index}>{error.message}</li>
+                        ))}
+                      </ul>
+                    )
                   ) : (
-                    <ul className="list-inside list-disc text-sm">
-                      {error.errors.map((error, index) => (
-                        <li key={index}>{error.message}</li>
-                      ))}
-                    </ul>
+                    <p>Something went wrong. Please try again later.</p>
                   )}
                 </AlertDescription>
               </Alert>
@@ -92,7 +86,7 @@ export default function SignUpForm() {
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Email</FormLabel>
                 <FormControl className="mb-2">
-                  <Input type="text" disabled={processing} {...field} />
+                  <Input type="text" disabled={mutation.isPending} {...field} />
                 </FormControl>
                 <FormDescription className="mb-2">We&apos;ll use this to contact you. Only members in the projects you are in will be able to see this email.</FormDescription>
                 <FormMessage />
@@ -102,7 +96,7 @@ export default function SignUpForm() {
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Password</FormLabel>
                 <FormControl className="mb-2">
-                  <Input type="password" disabled={processing} {...field} />
+                  <Input type="password" disabled={mutation.isPending} {...field} />
                 </FormControl>
                 <FormDescription />
                 <FormMessage className="mb-2" />
@@ -112,14 +106,14 @@ export default function SignUpForm() {
               <FormItem className="gap-0 py-4">
                 <FormLabel className="mb-2">Confirm password</FormLabel>
                 <FormControl className="mb-2">
-                  <Input type="password" disabled={processing} {...field} />
+                  <Input type="password" disabled={mutation.isPending} {...field} />
                 </FormControl>
                 <FormDescription />
                 <FormMessage className="mb-2" />
               </FormItem>
             )} />
-            <Button type="submit" disabled={processing} className="w-full cursor-pointer">
-              {processing ? (
+            <Button type="submit" disabled={mutation.isPending} className="w-full cursor-pointer">
+              {mutation.isPending ? (
                 <><Loader className="animate-spin" /><span>Creating account...</span></>
               ) : "Create account"}
             </Button>

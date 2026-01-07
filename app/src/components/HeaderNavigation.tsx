@@ -10,12 +10,12 @@ import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { User } from "@/lib/types/user";
-import { ApiError } from "@/lib/utils/result";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { getMyDetails } from "@/lib/services/user";
+import { AppError } from "@/lib/utils/errors";
 
 export default function HeaderNavigation() {
-  const { data, isPending, error } = useQuery<User, ApiError>({
+  const { data, isPending, error } = useQuery<User, AppError>({
     queryKey: [QUERY_KEYS.GET_MY_DETAILS],
     queryFn: getMyDetails,
     staleTime: 1000 * 60 * 3,
@@ -41,7 +41,7 @@ export default function HeaderNavigation() {
     }
 
     toast.error("Failed to fetch your details", {
-      description: error.errors?.map(e => e.message).join(", ") ?? "",
+      description: error.details?.map(e => e.message).join(", ") ?? "",
       duration: Infinity
     });
 

@@ -14,7 +14,7 @@ export interface Token {
 }
 
 export interface LoginResponse {
-  access_token: string | null;
+  access_token: string;
 }
 
 export interface SignupResponse {

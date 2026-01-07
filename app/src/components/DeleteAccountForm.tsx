@@ -1,9 +1,7 @@
 import { deleteMyAccountSchema, DeleteMyAccountSchema } from "@/lib/schemas/user";
 import { deleteMyAccount } from "@/lib/services/user";
-import { ApiError } from "@/lib/utils/result";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
@@ -15,6 +13,7 @@ import { Input } from "./ui/input";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { User } from "@/lib/types/user";
+import { AppError } from "@/lib/utils/errors";
 
 interface DeleteAccountFormProps {
   user: User;
@@ -24,8 +23,6 @@ interface DeleteAccountFormProps {
 export default function DeleteAccountForm(props: DeleteAccountFormProps) {
   const queryClient = useQueryClient();
   const { deauthenticate } = useAuthentication();
-  const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<ApiError | null>(null);
   
   const form = useForm<DeleteMyAccountSchema>({
     resolver: zodResolver(deleteMyAccountSchema),
@@ -34,19 +31,17 @@ export default function DeleteAccountForm(props: DeleteAccountFormProps) {
     }
   });
 
-  async function onSubmit(values: DeleteMyAccountSchema) {
-    setProcessing(true);
-    const response = await deleteMyAccount(values);
-
-    if (!response.success) {
-      setProcessing(false);
-      setError(response.error ?? null);
-      return;
+  const mutation = useMutation<undefined, AppError | Error, DeleteMyAccountSchema>({
+    mutationFn: deleteMyAccount,
+    onSuccess: () => {
+      deauthenticate();
+      queryClient.clear();
+      window.location.href = "/";
     }
+  })
 
-    deauthenticate();
-    queryClient.clear();
-    window.location.href = "/";
+  async function onSubmit(values: DeleteMyAccountSchema) {
+    mutation.mutate(values);
   }
   
   return (
@@ -92,19 +87,23 @@ export default function DeleteAccountForm(props: DeleteAccountFormProps) {
                 This action cannot be undone. This will permanently delete your account
                 and any related information.
               </AlertDialogDescription>
-              {error ? (
+              {mutation.isError ? (
                 <Alert variant="destructive">
                   <AlertCircleIcon />
                   <AlertTitle>Unable to delete your account</AlertTitle>
                   <AlertDescription>
-                    {error.errors.length == 1 ? (
-                      <p>{error.errors[0].message}</p>
+                    {mutation.error instanceof AppError ? (
+                      mutation.error.details.length === 1 ? (
+                        <p>{mutation.error.details[0].message}</p>
+                      ) : (
+                        <ul className="list-inside list-disc text-sm">
+                          {mutation.error.details.map((error, index) => (
+                            <li key={index}>{error.message}</li>
+                          ))}
+                        </ul>
+                      )
                     ) : (
-                      <ul className="list-inside list-disc text-sm">
-                        {error.errors.map((error, index) => (
-                          <li key={index}>{error.message}</li>
-                        ))}
-                      </ul>
+                      <p>Something went wrong. Please try again later.</p>
                     )}
                   </AlertDescription>
                 </Alert>
@@ -120,11 +119,11 @@ export default function DeleteAccountForm(props: DeleteAccountFormProps) {
               )} />
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="cursor-pointer" disabled={processing}>
+              <AlertDialogCancel className="cursor-pointer" disabled={mutation.isPending}>
                 Cancel
               </AlertDialogCancel>
-              <Button type="submit" variant="destructive" className="cursor-pointer" disabled={processing}>
-                {processing ? (
+              <Button type="submit" variant="destructive" className="cursor-pointer" disabled={mutation.isPending}>
+                {mutation.isPending ? (
                   <><Loader className="animate-spin" /><span>Deleting your account...</span></>
                 ) : (
                   <span>Delete</span>

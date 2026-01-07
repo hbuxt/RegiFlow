@@ -1,6 +1,6 @@
 import { getBaseApiUrl } from "@/lib/utils/env";
-import { ApiErrorMessage } from "@/lib/utils/result";
 import { getSession } from "./session";
+import { AppErrorDetail, appErrors } from "./errors";
 
 export interface HttpClientOptions {
   baseAddress: string;
@@ -61,26 +61,26 @@ class HttpClient {
       return json as T;
     }
 
-    const errors = this.toErrorMessages(json);
+    const details = this.toErrorDetails(json);
 
     if (response.status == 400) {
-      throw new BadRequestError(url, response.status, errors);
+      throw appErrors.badRequest(url, details);
     } else if (response.status == 401) {
-      throw new UnauthorizedError(url, response.status, errors);
+      throw appErrors.unauthorized(url, details);
     } else if (response.status == 403) {
-      throw new ForbiddenError(url, response.status, errors);
+      throw appErrors.forbidden(url, details);
     } else if (response.status == 404) {
-      throw new NotFoundError(url, response.status, errors);
+      throw appErrors.notFound(url, details);
     } else if (response.status == 409) {
-      throw new ConflictError(url, response.status, errors);
+      throw appErrors.conflict(url, details);
     } else if (response.status == 429) {
-      throw new RateLimitError(url, response.status, errors);
+      throw appErrors.rateLimit(url, details);
     } else {
-      throw new ServerError(url, response.status, errors);
+      throw appErrors.server(url, details);
     }
   }
 
-  private toErrorMessages(data: any): ApiErrorMessage[] {
+  private toErrorDetails(data: any): AppErrorDetail[] {
     if (!data) {
       return [];
     }
@@ -135,7 +135,10 @@ class HttpClientPipeline {
     try {
       response = await fetch(request);
     } catch (e) {
-      throw new NetworkError(request.url);
+      throw appErrors.network(request.url, [{ 
+        code: "network_error", 
+        message: "Network error. Please check your internet connection." 
+      }]);
     }
 
     for (const handler of this.afterHandlers) {
@@ -143,68 +146,6 @@ class HttpClientPipeline {
     }
 
     return response;
-  }
-}
-
-export abstract class HttpClientError extends Error {
-  public resource: string;
-  public status: number;
-  public data?: ApiErrorMessage[];
-
-  constructor(message: string, resource: string, status: number, data?: ApiErrorMessage[]) {
-    super(message);
-    
-    this.resource = resource;
-    this.status = status;
-    this.data = data;
-  }
-}
-
-export class BadRequestError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, looks like you missed something", resource, status, data);
-  }
-}
-
-export class UnauthorizedError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, you need to re-authenticate", resource, status, data);
-  }
-}
-
-export class ForbiddenError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, you don't have permissions", resource, status, data);
-  }
-}
-
-export class NotFoundError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, you should check your data", resource, status, data);
-  }
-}
-
-export class ConflictError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, you should check your data", resource, status, data);
-  }
-}
-
-export class RateLimitError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, steady on there!", resource, status, data);
-  }
-}
-
-export class ServerError extends HttpClientError {
-  constructor(resource: string, status: number, data?: ApiErrorMessage[]) {
-    super("Oops, something went wrong!", resource, status, data);
-  }
-}
-
-export class NetworkError extends HttpClientError {
-  constructor(resource: string) {
-    super("Network error!", resource, 503, [{ code: "network_error", message: "Network error. Please check your internet connection." }])
   }
 }
 
