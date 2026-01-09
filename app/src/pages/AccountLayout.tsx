@@ -10,6 +10,7 @@ import { Settings } from "lucide-react";
 import { isRouteErrorResponse, NavLink, Outlet, redirect, useLoaderData, useLocation, useRouteError } from "react-router";
 import Error from "./Error";
 import { AppError } from "@/lib/utils/errors";
+import { ReactNode } from "react";
 
 export async function accountLayoutLoader() {
   try {
@@ -45,22 +46,11 @@ export async function accountLayoutLoader() {
   }
 }
 
-export function AccountLayoutError() {
+export function AccountLayoutError(): ReactNode {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    const title = "Unable to load your account";
-
-    switch (error.status) {
-      case 403:
-        return <Error title={title} errors={error.data ?? []} />;
-      case 404:
-        return <Error title={title} errors={error.data ?? []} />;
-      case 503: 
-        return <Error title={title} errors={error.data ?? []} />;
-      default:
-        return <Error title={title} errors={error.data ?? []} />;
-    }
+    <Error title="Unable to load your account" errors={error.data ?? []} />
   }
 
   throw error;
