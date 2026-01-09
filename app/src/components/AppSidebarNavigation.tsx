@@ -93,7 +93,7 @@ export default function AppSidebarNavigation() {
               <>
                 {permissions.includes(PERMISSIONS.PROJECT_CREATE) ? (
                   <Button asChild variant="outline" className="flex-1">
-                    <NavLink to="/project/create">
+                    <NavLink to="/create">
                       <Plus />
                       <span>Project</span>
                     </NavLink>
@@ -191,7 +191,7 @@ export default function AppSidebarNavigation() {
                           <EmptyContent>
                             <div className="flex">
                               <Button variant="default" type="button" asChild>
-                                <NavLink to="/project/create">Create project</NavLink>
+                                <NavLink to="/create">Create project</NavLink>
                               </Button>
                             </div>
                           </EmptyContent>
@@ -202,7 +202,7 @@ export default function AppSidebarNavigation() {
                             <SidebarMenuItem key={item.id}>
                               <Tooltip delayDuration={800}>
                                 <TooltipTrigger asChild>
-                                  <SidebarMenuButton asChild isActive={isRouteActive(location.pathname, item.name)} className="cursor-pointer truncate">
+                                  <SidebarMenuButton asChild isActive={isRouteActive(location.pathname, item.id)} className="cursor-pointer truncate">
                                     <NavLink to={`/${item.id}`}>{ellipsize(item.name, 25)}</NavLink>
                                   </SidebarMenuButton>
                                 </TooltipTrigger>

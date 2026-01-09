@@ -1,6 +1,6 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
 import { createProjectSchema, CreateProjectSchema } from "../schemas/project";
-import { CreateProjectRequest, CreateProjectResponse, GetMyProjectsResponse, Project } from "../types/project";
+import { CreateProjectRequest, CreateProjectResponse, GetMyProjectsResponse, GetProjectByIdResponse, Project } from "../types/project";
 import { appErrors } from "../utils/errors";
 import http from "../utils/http";
 import { toErrorDetails } from "../utils/zod";
@@ -26,8 +26,25 @@ export async function createProject(values: CreateProjectSchema): Promise<Projec
   return {
     id: response.id,
     name: response.name,
+    description: null,
     createdAt: null
   };
+}
+
+export async function getProjectById(id: string) : Promise<Project> {
+  const response = await http.get<GetProjectByIdResponse>({
+    url: `/projects/${id}`,
+    contentType: "none"
+  });
+
+  const project: Project = {
+    id: response.id,
+    name: response.name,
+    description: response.description,
+    createdAt: response.created_at ? new Date(response.created_at) : null
+  };
+
+  return project;
 }
 
 export async function getMyProjects(): Promise<Project[]> {
@@ -40,6 +57,7 @@ export async function getMyProjects(): Promise<Project[]> {
     const project: Project = {
       id: dto.id,
       name: dto.name,
+      description: null,
       createdAt: dto.created_at ? new Date(dto.created_at) : null
     };
 

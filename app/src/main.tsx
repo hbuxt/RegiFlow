@@ -15,6 +15,8 @@ import AccountLayout, { AccountLayoutError, accountLayoutLoader } from './pages/
 import Account from './pages/Account';
 import PlainLayout, { plainLayoutLoader } from './pages/PlainLayout';
 import queryClient from './lib/utils/tanstack';
+import ProjectLayout, { ProjectLayoutError, projectLayoutLoader } from './pages/ProjectLayout';
+import ProjectOverview from './pages/ProjectOverview';
 
 const router = createBrowserRouter([
   {
@@ -27,11 +29,24 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "project/create",
+        path: "create",
         element: <CreateProject />,
         loader: createProjectLoader,
         hydrateFallbackElement: <div></div>,
         errorElement: <CreateProjectError />
+      },
+      {
+        path: ":id",
+        element: <ProjectLayout />,
+        loader: projectLayoutLoader,
+        hydrateFallbackElement: <div></div>,
+        errorElement: <ProjectLayoutError />,
+        children: [
+          {
+            index: true,
+            element: <ProjectOverview />
+          }
+        ]
       },
       {
         path: "/account",

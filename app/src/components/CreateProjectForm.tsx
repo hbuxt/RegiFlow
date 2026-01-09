@@ -35,7 +35,7 @@ export default function CreateProjectForm() {
     mutationFn: createProject,
     onSuccess: (project) => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_MY_PROJECTS], exact: true });
-      navigate(`/project/${project.id}`);
+      navigate(`/${project.id}`);
     }
   })
 
