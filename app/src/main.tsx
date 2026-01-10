@@ -17,6 +17,8 @@ import PlainLayout, { plainLayoutLoader } from './pages/PlainLayout';
 import queryClient from './lib/utils/tanstack';
 import ProjectLayout, { ProjectLayoutError, projectLayoutLoader } from './pages/ProjectLayout';
 import ProjectOverview from './pages/ProjectOverview';
+import ProjectSettingsLayout from './pages/ProjectSettingsLayout';
+import ProjectGeneralSettings from './pages/ProjectGeneralSettings';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,16 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <ProjectOverview />
+          },
+          {
+            path: "settings",
+            element: <ProjectSettingsLayout />,
+            children: [
+              {
+                index: true,
+                element: <ProjectGeneralSettings />
+              }
+            ]
           }
         ]
       },

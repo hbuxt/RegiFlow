@@ -1,6 +1,6 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
 import { createProjectSchema, CreateProjectSchema } from "../schemas/project";
-import { CreateProjectRequest, CreateProjectResponse, GetMyProjectsResponse, GetProjectByIdResponse, Project } from "../types/project";
+import { CreateProjectRequest, CreateProjectResponse, GetMyPermissionsInProject, GetMyProjectsResponse, GetProjectByIdResponse, Project } from "../types/project";
 import { appErrors } from "../utils/errors";
 import http from "../utils/http";
 import { toErrorDetails } from "../utils/zod";
@@ -65,6 +65,15 @@ export async function getMyProjects(): Promise<Project[]> {
   })
 
   return projects;
+}
+
+export async function getMyPermissionsInProject(id: string): Promise<string[]> {
+  const response = await http.get<GetMyPermissionsInProject>({
+    url: `/projects/${id}/users/me/permissions`,
+    contentType: "none"
+  });
+
+  return response.permissions;
 }
 
 export function sortProjects(projects: Project[], sortBy: SortBy): Project[] {

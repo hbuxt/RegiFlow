@@ -31,3 +31,7 @@ export interface GetMyProjectsProjectDto {
   name: string | null;
   created_at: string | null;
 }
+
+export interface GetMyPermissionsInProject {
+  permissions: string[]
+}

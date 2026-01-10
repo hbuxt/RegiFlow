@@ -9,4 +9,25 @@ export const createProjectSchema = z.object({
     .max(256, "Description exceeds the maximum length of 256 characters")
 });
 
+export const renameProjectSchema = z.object({
+  id: z.string(),
+  name: z.string()
+    .min(4, "Name must be at least 4 characters long")
+    .max(64, 'Name is too long, it must not exceed 64 characters')
+});
+
+export const updateProjectDescriptionSchema = z.object({
+  id: z.string(),
+  description: z.string()
+    .max(256, "Description is too long, it must not exceed 256 characters")
+    .optional()
+})
+
+export const deleteProjectSchema = z.object({
+  id: z.string()
+});
+
+export type RenameProjectSchema = z.infer<typeof renameProjectSchema>;
+export type UpdateProjectDescriptionSchema = z.infer<typeof updateProjectDescriptionSchema>;
+export type DeleteProjectSchema = z.infer<typeof deleteProjectSchema>;
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>;
