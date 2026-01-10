@@ -14,14 +14,14 @@ import { ReactNode } from "react";
 export async function projectLayoutLoader({ params }: LoaderFunctionArgs) {
   try {
     const project = await queryClient.fetchQuery<Project, AppError>({
-      queryKey: [QUERY_KEYS.GET_PROJECT_BY_ID(params.id!)],
+      queryKey: [QUERY_KEYS.GET_PROJECT_BY_ID, params.id!],
       queryFn: () => getProjectById(params.id!),
       staleTime: 1000 * 60 * 3,
       retry: false
     });
 
     const permissions = await queryClient.fetchQuery<string[], AppError>({
-      queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS_IN_PROJECT(params.id!)],
+      queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS_IN_PROJECT, params.id!],
       queryFn: () => getMyPermissionsInProject(params.id!),
       staleTime: 1000 * 60 * 3,
       retry: false
@@ -60,7 +60,7 @@ export default function ProjectLayout() {
   const { initProject, initPermissions } = useLoaderData() as { initProject: Project, initPermissions: string[] };
   
   const { data: project } = useQuery<Project, AppError>({
-    queryKey: [QUERY_KEYS.GET_PROJECT_BY_ID(initProject.id)],
+    queryKey: [QUERY_KEYS.GET_PROJECT_BY_ID, initProject.id],
     queryFn: () => getProjectById(initProject.id),
     initialData: initProject,
     staleTime: 1000 * 60 * 3,
@@ -69,7 +69,7 @@ export default function ProjectLayout() {
   });
 
   const { data: permissions } = useQuery<string[], AppError>({
-    queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS_IN_PROJECT(initProject.id)],
+    queryKey: [QUERY_KEYS.GET_MY_PERMISSIONS_IN_PROJECT, initProject.id],
     queryFn: () => getMyPermissionsInProject(initProject.id),
     initialData: initPermissions,
     staleTime: 1000 * 60 * 3,

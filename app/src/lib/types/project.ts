@@ -15,6 +15,22 @@ export interface CreateProjectResponse {
   name: string;
 }
 
+export interface RenameProjectRequest {
+  name: string;
+}
+
+export interface RenameProjectResponse {
+  id: string;
+}
+
+export interface UpdateProjectDescriptionRequest {
+  description: string;
+}
+
+export interface UpdateProjectDescriptionResponse {
+  id: string;
+}
+
 export interface GetProjectByIdResponse {
   id: string;
   name: string;

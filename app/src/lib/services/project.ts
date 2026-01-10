@@ -1,6 +1,7 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
-import { createProjectSchema, CreateProjectSchema } from "../schemas/project";
-import { CreateProjectRequest, CreateProjectResponse, GetMyPermissionsInProject, GetMyProjectsResponse, GetProjectByIdResponse, Project } from "../types/project";
+import { createProjectSchema, CreateProjectSchema, deleteProjectSchema, DeleteProjectSchema, renameProjectSchema, RenameProjectSchema, updateProjectDescriptionSchema, UpdateProjectDescriptionSchema } from "../schemas/project";
+import { CreateProjectRequest, CreateProjectResponse, GetMyPermissionsInProject, GetMyProjectsResponse, GetProjectByIdResponse, Project, RenameProjectRequest, RenameProjectResponse, UpdateProjectDescriptionRequest, UpdateProjectDescriptionResponse } from "../types/project";
+import { UpdateMyDetailsRequest } from "../types/user";
 import { appErrors } from "../utils/errors";
 import http from "../utils/http";
 import { toErrorDetails } from "../utils/zod";
@@ -29,6 +30,55 @@ export async function createProject(values: CreateProjectSchema): Promise<Projec
     description: null,
     createdAt: null
   };
+}
+
+export async function renameProject(values: RenameProjectSchema): Promise<undefined> {
+  const validationResult = renameProjectSchema.safeParse(values);
+      
+  if (!validationResult.success) {
+    throw appErrors.badRequest("Rename project", toErrorDetails(validationResult.error));
+  }
+
+  const request: RenameProjectRequest = {
+    name: values.name
+  };
+
+  await http.put<RenameProjectResponse>({
+    url: `/projects/${values.id}/rename`,
+    body: JSON.stringify(request),
+    contentType: "application/json"
+  });
+}
+
+export async function updateProjectDescription(values: UpdateProjectDescriptionSchema): Promise<undefined> {
+  const validationResult = updateProjectDescriptionSchema.safeParse(values);
+
+  if (!validationResult.success) {
+    throw appErrors.badRequest("Update project", toErrorDetails(validationResult.error));
+  }
+
+  const request: UpdateProjectDescriptionRequest = {
+    description: values.description ?? ""
+  };
+
+  await http.put<UpdateProjectDescriptionResponse>({
+    url: `/projects/${values.id}`,
+    body: JSON.stringify(request),
+    contentType: "application/json"
+  });
+}
+
+export async function deleteProjectById(values: DeleteProjectSchema): Promise<undefined> {
+  const validationResult = deleteProjectSchema.safeParse(values);
+
+  if (!validationResult.success) {
+    throw appErrors.badRequest("Delete project", toErrorDetails(validationResult.error));
+  }
+
+  await http.delete({
+    url: `/projects/${values.id}`,
+    contentType: "none"
+  });
 }
 
 export async function getProjectById(id: string) : Promise<Project> {

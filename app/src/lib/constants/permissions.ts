@@ -5,5 +5,8 @@ export const PERMISSIONS = {
   USER_PASSWORD_UPDATE: "user.password.update",
 
   PROJECT_CREATE: "project.create",
+  PROJECT_RENAME: "project.name.update",
+  PROJECT_UPDATE: "project.description.update",
+  PROJECT_DELETE: "project.delete",
   PROJECT_READ: "project.read"
 } as const;

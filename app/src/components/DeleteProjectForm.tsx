@@ -6,6 +6,13 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 import { Button } from "./ui/button";
 import { FormControl, FormDescription, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { AppError } from "@/lib/utils/errors";
+import { PERMISSIONS } from "@/lib/constants/permissions";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { AlertCircleIcon, Loader } from "lucide-react";
+import { deleteProjectById } from "@/lib/services/project";
 
 interface DeleteProjectFormProps {
   project: Project,
@@ -20,8 +27,15 @@ export default function DeleteProjectForm(props: DeleteProjectFormProps) {
     }
   });
 
+  const mutation = useMutation<undefined, AppError | Error, DeleteProjectSchema>({
+    mutationFn: deleteProjectById,
+    onSuccess: () => {
+      window.location.href = "/"
+    }
+  });
+
   function onSubmit(values: DeleteProjectSchema) {
-    console.log(values);
+    mutation.mutate(values);
   }
 
   return (
@@ -34,11 +48,28 @@ export default function DeleteProjectForm(props: DeleteProjectFormProps) {
           </p>
         </div>
         <div className="flex md:justify-end md:items-center">
-          <AlertDialogTrigger asChild>
-            <Button className="cursor-pointer" variant="destructive">
-              Delete Project
-            </Button>
-          </AlertDialogTrigger>
+          {props.permissions.includes(PERMISSIONS.PROJECT_DELETE) ? (
+            <AlertDialogTrigger asChild>
+              <Button className="cursor-pointer" variant="destructive">
+                Delete Project
+              </Button>
+            </AlertDialogTrigger>
+          ) : (
+            <Tooltip delayDuration={400}>
+              <TooltipTrigger asChild>
+                <span className="inline-block">
+                  <AlertDialogTrigger asChild>
+                    <Button className="cursor-not-allowed" variant="destructive" disabled>
+                      Delete Project
+                    </Button>
+                  </AlertDialogTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                You don&apos;t have permission to delete this project.
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
       <AlertDialogContent>
@@ -50,10 +81,31 @@ export default function DeleteProjectForm(props: DeleteProjectFormProps) {
                 This action cannot be undone. This will permanently delete project <span className="text-black font-bold mr-1">{props.project.name}</span>
                 and delete any related information, including removing access for all users.
               </AlertDialogDescription>
+              {mutation.isError ? (
+                <Alert variant="destructive">
+                  <AlertCircleIcon />
+                  <AlertTitle>Unable to delete project</AlertTitle>
+                  <AlertDescription>
+                    {mutation.error instanceof AppError ? (
+                      mutation.error.details.length === 1 ? (
+                        <p>{mutation.error.details[0].message}</p>
+                      ) : (
+                        <ul className="list-inside list-disc text-sm">
+                          {mutation.error.details.map((error, index) => (
+                            <li key={index}>{error.message}</li>
+                          ))}
+                        </ul>
+                      )
+                    ) : (
+                      <p>Something went wrong. Please try again later.</p>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              ) : null}
               <FormField control={form.control} name="id" render={({ field }: {field: any }) => (
                 <FormItem>
                   <FormControl>
-                    <Input type="hidden" {...field} />
+                    <Input type="hidden" {...field} disabled={mutation.isPending} />
                   </FormControl>
                   <FormDescription />
                   <FormMessage />
@@ -61,11 +113,15 @@ export default function DeleteProjectForm(props: DeleteProjectFormProps) {
               )} />
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="cursor-pointer">
+              <AlertDialogCancel className="cursor-pointer" disabled={mutation.isPending}>
                 Cancel
               </AlertDialogCancel>
-              <Button type="submit" variant="destructive" className="cursor-pointer">
-                Delete
+              <Button type="submit" variant="destructive" className="cursor-pointer" disabled={mutation.isPending}>
+                {mutation.isPending ? (
+                  <><Loader className="animate-spin" /><span>Deleting project...</span></>
+                ) : (
+                  <span>Delete</span>
+                )}
               </Button>
             </AlertDialogFooter>
           </form>
