@@ -158,8 +158,15 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             Id = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Allows the user to update a project.",
-                            Name = "project.update"
+                            Description = "Allows the user to rename a project.",
+                            Name = "project.name.update"
+                        },
+                        new
+                        {
+                            Id = new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Allows the user to update a project description.",
+                            Name = "project.description.update"
                         },
                         new
                         {
@@ -485,6 +492,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
+                            PermissionId = new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b"),
                             PermissionId = new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de")
                         },
                         new
@@ -521,6 +533,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
                             PermissionId = new Guid("d132729b-1009-48d2-a6c1-17761c8ff500")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54"),
+                            PermissionId = new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3")
                         },
                         new
                         {

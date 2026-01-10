@@ -87,11 +87,19 @@ namespace Api.Infrastructure.Persistence.Seeders
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
-        public static Permission ProjectUpdate { get; set; } = new Permission()
+        public static Permission ProjectNameUpdate { get; set; } = new Permission()
         {
             Id = new Guid("D132729B-1009-48D2-A6C1-17761C8FF500"),
-            Name = PermissionNames.ProjectUpdate,
-            Description = "Allows the user to update a project.",
+            Name = PermissionNames.ProjectNameUpdate,
+            Description = "Allows the user to rename a project.",
+            CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
+        };
+        
+        public static Permission ProjectDescriptionUpdate { get; set; } = new Permission()
+        {
+            Id = new Guid("793454CA-E380-44A4-AD3F-BD3BCFB53DC3"),
+            Name = PermissionNames.ProjectDescriptionUpdate,
+            Description = "Allows the user to update a project description.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
         
@@ -156,7 +164,8 @@ namespace Api.Infrastructure.Persistence.Seeders
                 RolesRead,
                 ProjectCreate,
                 ProjectRead,
-                ProjectUpdate,
+                ProjectNameUpdate,
+                ProjectDescriptionUpdate,
                 ProjectDelete,
                 ProjectUsersRead,
                 ProjectUsersUpdate,

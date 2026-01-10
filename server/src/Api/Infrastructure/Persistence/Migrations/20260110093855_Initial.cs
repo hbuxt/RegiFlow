@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class MigrationName : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -224,11 +224,12 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("6a856bb1-3865-4bb2-9fa9-8cc74968f1e0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view system roles.", "roles.read" },
                     { new Guid("6b8a28d1-d8eb-46d4-9946-b6007dbb7c23"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their details.", "user.read" },
                     { new Guid("73fbc56a-be18-45d8-bb78-5fd8b0391b6c"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to create projects.", "project.create" },
+                    { new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project description.", "project.description.update" },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "project.read" },
                     { new Guid("87edfa7a-1fcd-4114-bea8-4b89cd21fbde"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to respond to invitations.", "user.invitations.update" },
                     { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to invite users into a project.", "project.invitations.invite" },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view the users in a project.", "project.users.read" },
-                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project.", "project.update" },
+                    { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to rename a project.", "project.name.update" },
                     { new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to change the user's roles in a project.", "project.users.update" }
                 });
 
@@ -257,6 +258,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                 {
                     { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
+                    { new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
                     { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("1fbb98c3-37ac-4def-8824-83032cfdfb54") },
@@ -268,6 +270,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
+                    { new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new Guid("b4d50721-7c41-491b-92d7-a8213599cc2b") },

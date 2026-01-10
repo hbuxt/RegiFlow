@@ -104,7 +104,12 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ProjectUpdate.Id,
+                    PermissionId = PermissionSeeder.ProjectNameUpdate.Id,
+                    RoleId = RoleSeeder.Owner.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectDescriptionUpdate.Id,
                     RoleId = RoleSeeder.Owner.Id
                 },
                 new RolePermission()
@@ -148,7 +153,12 @@ namespace Api.Infrastructure.Persistence.Seeders
                 },
                 new RolePermission()
                 {
-                    PermissionId = PermissionSeeder.ProjectUpdate.Id,
+                    PermissionId = PermissionSeeder.ProjectNameUpdate.Id,
+                    RoleId = RoleSeeder.Admin.Id
+                },
+                new RolePermission()
+                {
+                    PermissionId = PermissionSeeder.ProjectDescriptionUpdate.Id,
                     RoleId = RoleSeeder.Admin.Id
                 },
                 new RolePermission()

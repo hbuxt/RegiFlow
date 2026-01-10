@@ -14,7 +14,8 @@ namespace Api.Domain.Constants
 
         public const string ProjectCreate = "project.create";
         public const string ProjectRead = "project.read";
-        public const string ProjectUpdate = "project.update";
+        public const string ProjectNameUpdate = "project.name.update";
+        public const string ProjectDescriptionUpdate = "project.description.update";
         public const string ProjectDelete = "project.delete";
         public const string ProjectUsersRead = "project.users.read";
         public const string ProjectUsersUpdate = "project.users.update";

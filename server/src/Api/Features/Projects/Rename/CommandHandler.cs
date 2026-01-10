@@ -54,7 +54,7 @@ namespace Api.Features.Projects.Rename
                 return Result.Failure<Response>(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectUpdate, command.UserId, 
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectNameUpdate, command.UserId, 
                 command.ProjectId))
             {
                 _logger.LogInformation("Rename project failed for user: {UserId} in project: {ProjectId}. " +
