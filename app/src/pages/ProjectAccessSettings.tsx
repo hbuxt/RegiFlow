@@ -1,6 +1,4 @@
 import DataTable from "@/components/DataTable";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { PERMISSIONS } from "@/lib/constants/permissions";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
@@ -9,11 +7,10 @@ import { Project, ProjectUser, ProjectUserRole } from "@/lib/types/project";
 import { AppError } from "@/lib/utils/errors";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Ban, DoorOpen, KeyRound, MoreHorizontal, UserPlus } from "lucide-react";
+import { Ban } from "lucide-react";
 import { useOutletContext } from "react-router";
 import Error from "./Error";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { InviteUserToProjectForm } from "@/components/InviteUserToProjectForm";
 
 export default function ProjectAccessSettings() {

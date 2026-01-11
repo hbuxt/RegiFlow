@@ -65,7 +65,7 @@ export function InviteUserToProjectForm(props: InviteUserToProjectFormProps) {
 
   return (
     <AlertDialog>
-      {props.permissions.includes(PERMISSIONS.PROJECT_USERS_INVITE) ? (
+      {props.permissions.includes(PERMISSIONS.PROJECT_INVITATIONS_CREATE) ? (
         <AlertDialogTrigger asChild>
           <Button className="cursor-pointer">
             <UserPlus /> Invite

@@ -16,7 +16,7 @@ export default function ChangeEmailForm(props: ChangeEmailFormProps) {
           <Input id="email" type="email" defaultValue={props.user.email} disabled={true} />
         </div>
       </div>
-      <p className="text-muted-foreground text-sm">We&apos;ll use this to contact you. Only members in the projects you are in, and have been invited to, will be able to see this email.</p>
+      <p className="text-muted-foreground text-sm">We&apos;ll use this to contact you. Only members in the projects you are in will be able to see this email.</p>
     </div>
   );
 }

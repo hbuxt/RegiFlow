@@ -37,18 +37,7 @@ export function CreateProjectError() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    const title = "Unable to load project creation page";
-
-    switch (error.status) {
-      case 403:
-        return <Error title={title} errors={error.data ?? []} />;
-      case 404:
-        return <Error title={title} errors={error.data ?? []} />;
-      case 503: 
-        return <Error title={title} errors={error.data ?? []} />;
-      default:
-        return <Error title={title} errors={error.data ?? []} />;
-    }
+    return <Error title="Unable to load project creation page" errors={error.data ?? []} />;
   }
 
   throw error;

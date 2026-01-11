@@ -49,7 +49,7 @@ export function ProjectLayoutError(): ReactNode {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    <Error title="Unable to load project" errors={error.data ?? []} />
+    return <Error title="Unable to load project" errors={error.data ?? []} />;
   }
 
   throw error;

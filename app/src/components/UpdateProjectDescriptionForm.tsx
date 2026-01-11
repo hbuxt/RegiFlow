@@ -87,7 +87,7 @@ export default function UpdateProjectDescriptionForm(props: UpdateProjectDescrip
           <FormField control={form.control} name="id" render={({ field }: {field: any }) => (
             <FormItem>
               <FormControl>
-                <Input type="hidden" {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.PROJECT_UPDATE)} />
+                <Input type="hidden" {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.PROJECT_DESCRIPTION_UPDATE)} />
               </FormControl>
               <FormDescription />
               <FormMessage />
@@ -98,9 +98,9 @@ export default function UpdateProjectDescriptionForm(props: UpdateProjectDescrip
               <FormLabel className="mb-2">Description</FormLabel>
               <div className="flex gap-4 items-end mb-1">
                 <FormControl className="flex-1">
-                  <Textarea rows={8} {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.PROJECT_UPDATE)} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} />
+                  <Textarea rows={8} {...field} disabled={mutation.isPending || !props.permissions.includes(PERMISSIONS.PROJECT_DESCRIPTION_UPDATE)} maxLength={characterMaxLength} onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setCharacterCounter(e.currentTarget.value.length)} />
                 </FormControl>
-                {props.permissions.includes(PERMISSIONS.PROJECT_UPDATE) ? (
+                {props.permissions.includes(PERMISSIONS.PROJECT_DESCRIPTION_UPDATE) ? (
                   <Button type="submit" variant="outline" className="cursor-pointer" disabled={mutation.isPending}>
                     {mutation.isPending ? (
                       <><Loader className="animate-spin" /><span>Updating...</span></>

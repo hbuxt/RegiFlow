@@ -50,7 +50,7 @@ export default function RenameProjectForm(props: RenameProjectFormProps) {
           <Input id="name" type="text" defaultValue={props.project.name ?? ""} disabled={true} />
         </div>
         <div className="flex items-end md:justify-end">
-          {props.permissions.includes(PERMISSIONS.PROJECT_RENAME) ? (
+          {props.permissions.includes(PERMISSIONS.PROJECT_NAME_UPDATE) ? (
             <Button asChild className="cursor-pointer" variant="outline">
               <AlertDialogTrigger>Rename</AlertDialogTrigger>
             </Button>
