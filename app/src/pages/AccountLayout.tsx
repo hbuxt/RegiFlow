@@ -50,7 +50,7 @@ export function AccountLayoutError(): ReactNode {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    <Error title="Unable to load your account" errors={error.data ?? []} />
+    return <Error title="Unable to load your account" errors={error.data ?? []} />
   }
 
   throw error;
