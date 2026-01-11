@@ -216,7 +216,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("0e9b858f-164d-4c75-a559-9c13d3794547"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their roles.", "user.roles.read" },
                     { new Guid("2ad51633-09b5-4abc-8cd7-0fef16ca08de"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete a project.", "project.delete" },
                     { new Guid("37fad974-167b-4d6f-9cc6-c57b488b72a7"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update their details.", "user.profile.update" },
-                    { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to revoke invitations in a project.", "project.invitations.revoke" },
+                    { new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to revoke invitations in a project.", "project.invitations.delete" },
                     { new Guid("3f396475-3e5a-4c44-93c0-77acc30e494f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their permissions.", "user.permissions.read" },
                     { new Guid("3fc973af-c16f-4a92-a461-3cce8f5cecf9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to delete their details.", "user.delete" },
                     { new Guid("5967eac1-dabf-4c13-880a-3b25c4078a4f"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view their permissions in a project.", "project.permissions.read" },
@@ -227,7 +227,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                     { new Guid("793454ca-e380-44a4-ad3f-bd3bcfb53dc3"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to update a project description.", "project.description.update" },
                     { new Guid("7b91219a-11ff-46c3-88b3-bd483c3a1658"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view project they're involved with.", "project.read" },
                     { new Guid("87edfa7a-1fcd-4114-bea8-4b89cd21fbde"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to respond to invitations.", "user.invitations.update" },
-                    { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to invite users into a project.", "project.invitations.invite" },
+                    { new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to invite users into a project.", "project.invitations.create" },
                     { new Guid("9385f62b-2867-42c6-9dc0-3598d19da8f8"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to view the users in a project.", "project.users.read" },
                     { new Guid("d132729b-1009-48d2-a6c1-17761c8ff500"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to rename a project.", "project.name.update" },
                     { new Guid("ffbc21ef-ebab-4459-add6-7ac5d748c416"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Allows the user to change the user's roles in a project.", "project.users.update" }

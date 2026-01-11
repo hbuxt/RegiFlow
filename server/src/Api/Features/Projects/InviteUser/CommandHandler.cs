@@ -4,34 +4,50 @@ using System.Threading;
 using System.Threading.Tasks;
 using Api.Application.Abstractions;
 using Api.Application.Behaviours;
+using Api.Application.Extensions;
 using Api.Domain.Constants;
 using Api.Domain.Entities;
 using Api.Domain.Enums;
 using Api.Domain.ValueObjects;
 using Api.Infrastructure.Persistence.Contexts;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Features.Projects.InviteUser
 {
-    public sealed class CommandHandler : ICommandHandler<Command, Response>
+    public sealed class CommandHandler : ICommandHandler<Command>
     {
         private readonly AppDbContext _dbContext;
         private readonly IPermissionService _permissionService;
+        private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
             AppDbContext dbContext, 
-            IPermissionService permissionService, 
+            IPermissionService permissionService,
+            IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
             _dbContext = dbContext;
             _permissionService = permissionService;
+            _validator = validator;
             _logger = logger;
         }
 
-        public async Task<Result<Response>> Handle(Command command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
+            var validationResult = _validator.Validate(command);
+
+            if (!validationResult.IsValid)
+            {
+                var validationErrors = validationResult.ToFormattedDictionary();
+                
+                _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
+                    "Validation errors occurred: {@Errors}", command.UserId, command.ProjectId, validationErrors);
+                return Result.Failure(validationErrors);
+            }
+            
             var roles = await _dbContext.Roles
                 .AsNoTracking()
                 .Where(r => r.Scope == RoleScope.Project && command.Roles.Contains(r.Id))
@@ -41,7 +57,7 @@ namespace Api.Features.Projects.InviteUser
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "One of the roles did not exist", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.RoleNotFound());
+                return Result.Failure(Errors.RoleNotFound());
             }
 
             var project = await _dbContext.Projects
@@ -52,7 +68,7 @@ namespace Api.Features.Projects.InviteUser
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "Project does not exist", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.ProjectNotFound());
+                return Result.Failure(Errors.ProjectNotFound());
             }
 
             if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectInvitationsInvite, command.UserId, 
@@ -60,7 +76,7 @@ namespace Api.Features.Projects.InviteUser
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "User does not have permission", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.UserNotAuthorized());
+                return Result.Failure(Errors.UserNotAuthorized());
             }
 
             var recipient = await _dbContext.Users
@@ -71,7 +87,7 @@ namespace Api.Features.Projects.InviteUser
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "User: {UserEmail} does not exist", command.UserId, command.ProjectId, command.Email);
-                return Result.Failure<Response>(Errors.UserNotFound());
+                return Result.Success();
             }
 
             var isInProject = await _dbContext.ProjectUsers
@@ -82,20 +98,21 @@ namespace Api.Features.Projects.InviteUser
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                 "   Duplicate user in project.", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.DuplicateUser());
+                return Result.Failure(Errors.DuplicateUser());
             }
 
             var pendingInvitationExists = await _dbContext.Invitations
                 .AsNoTracking()
                 .AnyAsync(i => i.RegardingId == project.Id &&
                                i.Status == NotificationStatus.Pending &&
+                               i.ExpiresAt >= DateTime.UtcNow &&
                                i.RecipientId == recipient.Id);
 
             if (pendingInvitationExists)
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "Duplicate invitation in project.", command.UserId, command.ProjectId);
-                return Result.Failure<Response>(Errors.DuplicateInvitation());
+                return Result.Success();
             }
 
             var invitation = new Invitation()
@@ -121,10 +138,7 @@ namespace Api.Features.Projects.InviteUser
                 
             _logger.LogInformation("Project invitation succeded for user: {UserId} in " +
                 "project: {ProjectId} to recipient: {RecipientId}", command.UserId, command.ProjectId, recipient.Id);
-            return Result.Success(new Response()
-            {
-                Id = invitation.Id
-            });
+            return Result.Success();
         }
     }
 }

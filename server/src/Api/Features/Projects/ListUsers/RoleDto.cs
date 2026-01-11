@@ -17,5 +17,9 @@ namespace Api.Features.Projects.ListUsers
         [JsonPropertyName(FieldNames.RoleName)]
         [JsonPropertyOrder(1)]
         public string? Name { get; init; }
+        
+        [JsonPropertyName(FieldNames.ProjectUserRoleAssignedAt)]
+        [JsonPropertyOrder(2)]
+        public DateTime? AssignedAt { get; init; }
     }
 }

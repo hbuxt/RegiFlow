@@ -39,5 +39,8 @@ namespace Api.Domain.Constants
         public const string ProjectDescription = "description";
         public const string ProjectCreatedAt = "created_at";
         public const string ProjectCreatedBy = "created_by";
+
+        public const string ProjectUserJoinedAt = "joined_at";
+        public const string ProjectUserRoleAssignedAt = "assigned_at";
     }
 }

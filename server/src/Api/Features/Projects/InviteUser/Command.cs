@@ -4,7 +4,7 @@ using Api.Application.Behaviours;
 
 namespace Api.Features.Projects.InviteUser
 {
-    public sealed record Command : ICommand<Response>
+    public sealed record Command : ICommand
     {
         public Command(
             Guid? userId, 

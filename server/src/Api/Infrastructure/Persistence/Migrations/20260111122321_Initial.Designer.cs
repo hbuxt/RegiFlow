@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260110093855_Initial")]
+    [Migration("20260111122321_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -204,14 +204,14 @@ namespace Api.Infrastructure.Persistence.Migrations
                             Id = new Guid("8c2a9606-a6fa-4d1b-8068-1f3a4767eda2"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to invite users into a project.",
-                            Name = "project.invitations.invite"
+                            Name = "project.invitations.create"
                         },
                         new
                         {
                             Id = new Guid("3ae302be-a68c-4a1f-827c-b35edabdf0bb"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Allows the user to revoke invitations in a project.",
-                            Name = "project.invitations.revoke"
+                            Name = "project.invitations.delete"
                         });
                 });
 

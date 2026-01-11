@@ -168,7 +168,7 @@ namespace Api.Features.Projects
                 request?.Roles), cancellationToken);
             
             return result.Match(
-                _ => Results.CreatedAtRoute(EndpointNames.InviteUserToProject, value: result.Value),
+                Results.NoContent,
                 _ => result.ToProblemDetails());
         }
         

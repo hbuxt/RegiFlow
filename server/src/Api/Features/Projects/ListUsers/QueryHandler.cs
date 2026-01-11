@@ -62,12 +62,16 @@ namespace Api.Features.Projects.ListUsers
                     .Select(pu => new UserDto()
                     {
                         Id = pu.User!.Id,
+                        FirstName = pu.User.FirstName,
+                        LastName = pu.User.LastName,
                         Email = pu.User.Email,
+                        JoinedAt = pu.JoinedAt,
                         Roles = pu.ProjectUserRoles
                             .Select(pur => new RoleDto()
                             {
                                 Id = pur.Role!.Id,
-                                Name = pur.Role.Name
+                                Name = pur.Role.Name,
+                                AssignedAt = pur.AssignedAt
                             })
                             .ToList()
                     })

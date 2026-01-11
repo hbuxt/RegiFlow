@@ -20,7 +20,7 @@ namespace Api.Domain.Constants
         public const string ProjectUsersRead = "project.users.read";
         public const string ProjectUsersUpdate = "project.users.update";
         public const string ProjectPermissionsRead = "project.permissions.read";
-        public const string ProjectInvitationsInvite = "project.invitations.invite";
-        public const string ProjectInvitationsRevoke = "project.invitations.revoke";
+        public const string ProjectInvitationsInvite = "project.invitations.create";
+        public const string ProjectInvitationsRevoke = "project.invitations.delete";
     }
 }
