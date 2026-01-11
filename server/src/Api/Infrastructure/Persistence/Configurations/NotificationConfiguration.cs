@@ -35,13 +35,8 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .HasColumnOrder(5)
                 .IsRequired();
 
-            builder.Property(n => n.Content)
-                .HasColumnOrder(6)
-                .IsRequired()
-                .HasMaxLength(450);
-
             builder.Property(n => n.CreatedAt)
-                .HasColumnOrder(9)
+                .HasColumnOrder(8)
                 .IsRequired();
 
             builder.HasOne(n => n.Recipient)

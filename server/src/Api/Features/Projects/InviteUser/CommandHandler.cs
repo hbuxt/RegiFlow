@@ -19,17 +19,20 @@ namespace Api.Features.Projects.InviteUser
     public sealed class CommandHandler : ICommandHandler<Command>
     {
         private readonly AppDbContext _dbContext;
+        private readonly IProjectService _projectService;
         private readonly IPermissionService _permissionService;
         private readonly IValidator<Command> _validator;
         private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(
             AppDbContext dbContext, 
+            IProjectService projectService,
             IPermissionService permissionService,
             IValidator<Command> validator,
             ILogger<CommandHandler> logger)
         {
             _dbContext = dbContext;
+            _projectService = projectService;
             _permissionService = permissionService;
             _validator = validator;
             _logger = logger;
@@ -59,12 +62,8 @@ namespace Api.Features.Projects.InviteUser
                     "One of the roles did not exist", command.UserId, command.ProjectId);
                 return Result.Failure(Errors.RoleNotFound());
             }
-
-            var project = await _dbContext.Projects
-                .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id == command.ProjectId);
             
-            if (project == null)
+            if (!await _projectService.ExistsAsync(command.ProjectId))
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
                     "Project does not exist", command.UserId, command.ProjectId);
@@ -103,7 +102,7 @@ namespace Api.Features.Projects.InviteUser
 
             var pendingInvitationExists = await _dbContext.Invitations
                 .AsNoTracking()
-                .AnyAsync(i => i.RegardingId == project.Id &&
+                .AnyAsync(i => i.RegardingId == command.ProjectId &&
                                i.Status == NotificationStatus.Pending &&
                                i.ExpiresAt >= DateTime.UtcNow &&
                                i.RecipientId == recipient.Id);
@@ -126,7 +125,6 @@ namespace Api.Features.Projects.InviteUser
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddDays(3),
                 Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
-                Content = $"You've been invited to {project.Name} as {string.Join(", ", roles.Select(r => r.Name))}",
                 Data = new InvitationData()
                 {
                     Roles = roles.Select(r => r.Id).ToList()

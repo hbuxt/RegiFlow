@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -5,7 +7,6 @@ using Api.Application.Abstractions;
 using Api.Application.Behaviours;
 using Api.Domain.Constants;
 using Api.Domain.Entities;
-using Api.Domain.Enums;
 using Api.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -46,34 +47,54 @@ namespace Api.Features.Users.ListMyNotifications
                 return Result.Failure<Response>(Errors.UserNotAuthorized());
             }
 
-            var notifications = await _dbContext.Notifications
+            var invitationsQuery = _dbContext.Notifications
+                .OfType<Invitation>()
                 .AsNoTracking()
                 .Where(n => n.RecipientId == query.UserId)
-                .Select(n => new NotificationDto()
+                .Include(i => i.SentBy)
+                .Include(i => i.Regarding);
+            
+            var notifications = await invitationsQuery
+                .Select(i => new
+                {
+                    i.Id,
+                    i.Type,
+                    i.Status,
+                    i.CreatedAt,
+                    i.Token,
+                    i.ExpiresAt,
+                    SentBy = i.SentBy != null ? new UserDto { Id = i.SentBy.Id, Email = i.SentBy.Email } : null,
+                    Regarding = i.Regarding != null ? new ProjectDto { Id = i.Regarding.Id, Name = i.Regarding.Name, Description = i.Regarding.Description } : null,
+                    RoleIds = i.Data != null ? i.Data.Roles : new List<Guid>()
+                })
+                .ToListAsync();
+            
+            var allRoleIds = notifications.SelectMany(n => n.RoleIds!).Distinct().ToList();
+
+            var rolesMap = await _dbContext.Roles
+                .AsNoTracking()
+                .Where(r => allRoleIds.Contains(r.Id))
+                .Select(r => new RoleDto { Id = r.Id, Name = r.Name })
+                .ToDictionaryAsync(r => r.Id);
+            
+            _logger.LogInformation("List my notifications for user: {UserId} succeeded", query.UserId);
+            return Result.Success(new Response()
+            {
+                Notifications = notifications.Select(n => new NotificationDto
                 {
                     Id = n.Id,
                     Type = n.Type.ToString(),
                     Status = n.Status.ToString(),
-                    Content = n.Content,
                     CreatedAt = n.CreatedAt,
-                    InvitationDetails = n.Type == NotificationType.Invitation
-                        ? new InvitationDetailsDto
-                        {
-                            Token = ((Invitation)n).Token,
-                            ExpiresAt = ((Invitation)n).ExpiresAt,
-                            Regarding = new ProjectDto
-                            {
-                                Name = ((Invitation)n).Regarding!.Name
-                            }
-                        }
-                        : null
-                })
-                .ToListAsync();
-                
-            _logger.LogInformation("List my notifications for user: {UserId} succeeded", query.UserId);
-            return Result.Success(new Response()
-            {
-                Notifications = notifications.OrderByDescending(n => n.CreatedAt).ToList()
+                    InvitationDetails = n.RoleIds == null ? null : new InvitationDetailsDto
+                    {
+                        Token = n.Token,
+                        ExpiresAt = n.ExpiresAt,
+                        SentBy = n.SentBy,
+                        Regarding = n.Regarding,
+                        Roles = n.RoleIds.Select(id => rolesMap[id]).ToList()
+                    }
+                }).OrderByDescending(n => n.CreatedAt).ToList()
             });
         }
     }

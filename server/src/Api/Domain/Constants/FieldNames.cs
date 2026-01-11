@@ -18,11 +18,12 @@ namespace Api.Domain.Constants
         public const string NotificationId = "id";
         public const string NotificationType = "type";
         public const string NotificationStatus = "status";
-        public const string NotificationContent = "content";
         public const string NotificationCreatedAt = "created_at";
         public const string Invitation = "invitation";
         public const string InvitationToken = "token";
+        public const string InvitationSentBy = "sent_by";
         public const string InvitationRegarding = "regarding";
+        public const string InvitationRoles = "roles";
         public const string InvitationExpiresAt = "expires_at";
         public const string InvitationStatus = "status";
 

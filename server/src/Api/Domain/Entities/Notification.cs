@@ -13,7 +13,6 @@ namespace Api.Domain.Entities
         public Guid RecipientId { get; set; }
         public NotificationType Type { get; set; }
         public NotificationStatus Status { get; set; }
-        public string? Content { get; set; }
         public DateTime CreatedAt { get; set; }
         
         public User? Recipient { get; set; }

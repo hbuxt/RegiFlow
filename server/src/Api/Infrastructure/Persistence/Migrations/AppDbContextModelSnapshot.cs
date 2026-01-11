@@ -24,15 +24,9 @@ namespace Api.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(6);
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(8);
 
                     b.Property<Guid>("RecipientId")
                         .HasColumnType("TEXT")
@@ -688,11 +682,11 @@ namespace Api.Infrastructure.Persistence.Migrations
                     b.Property<string>("DataJson")
                         .HasMaxLength(450)
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(9);
 
                     b.Property<Guid>("RegardingId")
                         .HasColumnType("TEXT")
@@ -706,7 +700,7 @@ namespace Api.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("TEXT")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
                     b.HasIndex("RegardingId");
 

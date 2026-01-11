@@ -134,7 +134,6 @@ namespace Api.Infrastructure.Persistence.Migrations
                     RegardingId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
                     Token = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
                     DataJson = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),

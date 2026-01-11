@@ -22,10 +22,6 @@ namespace Api.Features.Users.ListMyNotifications
         [JsonPropertyOrder(2)]
         public string? Status { get; init; }
         
-        [JsonPropertyName(FieldNames.NotificationContent)]
-        [JsonPropertyOrder(3)]
-        public string? Content { get; init; }
-        
         [JsonPropertyName(FieldNames.Invitation)]
         [JsonPropertyOrder(4)]
         public InvitationDetailsDto? InvitationDetails { get; init; }

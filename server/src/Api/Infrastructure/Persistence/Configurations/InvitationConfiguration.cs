@@ -19,17 +19,17 @@ namespace Api.Infrastructure.Persistence.Configurations
                 .HasColumnOrder(3);
 
             builder.Property(i => i.Token)
-                .HasColumnOrder(7)
+                .HasColumnOrder(6)
                 .IsRequired()
                 .HasMaxLength(450);
 
             builder.Property(i => i.DataJson)
-                .HasColumnOrder(8)
+                .HasColumnOrder(7)
                 .IsRequired(false)
                 .HasMaxLength(450);
 
             builder.Property(i => i.ExpiresAt)
-                .HasColumnOrder(10)
+                .HasColumnOrder(9)
                 .IsRequired();
 
             builder.HasOne(i => i.Regarding)
