@@ -138,7 +138,7 @@ namespace Api.Infrastructure.Persistence.Seeders
         public static Permission ProjectInvitationInvite { get; set; } = new Permission()
         {
             Id = new Guid("8C2A9606-A6FA-4D1B-8068-1F3A4767EDA2"),
-            Name = PermissionNames.ProjectInvitationsInvite,
+            Name = PermissionNames.ProjectInvitationsCreate,
             Description = "Allows the user to invite users into a project.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };
@@ -146,7 +146,7 @@ namespace Api.Infrastructure.Persistence.Seeders
         public static Permission ProjectInvitationRevoke { get; set; } = new Permission()
         {
             Id = new Guid("3AE302BE-A68C-4A1F-827C-B35EDABDF0BB"),
-            Name = PermissionNames.ProjectInvitationsRevoke,
+            Name = PermissionNames.ProjectInvitationsDelete,
             Description = "Allows the user to revoke invitations in a project.",
             CreatedAt = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
         };

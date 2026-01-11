@@ -73,7 +73,7 @@ namespace Api.Features.Users.ListMyNotifications
             _logger.LogInformation("List my notifications for user: {UserId} succeeded", query.UserId);
             return Result.Success(new Response()
             {
-                Notifications = notifications
+                Notifications = notifications.OrderByDescending(n => n.CreatedAt).ToList()
             });
         }
     }

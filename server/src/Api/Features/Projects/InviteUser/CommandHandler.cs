@@ -71,7 +71,7 @@ namespace Api.Features.Projects.InviteUser
                 return Result.Failure(Errors.ProjectNotFound());
             }
 
-            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectInvitationsInvite, command.UserId, 
+            if (!await _permissionService.IsAuthorizedAsync(PermissionNames.ProjectInvitationsCreate, command.UserId, 
                 command.ProjectId))
             {
                 _logger.LogInformation("Project invitation failed for user: {UserId} in project: {ProjectId}. " +
