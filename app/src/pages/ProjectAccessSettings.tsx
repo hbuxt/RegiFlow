@@ -141,8 +141,7 @@ function ProjectUsersDataTable({ project }: { project: Project }) {
 
     return (
       <div className="rounded-md border">
-        <div className="grid grid-cols-6 gap-4 border-b px-4 py-3">
-          <Skeleton className="h-5 w-full" />
+        <div className="grid grid-cols-5 gap-4 border-b px-4 py-3">
           <Skeleton className="h-5 w-full" />
           <Skeleton className="h-5 w-full" />
           <Skeleton className="h-5 w-full" />
@@ -150,8 +149,7 @@ function ProjectUsersDataTable({ project }: { project: Project }) {
           <Skeleton className="h-5 w-full" />
         </div>
         {Array.from({ length: rows }).map((_, rowIndex) => (
-          <div key={rowIndex} className="grid grid-cols-6 gap-4 px-4 py-3 border-b last:border-b-0">
-            <Skeleton className="h-5 w-full" />
+          <div key={rowIndex} className="grid grid-cols-5 gap-4 px-4 py-3 border-b last:border-b-0">
             <Skeleton className="h-5 w-full" />
             <Skeleton className="h-5 w-full" />
             <Skeleton className="h-5 w-full" />

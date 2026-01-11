@@ -17,6 +17,9 @@ import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { getRolesByScope } from "@/lib/services/role";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { inviteUserToProject } from "@/lib/services/project";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { Skeleton } from "./ui/skeleton";
 
 interface InviteUserToProjectFormProps {
   project: Project;
@@ -24,7 +27,7 @@ interface InviteUserToProjectFormProps {
 }
 
 export function InviteUserToProjectForm(props: InviteUserToProjectFormProps) {
-  const { data, isPending, isError } = useQuery<Role[], AppError>({
+  const { data, isPending, isError, error } = useQuery<Role[], AppError>({
     queryKey: [QUERY_KEYS.GET_ROLES_BY_SCOPE, "project"],
     queryFn: () => getRolesByScope("project"),
     staleTime: 1000 * 60 * 3,
@@ -48,6 +51,17 @@ export function InviteUserToProjectForm(props: InviteUserToProjectFormProps) {
   function onSubmit(values: InviteUserToProjectSchema) {
     mutation.mutate(values);
   }
+
+  useEffect(() => {
+    if (!isError) {
+      return;
+    }
+
+    toast.error("Failed to fetch roles", {
+      description: error.details?.map(e => e.message).join(", ") ?? "",
+      duration: Infinity
+    });
+  }, [isError]);
 
   return (
     <AlertDialog>
@@ -132,7 +146,7 @@ export function InviteUserToProjectForm(props: InviteUserToProjectFormProps) {
                 <FormItem className="gap-0 pt-2 pb-4">
                   <FormLabel className="mb-2">Role</FormLabel>
                   {isPending || isError ? (
-                    <>Oops</>
+                    <Skeleton className="h-9 w-full rounded-md" />
                   ) : (
                     <Select {...field} onValueChange={field.onChange}>
                       <FormControl>
