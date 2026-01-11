@@ -1,4 +1,6 @@
 import { deleteMyAccountSchema, DeleteMyAccountSchema, updateMyDetailsSchema, UpdateMyDetailsSchema } from "../schemas/user";
+import { GetMyNotificationsResponse, Notification } from "../types/notification";
+import { Role } from "../types/role";
 import { GetMyDetailsResponse, GetMyPermissionsResponse, UpdateMyDetailsRequest, UpdateMyDetailsResponse, User } from "../types/user";
 import { appErrors } from "../utils/errors";
 import http from "../utils/http";
@@ -57,4 +59,48 @@ export async function getMyPermissions(): Promise<string[]> {
   });
 
   return response.permissions;
+}
+
+export async function getMyNotifications(): Promise<Notification[]> {
+  const response = await http.get<GetMyNotificationsResponse>({
+    url: "/users/me/notifications",
+    contentType: "none"
+  });
+
+  const notifications = response.notifications.map((dto) => {
+    const notification: Notification = {
+      id: dto.id,
+      type: dto.type,
+      status: dto.status,
+      createdAt: dto.created_at ? new Date(dto.created_at) : null,
+      invitation: !!dto.invitation ? {
+        sentBy: {
+          id: dto.invitation.sent_by.id,
+          firstName: null,
+          lastName: null,
+          email: dto.invitation.sent_by.email
+        },
+        regarding: {
+          id: dto.invitation.regarding.id,
+          name: dto.invitation.regarding.name,
+          description: dto.invitation.regarding.description,
+          createdAt: null
+        },
+        roles: dto.invitation.roles.map((roleDto) => {
+          const role: Role = {
+            id: roleDto.id,
+            name: roleDto.name
+          };
+
+          return role;
+        }),
+        token: dto.invitation.token,
+        expiresAt: dto.invitation.expires_at ? new Date(dto.invitation.expires_at) : null
+      } : null
+    }
+
+    return notification;
+  });
+
+  return notifications;
 }

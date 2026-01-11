@@ -13,6 +13,8 @@ import { User } from "@/lib/types/user";
 import { QUERY_KEYS } from "@/lib/constants/queryKeys";
 import { getMyDetails } from "@/lib/services/user";
 import { AppError } from "@/lib/utils/errors";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import NotificationsPanel from "./NotificationsPanel";
 
 export default function HeaderNavigation() {
   const { data, isPending, error } = useQuery<User, AppError>({
@@ -50,18 +52,7 @@ export default function HeaderNavigation() {
   return (
     <div className="ml-auto px-6">
       <div className="flex items-center gap-3">
-        <Tooltip delayDuration={400}>
-          <TooltipTrigger asChild>
-            <Button className="rounded-full cursor-pointer" variant="ghost" size="icon">
-              <NavLink to="/">
-                <Bell className="size-4" />
-              </NavLink>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            Notifications
-          </TooltipContent>
-        </Tooltip>
+        <NotificationsPanel />
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="cursor-pointer rounded-full">
             <Avatar className="h-8 w-8 rounded-full">

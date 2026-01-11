@@ -2,6 +2,7 @@ export const PERMISSIONS = {
   USER_PROFILE_UPDATE: "user.profile.update",
   USER_EMAIL_UPDATE: "user.email.update",
   USER_PASSWORD_UPDATE: "user.password.update",
+  USER_NOTIFICATIONS_READ: "user.notifications.read",
   USER_DELETE: "user.delete",
 
   PROJECT_READ: "project.read",
