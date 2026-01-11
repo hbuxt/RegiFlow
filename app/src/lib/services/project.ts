@@ -1,6 +1,6 @@
 import { SORT_BY_AZ, SORT_BY_MOST_RECENT, SORT_BY_OLDEST, SORT_BY_ZA, SortBy } from "../constants/sort";
-import { createProjectSchema, CreateProjectSchema, deleteProjectSchema, DeleteProjectSchema, renameProjectSchema, RenameProjectSchema, updateProjectDescriptionSchema, UpdateProjectDescriptionSchema } from "../schemas/project";
-import { CreateProjectRequest, CreateProjectResponse, GetMyPermissionsInProject, GetMyProjectsResponse, GetProjectByIdResponse, Project, RenameProjectRequest, RenameProjectResponse, UpdateProjectDescriptionRequest, UpdateProjectDescriptionResponse } from "../types/project";
+import { createProjectSchema, CreateProjectSchema, deleteProjectSchema, DeleteProjectSchema, InviteUserToProjectSchema, renameProjectSchema, RenameProjectSchema, updateProjectDescriptionSchema, UpdateProjectDescriptionSchema } from "../schemas/project";
+import { CreateProjectRequest, CreateProjectResponse, GetMyPermissionsInProject, GetMyProjectsResponse, GetProjectByIdResponse, GetUsersInProjectResponse, InviteUserToProjectRequest, Project, ProjectUser, ProjectUserRole, RenameProjectRequest, RenameProjectResponse, UpdateProjectDescriptionRequest, UpdateProjectDescriptionResponse } from "../types/project";
 import { UpdateMyDetailsRequest } from "../types/user";
 import { appErrors } from "../utils/errors";
 import http from "../utils/http";
@@ -97,6 +97,38 @@ export async function getProjectById(id: string) : Promise<Project> {
   return project;
 }
 
+export async function getUsersInProject(id: string): Promise<ProjectUser[]> {
+  const response = await http.get<GetUsersInProjectResponse>({
+    url: `/projects/${id}/users`,
+    contentType: "none"
+  });
+
+  const users = response.users.map((userDto) => {
+    const roles = userDto.roles.map((roleDto) => {
+      const role: ProjectUserRole = {
+        id: roleDto.id,
+        name: roleDto.name,
+        assignedAt: roleDto.assigned_at ? new Date(roleDto.assigned_at) : null
+      };
+
+      return role;
+    });
+
+    const user: ProjectUser = {
+      id: userDto.id,
+      firstName: userDto.first_name,
+      lastName: userDto.last_name,
+      email: userDto.email,
+      joinedAt: userDto.joined_at ? new Date(userDto.joined_at) : null,
+      roles: roles
+    };
+
+    return user;
+  });
+
+  return users;
+}
+
 export async function getMyProjects(): Promise<Project[]> {
   const response = await http.get<GetMyProjectsResponse>({
     url: "/users/me/projects",
@@ -124,6 +156,19 @@ export async function getMyPermissionsInProject(id: string): Promise<string[]> {
   });
 
   return response.permissions;
+}
+
+export async function inviteUserToProject(values: InviteUserToProjectSchema): Promise<undefined> {
+  const request: InviteUserToProjectRequest = {
+    email: values.email,
+    roles: [values.role]
+  };
+
+  await http.post({
+    url: `/projects/${values.id}/invitations`,
+    body: JSON.stringify(request),
+    contentType: "application/json"
+  });
 }
 
 export function sortProjects(projects: Project[], sortBy: SortBy): Project[] {

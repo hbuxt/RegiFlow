@@ -2,7 +2,22 @@ export interface Project {
   id: string,
   name: string | null,
   description: string | null;
-  createdAt: Date | null
+  createdAt: Date | null;
+}
+
+export interface ProjectUser {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  joinedAt: Date | null;
+  roles: ProjectUserRole[];
+}
+
+export interface ProjectUserRole {
+  id: string;
+  name: string;
+  assignedAt: Date | null;
 }
 
 export interface CreateProjectRequest {
@@ -38,6 +53,25 @@ export interface GetProjectByIdResponse {
   created_at: string;
 }
 
+export interface GetUsersInProjectResponse {
+  users: GetUsersInProjectUserDto[]
+}
+
+export interface GetUsersInProjectUserDto {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
+  joined_at: string | null;
+  roles: GetUsersInProjectRoleDto[]
+}
+
+export interface GetUsersInProjectRoleDto {
+  id: string;
+  name: string;
+  assigned_at: string | null;
+}
+
 export interface GetMyProjectsResponse {
   projects: GetMyProjectsProjectDto[]
 }
@@ -50,4 +84,9 @@ export interface GetMyProjectsProjectDto {
 
 export interface GetMyPermissionsInProject {
   permissions: string[]
+}
+
+export interface InviteUserToProjectRequest {
+  email: string;
+  roles: string[];
 }

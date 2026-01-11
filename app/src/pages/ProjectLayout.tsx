@@ -8,7 +8,7 @@ import Error from "./Error";
 import { useQuery } from "@tanstack/react-query";
 import { Gauge, Settings, Tickets } from "lucide-react";
 import { cn } from "@/lib/utils/styles";
-import { isExactRouteActive } from "@/lib/utils/route";
+import { isExactRouteActive, isRouteActive } from "@/lib/utils/route";
 import { ReactNode } from "react";
 
 export async function projectLayoutLoader({ params }: LoaderFunctionArgs) {
@@ -78,9 +78,24 @@ export default function ProjectLayout() {
   });
 
   const links = [
-    { name: "Overview", url: `/${project.id}`, icon: <Gauge size={18} /> },
-    { name: "Tickets", url: `/${project.id}/tickets`, icon: <Tickets size={18} /> },
-    { name: "Settings", url: `/${project.id}/settings`, icon: <Settings size={18} /> }
+    { 
+      name: "Overview", 
+      url: `/${project.id}`, 
+      icon: <Gauge size={18} />, 
+      isActive: isExactRouteActive(location.pathname, `/${project.id}`) 
+    },
+    { 
+      name: "Tickets", 
+      url: `/${project.id}/tickets`, 
+      icon: <Tickets size={18} />, 
+      isActive: isExactRouteActive(location.pathname, `/${project.id}/tickets`) 
+    },
+    { 
+      name: "Settings", 
+      url: `/${project.id}/settings`, 
+      icon: <Settings size={18} />, 
+      isActive: isRouteActive(location.pathname, `/${project.id}/settings`) 
+    }
   ];
 
   return (
@@ -96,7 +111,7 @@ export default function ProjectLayout() {
           <ul className="w-full px-8 bg-slate-50 flex flex-col md:flex-row">
             {links.map((item) => (
               <li key={item.name}>
-                <NavLink to={item.url} className={cn("flex items-center gap-2 py-2 px-4 border-b-2 font-normal text-sm hover:text-primary", isExactRouteActive(location.pathname, item.url) ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>
+                <NavLink to={item.url} className={cn("flex items-center gap-2 py-2 px-4 border-b-2 font-normal text-sm hover:text-primary", item.isActive ? "border-primary text-primary" : "border-transparent text-muted-foreground")}>
                   {item.icon}
                   <span>{item.name}</span>
                 </NavLink>

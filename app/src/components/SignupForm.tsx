@@ -88,7 +88,7 @@ export default function SignUpForm() {
                 <FormControl className="mb-2">
                   <Input type="text" disabled={mutation.isPending} {...field} />
                 </FormControl>
-                <FormDescription className="mb-2">We&apos;ll use this to contact you. Only members in the projects you are in will be able to see this email.</FormDescription>
+                <FormDescription className="mb-2">We&apos;ll use this to contact you. Only members in the projects you are in, and have been invited to, will be able to see this email.</FormDescription>
                 <FormMessage />
               </FormItem>
             )} />

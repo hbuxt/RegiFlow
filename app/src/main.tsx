@@ -19,6 +19,7 @@ import ProjectLayout, { ProjectLayoutError, projectLayoutLoader } from './pages/
 import ProjectOverview from './pages/ProjectOverview';
 import ProjectSettingsLayout from './pages/ProjectSettingsLayout';
 import ProjectGeneralSettings from './pages/ProjectGeneralSettings';
+import ProjectAccessSettings from './pages/ProjectAccessSettings';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <ProjectGeneralSettings />
+              },
+              {
+                path: "access",
+                element: <ProjectAccessSettings />
               }
             ]
           }
