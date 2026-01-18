@@ -79,7 +79,7 @@ namespace Api.Features.Users.RespondToMyInvitation
 
             if (status == InvitationStatus.Accept)
             {
-                invitation.Status = NotificationStatus.Resolved;
+                invitation.Status = NotificationStatus.Accepted;
 
                 var projectUser = new ProjectUser()
                 {
