@@ -54,6 +54,7 @@ namespace Api.Features.Users.ListMyProjects
             return Result.Success(new Response()
             {
                 Projects = projects
+                    .OrderByDescending(p => p.CreatedAt)
                     .Select(p => new ProjectDto()
                     {
                         Id = p.Id,

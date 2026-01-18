@@ -80,21 +80,24 @@ namespace Api.Features.Users.ListMyNotifications
             _logger.LogInformation("List my notifications for user: {UserId} succeeded", query.UserId);
             return Result.Success(new Response()
             {
-                Notifications = notifications.Select(n => new NotificationDto
-                {
-                    Id = n.Id,
-                    Type = n.Type.ToString(),
-                    Status = n.Status.ToString(),
-                    CreatedAt = n.CreatedAt,
-                    InvitationDetails = n.RoleIds == null ? null : new InvitationDetailsDto
+                Notifications = notifications
+                    .OrderByDescending(n => n.CreatedAt)
+                    .Select(n => new NotificationDto
                     {
-                        Token = n.Token,
-                        ExpiresAt = n.ExpiresAt,
-                        SentBy = n.SentBy,
-                        Regarding = n.Regarding,
-                        Roles = n.RoleIds.Select(id => rolesMap[id]).ToList()
-                    }
-                }).OrderByDescending(n => n.CreatedAt).ToList()
+                        Id = n.Id,
+                        Type = n.Type.ToString(),
+                        Status = n.Status.ToString(),
+                        CreatedAt = n.CreatedAt,
+                        InvitationDetails = n.RoleIds == null ? null : new InvitationDetailsDto
+                        {
+                            Token = n.Token,
+                            ExpiresAt = n.ExpiresAt,
+                            SentBy = n.SentBy,
+                            Regarding = n.Regarding,
+                            Roles = n.RoleIds.Select(id => rolesMap[id]).ToList()
+                        }
+                    })
+                    .ToList()
             });
         }
     }

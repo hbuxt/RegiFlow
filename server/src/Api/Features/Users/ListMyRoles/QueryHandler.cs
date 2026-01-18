@@ -55,6 +55,7 @@ namespace Api.Features.Users.ListMyRoles
             {
                 Roles = roles
                     .Where(ur => ur.Role != null)
+                    .OrderByDescending(ur => ur.Role!.CreatedAt)
                     .Select(ur => new RoleDto()
                     {
                         Id = ur.Role!.Id,

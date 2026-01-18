@@ -56,7 +56,10 @@ namespace Api.Features.Users.ListMyPermissions
                 _logger.LogInformation("List My Permissions succeeded for user: {UserId}", query.UserId);
                 return Result.Success(new Response()
                 {
-                    Permissions = permissions.Select(p => p.Name).ToList()
+                    Permissions = permissions
+                        .OrderByDescending(p => p.CreatedAt)
+                        .Select(p => p.Name)
+                        .ToList()
                 });
             }
             catch (Exception ex)

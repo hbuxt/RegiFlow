@@ -59,6 +59,7 @@ namespace Api.Features.Projects.ListUsers
             return Result.Success(new Response()
             {
                 Users = users
+                    .OrderByDescending(pu => pu.JoinedAt)
                     .Select(pu => new UserDto()
                     {
                         Id = pu.User!.Id,

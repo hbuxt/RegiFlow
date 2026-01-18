@@ -45,6 +45,7 @@ namespace Api.Features.Roles.ListByScope
             return Result.Success(new Response()
             {
                 Roles = roles
+                    .OrderByDescending(r => r.CreatedAt)
                     .Select(r => new RoleDto()
                     {
                         Id = r.Id,

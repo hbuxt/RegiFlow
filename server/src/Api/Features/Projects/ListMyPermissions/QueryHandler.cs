@@ -57,7 +57,10 @@ namespace Api.Features.Projects.ListMyPermissions
                 query.UserId, query.ProjectId);
             return Result.Success(new Response()
             {
-                Permissions = permissions.Select(p => p.Name).ToList()
+                Permissions = permissions
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Select(p => p.Name)
+                    .ToList()
             });
         }
     }
